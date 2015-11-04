@@ -10,7 +10,7 @@ version=0.1
 # --------------------
 def create_json(rootfile='file.root', treename='', jout=''):
     """
-    [] Create a json template file for
+    Create a json template file for
     plotng all the branches in a given
     tree
     """
@@ -52,8 +52,6 @@ def create_json(rootfile='file.root', treename='', jout=''):
 # read arguments
 # --------------------
 from optparse import OptionParser
-
-
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-r", "--load", dest="rootfile",default='rootfile.root',
@@ -64,9 +62,9 @@ if __name__ == "__main__":
                       help="specify output json file")
     
     (options, args) = parser.parse_args()
-    create_json(options.rootfile,
-                options.treename,
-                options.jsonfile)
-
+    create_json( options.rootfile,
+                 options.treename,
+                 options.jsonfile)
+    
     
     

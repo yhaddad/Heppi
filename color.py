@@ -7,8 +7,14 @@ This is a configuration file containing
 the code colors in hex, and translated 
 in the ROOT format.
 
-"""
+The colors has been inspired from :
+http://flatuicolors.com/
 
+you can use the follwing command to 
+transform the HEX color format to ROOT
+format : ROOT.TColor.GetColor(hexcolor)
+
+"""
 hexcolor = {
     "turquoise"    :"#1abc9c",
     "emerald"      :"#2ecc71",
