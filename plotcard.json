@@ -194,13 +194,15 @@
         }
     }, 
     "processes": {
-        "vbf_m125": [
-            "VBFHToGG_M-125_13TeV_powheg_pythia8", 
-            "1"
-        ], 
-        "ggf_m125": [
-            "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
-            "2"
-        ]
+        "vbf_m125": {
+            "color": 1, 
+            "name": "VBFHToGG_M-125_13TeV_powheg_pythia8", 
+            "title": "vbf_m125"
+        }, 
+        "ggf_m125": {
+            "color": 2, 
+            "name": "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
+            "title": "ggf_m125"
+        }
     }
 }

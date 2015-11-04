@@ -40,8 +40,8 @@ def create_json(rootfile='file.root', treename='', jout=''):
     for sam in samples:
         if 'processes' in sam:
             for proc in samples[sam]:
-                samples[sam][proc].append("%i"%color_count)
-                samples_new[proc] = samples[sam][proc] 
+                samples_name = samples[sam][proc][0]
+                samples_new[proc] = {'name': samples_name, 'color':color_count, 'title':proc}
                 color_count = color_count + 1
     
     with open(jout, "w") as file:
