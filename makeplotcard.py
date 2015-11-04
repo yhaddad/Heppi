@@ -48,9 +48,11 @@ def create_json(rootfile='file.root', treename='', jout=''):
         json.dump({'variables':varlist, 'processes':samples_new}, file, indent=4)
     file.close()
         
+
 # --------------------
 # read arguments
 # --------------------
+
 from optparse import OptionParser
 if __name__ == "__main__":
     parser = OptionParser()
