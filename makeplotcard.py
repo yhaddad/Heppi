@@ -52,7 +52,6 @@ def create_json(rootfile='file.root', treename='', jout=''):
 # --------------------
 # read arguments
 # --------------------
-
 from optparse import OptionParser
 if __name__ == "__main__":
     parser = OptionParser()
