@@ -2,6 +2,7 @@
 
 import ROOT
 import sys, os, glob, json
+import colors
 
 version=0.1
 
@@ -32,23 +33,22 @@ def create_json(rootfile='file.root', treename='', jout=''):
     # create list of variables
     varlist={}
     for var in tree.GetListOfLeaves():
-        varlist[var.GetTitle()]={'title':'','hist':'(100,0,100)','norm':False,'log':False}
+        varlist[var.GetTitle()]={'title':'','hist':'(100,0,100)','norm':False,'log':False, 'cut':''}
         # create a json file
     samples = json.loads(open('samples.json').read())
     samples_new = {}
-    color_count = 1;
+    selection   = {'VBF':'', 'diphoton':''}
+    count       = 0
     for sam in samples:
         if 'processes' in sam:
             for proc in samples[sam]:
                 samples_name = samples[sam][proc][0]
-                samples_new[proc] = {'name': samples_name, 'color':color_count, 'title':proc}
-                color_count = color_count + 1
-    
+                samples_new[proc] = {'name': samples_name, 'color':colors.rootcolor.keys()[count], 'title':proc}
+                count = count + 1
+                
     with open(jout, "w") as file:
-        json.dump({'variables':varlist, 'processes':samples_new}, file, indent=4)
+        json.dump({'variables':varlist, 'processes':samples_new, 'selections':selection}, file, indent=2)
     file.close()
-        
-
 # --------------------
 # read arguments
 # --------------------
