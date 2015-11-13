@@ -1,0 +1,881 @@
+{
+  "variables": {
+    "jet3_pt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet3_eta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_leadEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2_dEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet1_pt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J3_dipho_dPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dMjj_d13_23": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "lead_sieie": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadEt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_MVA": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "momentum4Volume": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "candidate_id": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dMjj_d12_13": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "lead_sigmaEoE": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestParticleToSubLeadingJet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet1_pt_test": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_mag_3J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadPt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_dJ1_J2J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_J2_J3J1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J3_mjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestParticleToLeadingJet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2_Zep": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dMjj_d12_23": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dPhi_max_jets": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dRToNearestPartonJ1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dipho_PToM": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_LeadJPt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet1_eta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J3_dEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestGenJetToLeadingJet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_SubJPt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_subleady": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "eta_genJetMatchingToJ2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "eta_genJetMatchingToJ3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "eta_genJetMatchingToJ1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "weight": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet2_pt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "genZ": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "event": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "jet2_eta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestGenJetToSubLeadingJet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dPhi_min_jets": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "run": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestParticleToLeadingPhoton": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "nvtx": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_subleadEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "lead_ptoM": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2J3_dipho_dPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "Mjjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "sublead_hoe": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_abs_dEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dipho_cosphi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_J3_J1J2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_dipho_pt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "has3Jet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_dipho_dijet13": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_dipho_dijet12": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_dphi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_dPhi_2J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "sublead_sieie": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon1_J1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon1_J2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon1_J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "sublPho_PToM": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J2J3_dEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_min_J12J23": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon2_J1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon2_J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_Photon2_J2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "pt_genJetMatchingToJ1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_dipho_trijet": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "pt_genJetMatchingToJ3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "pt_genJetMatchingToJ2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_minDRJetPho": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadEta": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_dipho_dphi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dR_dipho_dijet23": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadR9": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dPhi_J2_J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadEt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_Mjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2J3_Zep": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_Zep": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J2J3_dipho_dPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2_mjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "hasClosestParticleToSubLeadingPhoton": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J2_dipho_dPhi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dPhi_J1_J2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dPhi_J1_J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_dPhi_d3J2J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J2J3_mjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dipho_sumpt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_J1_J2J3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J2J3_Zep": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_mag_2J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_mag_d3J2J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "sublead_ptoM": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_dphi_trunc": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "lead_hoe": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadR9": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "J1J3_Zep": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_dipho_dphi_trunc": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "mass": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadPt": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dRToNearestPartonJ2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dRToNearestPartonJ3": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_dJ3_J1J2": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dEta_dJ2_J3J1": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "numberOfMatches": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "misPt_dPhi_3J": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "Mjj": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "rho": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "lumi": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dijet_leady": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "dMjj_d12_13plus23": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadPho_PToM": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "sublead_sigmaEoE": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "subleadIDMVA": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }, 
+    "leadIDMVA": {
+      "hist": "(100,0,100)", 
+      "cut": "", 
+      "log": false, 
+      "norm": false, 
+      "title": ""
+    }
+  }, 
+  "processes": {
+    "vbf_m125": {
+      "color": "turquoise", 
+      "name": "VBFHToGG_M-125_13TeV_powheg_pythia8", 
+      "title": "vbf_m125"
+    }, 
+    "ggf_m125": {
+      "color": "clouds", 
+      "name": "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
+      "title": "ggf_m125"
+    }
+  }, 
+  "selections": {
+    "VBF": "", 
+    "diphoton": ""
+  }
+}

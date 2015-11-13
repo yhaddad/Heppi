@@ -17,8 +17,7 @@ class options:
         self.treename    = 'VBFMVADumper/trees/*_13TeV_VBFDiJet'
         self.allnormhist = False
         self.args        = None
-
-
+        
 #-----------------------------------
 def draw2Legend(histo1,
                 histo2,

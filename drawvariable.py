@@ -14,8 +14,8 @@ cutflow     = [] ## save all the cuts
 selections  = {}
 
 # delete me
-sampledir   = './data/' ## temp variable
-treename    = 'VBFMVADumper/trees/*_13TeV_VBFDiJet'
+sampledir   = './data/new' ## temp variable
+treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
 options     = None   
 allnormhist = False
 # =================================================
@@ -170,12 +170,14 @@ def draw_variable(variable, selection):
         for c in colors.usercolor:
             if c in proc:
                 hcolor = colors.usercolor[c]
-        legend.AddEntry( h, samples[proc]["title"], "f" );
+                
         if ('signal' in samples[proc]['label']) or ('spectator' in samples[proc]['label']) or (variables[variable]['norm'] == True) or (allnormhist==True):
             h.SetLineColor(hcolor)
             h.SetTitle(";" + variables[variable]['title']+";entries")
+            legend.AddEntry( h, samples[proc]["title"], "l" );
         else:
             h.SetTitle(";" + variables[variable]['title']+";entries")
+            legend.AddEntry( h, samples[proc]["title"], "f" );
             
         print 'norm hist', allnormhist
         if variables[variable]['norm'] == True or allnormhist==True:
@@ -196,14 +198,21 @@ def draw_variable(variable, selection):
     c = ROOT.TCanvas('c_'+variable,variable,600,700)
     c.cd()
     count = 0
+    ymax = maximum + maximum*0.5;
+    ymin = 0;
+    if options.allloghist:
+        ROOT.gPad.SetLogy()
+        histfilename = histfilename + '_log'
+        ymax = 10*ymax
+        ymin = 0.001
     if variables[variable]['norm'] == True or allnormhist==True:
         for h in hist:
             print 'orderded histo::', h.GetName()
             if count==0:
-                h.GetYaxis().SetRangeUser(0.000001,maximum+ maximum*0.5)
+                h.GetYaxis().SetRangeUser(ymin, ymax)
                 h.Draw('hist')
             else:
-                h.GetYaxis().SetRangeUser(0.000001,maximum+ maximum*0.5)
+                h.GetYaxis().SetRangeUser(ymin, ymax)
                 h.Draw('hist,same')
             count = count+1
     else:
@@ -219,10 +228,7 @@ def draw_variable(variable, selection):
         hstack.Draw('hist,same')
         
     ROOT.gPad.RedrawAxis();
-    if options.allloghist:
-        ROOT.gPad.SetLogy()
-        histfilename = histfilename + '_log'
-        
+    
     # this is for the legend
     legend.SetTextAlign( 12 )
     legend.SetTextFont ( 42 )
@@ -258,6 +264,12 @@ def get_options():
                       please use ./makeplotcard.py to create one
                       """,
                       metavar="FILE")
+    parser.add_option("-s", "--sampledir", dest="sampledir",default='./data/',
+                      help="""
+                      specify the detrectory where the trees are. 
+                      example: --filedir /data/trees
+                      """,
+                      metavar="FILE")
     parser.add_option("-t", "--tree", dest="treename",default='VBFMVADumper/*VBFDiJet',
                       help="dumper tree that you want to use", metavar="FILE")
     parser.add_option("-a", "--all", 
@@ -285,6 +297,8 @@ if __name__ == "__main__":
     # reading the plotcard from json
     #logging.basicConfig(level=options.loglevel
     allnormhist = options.allnormhist
+    sampledir   = options.sampledir
+    allloghist  = options.allloghist
     
     ROOT.gROOT.ProcessLine(".x ~/.rootsys/rootlogon.C")
     read_plotcard(options.plotcard)

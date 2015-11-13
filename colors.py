@@ -64,11 +64,12 @@ rootcolor={
 
 
 usercolor={
-    "vbf_m125"           : ROOT.kRed,
-    "ggf_m125"           : ROOT.kAzure+6,
-    "qcd"                : ROOT.kOrange,
-    "gam"                : ROOT.kViolet-4,
-    "dy_toll_m50"        : ROOT.kGreen-5,
+    "vbf_m125"           : 99,
+    "ggf_m125"           : 215,
+    "qcd"                : 91,
+    "gamgam"             : 65,
+    "gamJet"             : 51,
+    "dy_toll_m50"        : 85,
 }
 
 def hex_to_RGB(value):
