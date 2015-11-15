@@ -5,9 +5,9 @@ import os, sys, glob, sys, json
 import logging
 from   rootpy.tree import Cut  # more robust
 import colors 
-from rootpy.interactive import wait
+from   rootpy.interactive import wait
 import collections
-from collections import OrderedDict
+from   collections import OrderedDict
 
 samples     = collections.OrderedDict()
 variables   = {}
@@ -92,11 +92,11 @@ def draw_instack(variable, label='VBF', select=''):
         hist.SetDirectory(0)
         # histogram color
         hist.SetTitle(";" + variables[variable]['title']+";entries")
+        hcolor = 1
+        print 'colors.usercolor::',colors.usercolor
         for c in colors.usercolor:
-            if c in proc:
+            if c in samples[proc]['color']:
                 hcolor = colors.usercolor[c]
-        # add a legend
-        
         if ('signal'==samples[proc]['label']) or ('spectator'==samples[proc]['label']):
             hist.SetLineColor(hcolor)
             hist.SetLineStyle(1)
@@ -110,7 +110,6 @@ def draw_instack(variable, label='VBF', select=''):
             hist.SetLineWidth(2)
             hstack.Add(hist)
             legend.AddEntry( hist, samples[proc]["title"], "f" );
-            
     # drawing
     c = ROOT.TCanvas('c_'+variable,variable,600,700)
     c.cd()
@@ -133,8 +132,6 @@ def draw_instack(variable, label='VBF', select=''):
         h.Draw('hist,same')
     # cosmetics
     ROOT.gPad.RedrawAxis();
-    #if options.allloghist:
-    #    ROOT.gPad.SetLogy()
     # this is for the legend
     legend.SetTextAlign( 12 )
     legend.SetTextFont ( 42 )
@@ -198,13 +195,15 @@ if __name__ == "__main__":
     if opt.display :
         ROOT.gROOT.SetBatch(ROOT.kTRUE) 
     # reading the plotcard from json
-    #logging.basicConfig(level=options.loglevel
+    # logging.basicConfig(level=options.loglevel
     allnormhist = options.allnormhist
     allloghist  = options.allloghist
     sampledir   = options.sampledir
     
     ROOT.gROOT.ProcessLine(".x ~/.rootsys/rootlogon.C")
     read_plotcard(options.plotcard)
+    colors.declar_color()
+    ROOT.gROOT.ProcessLine(".x .color-for-root.C")
     
     print 'test::', selection
     for var in variables:

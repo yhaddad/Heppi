@@ -17,3 +17,10 @@ This a python/c++ project to make plots from a ROOT tree.
 
 
 
+
+## Color theme
+
+On top of the ROOT colors, other palette of colors has been defined.These colors has been inspired from [http://flatuicolors.com/](flatuicolors.com). A translation on ROOT color code is provided:
+![palette](.pic/colors.png)
+
+

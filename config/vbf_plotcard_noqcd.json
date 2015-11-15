@@ -165,28 +165,28 @@
     }, 
     "processes": {
 	"vbf_m125" : {
-	    "color": 1,
+	    "color": "pomegranate",
 	    "order": 0,
 	    "name" : "VBFHToGG_M-125_13TeV_powheg_pythia8", 
 	    "title": "VBF(m_{h}=125)",
 	    "label": "signal"
 	}, 
 	"ggf_m125" : {
-	    "color": 2,
+	    "color": "carrot",
 	    "order": 1,
 	    "name" : "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
 	    "title": "ggf(m_{h}=125)",
 	    "label": "background"
 	},
 	"gamgamjetbox": {
-	    "color": 3,
+	    "color": "emerland",
 	    "order": 2,
 	    "name" : "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa", 
 	    "title": "#gamma#gamma",
 	    "label": "background"
 	},
 	"gamJet": {
-	    "color": 4,
+	    "color": "pumpkin",
 	    "order": 3,
 	    "name" : "GJet_DoubleEMEnriched_TuneCUETP8M1_13TeV_Pythia8", 
 	    "title": "j#gamma",
