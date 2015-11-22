@@ -38,17 +38,18 @@ def create_json(rootfile='file.root', treename='', jout=''):
         # create a json file
     samples     = json.loads(open('config/samples.json').read())
     samples_new = {}
-    selection   = {'VBF':'', 'diphoton':''}
+    sample_tree = {'name':treename}
+    selection   = {'cutflow':''}
     count       = 0
     for sam in samples:
         if 'processes' in sam:
             for proc in samples[sam]:
                 samples_name = samples[sam][proc][0]
-                samples_new[proc] = {'name': samples_name, 'color':colors.rootcolor.keys()[count], 'title':proc}
+                samples_new[proc] = {'name': samples_name, 'color':count, 'title':proc, 'label':'', 'order':count}
                 count = count + 1
                 
     with open(jout, "w") as file:
-        json.dump({'variables':varlist, 'processes':samples_new, 'selections':selection}, file, indent=2)
+        json.dump({'variables':varlist, 'processes':samples_new, 'tree':sample_tree, 'selection':selection}, file, indent=2)
     file.close()
 # --------------------
 # read arguments

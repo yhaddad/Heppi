@@ -14,15 +14,21 @@ variables   = {}
 rootfile    = {}
 cutflow     = [] ## save all the cuts
 selection   = {}
-
+plotlabels  = {}
 # delete me
 sampledir   = './data/new' ## temp variable
 treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
 options     = None   
 allnormhist = False
 
+
+
 # ---- plot card
 def read_plotcard(plotcard):
+    global plotlabels
+    global selection
+    global variables
+    global samples
     config = json.loads(open(plotcard).read())
     for key in config:
         if 'variables' in key:
@@ -34,17 +40,25 @@ def read_plotcard(plotcard):
             logging.debug(' ---- book processes ----')
             for proc in config[key]:
                 samples[proc] = config[key][proc]
+                logging.debug(' -- %12s %12s' % (key, samples[proc]['name']))
         if 'selection' in key:
             logging.debug(' ---- book selections ---')
+            print selection
             selection = config[key]
-            logging.debug(' -- %12s ' % (selection))
-            logging.debug(' -------------------')
+            logging.debug(' -- %12s %12s' % (selection['name'], selection['title']))
             
+        if 'labels' in key:
+            logging.debug(' ------ book labels -----')
+            print plotlabels
+            plotlabels = config[key]
+            logging.debug(' -- %12s %12s' % (key, plotlabels['name']))
+        logging.debug(' -------------------')
 # ---- create a cut flow except the considered variables
 def variable_cutflow(variable, select=''):
     cutflow = ''
     for var in variables:
         if (len(variables[var]['cut'])!=0) and (var!=variable):
+            #logging.debug('-- %12s: %12s' % (variable, variables[var]['cut'] ) )
             if len(cutflow)==0:
                 cutflow = '(' + variables[var]['cut'] + ')'
             else:
@@ -52,17 +66,53 @@ def variable_cutflow(variable, select=''):
                 
     if select != '':
         cutflow = cutflow + '&&' + select
-    #logging.debug('-- cutflow(%s):%s' % (variable, cutflow) )
+    print cutflow
     return cutflow
 
+def print_cutflow():
+    for var in variables:
+        if (len(variables[var]['cut'])!=0):
+            print ('-- %20s: %12s' % (var, variables[var]['cut'] ) )
+
+
+def draw_cut_line(hist, variable=''):
+    if variables[variable]['cut']!='':
+        ymin = hist.GetMinimum()
+        ymax = hist.GetMaximum()
+        cuttt = variables[variable]['cut'].replace('(','').replace(')','')
+        for cut in  cuttt.split('&&'):
+            stmp = cut.split('>')
+            if len(stmp) == 1:
+                stmp = cut.split('<')
+            xcut = float(stmp[1])
+            line = ROOT.TLine()
+            line.SetLineColor(134)
+            line.SetLineStyle(7)
+            if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
+                line.DrawLine(xcut,ymin,xcut,ymax)
+
+                
+def draw_labels(label):
+    t = ROOT.TText()
+    t.SetTextAlign(12);
+    t.SetTextFont(42);
+    t.SetTextSize(0.025);
+    shift = 0;
+    print 'labels ::' , label 
+    for s in label.split('\\'):
+        t.DrawTextNDC((0.1       + ROOT.gStyle.GetPadLeftMargin()),
+                      (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),
+                      s)
+        shift = shift + 0.03
 # ---- draw norm histograms
 def draw_instack(variable, label='VBF', select=''):
     histos = []
-    histfilename = ('plots/histogram_stack_' + variable + '_' + label)
-    legend = ROOT.TLegend(0.55, 0.73,
-                          (0.95 - ROOT.gStyle.GetPadRightMargin()),
-                          (0.98 - ROOT.gStyle.GetPadTopMargin()))
-    
+    histfilename = ('plots/histogram_stack_' +
+                    variable + '_' + label+ '_'
+                    + selection['name'])
+    legend  = ROOT.TLegend(0.55, 0.72,
+                           (0.95 - ROOT.gStyle.GetPadRightMargin()),
+                           (0.98 - ROOT.gStyle.GetPadTopMargin()))
     cutflow = variable_cutflow(variable,'')
     if len(cutflow)!=0:
         cutflow = variable_cutflow(variable,select)
@@ -71,8 +121,13 @@ def draw_instack(variable, label='VBF', select=''):
     hstack.SetName('hs_'+ variable)
     hstack.SetTitle(";" + variables[variable]['title']+";entries")
     # cutflow
-    if len(cutflow)!=0:
+    if len(cutflow)!=0 and options.nocuts==False:
         cutflow = 'weight*(' + cutflow + ')'
+    else:
+        cutflow = 'weight'
+
+    if  options.nocuts:
+        histfilename = histfilename + '_nocuts'
     # loop over the samples
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
     for proc in ordsam:
@@ -94,9 +149,9 @@ def draw_instack(variable, label='VBF', select=''):
         hist.SetTitle(";" + variables[variable]['title']+";entries")
         hcolor = 1
         print 'colors.usercolor::',colors.usercolor
-        for c in colors.usercolor:
-            if c in samples[proc]['color']:
-                hcolor = colors.usercolor[c]
+        #for c in colors.usercolor:
+        #    if c in samples[proc]['color']:
+        hcolor = samples[proc]['color']
         if ('signal'==samples[proc]['label']) or ('spectator'==samples[proc]['label']):
             hist.SetLineColor(hcolor)
             hist.SetLineStyle(1)
@@ -131,6 +186,7 @@ def draw_instack(variable, label='VBF', select=''):
     for h in histos:
         h.Draw('hist,same')
     # cosmetics
+    draw_cut_line(htmp,variable)
     ROOT.gPad.RedrawAxis();
     # this is for the legend
     legend.SetTextAlign( 12 )
@@ -142,7 +198,13 @@ def draw_instack(variable, label='VBF', select=''):
     legend.SetLineColorAlpha(0,0)
     legend.SetShadowColor(0)
     legend.Draw()
+    # draw a line
     
+    # draw labels
+    if  options.nocuts:
+        draw_labels('w/o cuts')
+    else:
+        draw_labels(plotlabels['name'])
     if variables[variable]['norm']==True or allnormhist==True:
         histfilename = histfilename + '_norm'
     c.SaveAs( histfilename + '.png')
@@ -187,6 +249,12 @@ def get_options():
     parser.add_option("-l", "--alllog",
                       action="store_true",dest="allloghist",default=False,
                       help="all the histogram will be in log scale")
+    parser.add_option("--nocuts",
+                      action="store_true",dest="nocuts",default=False,
+                      help="all the histogram will be in log scale")
+    parser.add_option("--label", dest="label",default='VBF',
+                      help="label to the produced plots")
+
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -202,12 +270,15 @@ if __name__ == "__main__":
     
     ROOT.gROOT.ProcessLine(".x ~/.rootsys/rootlogon.C")
     read_plotcard(options.plotcard)
-    colors.declar_color()
-    ROOT.gROOT.ProcessLine(".x .color-for-root.C")
+    if not options.display:
+        ROOT.gROOT.SetBatch(ROOT.kTRUE)
+    #colors.declar_color()
+    #ROOT.gROOT.ProcessLine(".x .color-for-root.C")
+    print_cutflow()
     
     print 'test::', selection
     for var in variables:
-        draw_instack(var,'VBF','')
+        draw_instack(var,options.label,selection['title'])
         
     #hist = produce_histos('jet1_pt','',['norm'],'')
     #print 'voila ::',hist

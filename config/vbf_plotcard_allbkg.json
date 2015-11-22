@@ -1,15 +1,15 @@
 {
     "variables": {
-	"jet1_pt": {
+	"dijet_LeadJPt": {
 	    "hist": "(61,15,260)", 
-	    "cut" : "jet1_pt>30", 
+	    "cut" : "dijet_LeadJPt>30", 
 	    "log": false, 
 	    "norm": false, 
 	    "title": "p_{t}(jet_{1})[GeV]"
 	}, 
-	"jet2_pt": {
+	"dijet_SubJPt": {
 	    "hist" : "(61,15,260)", 
-	    "cut"  : "jet2_pt>20", 
+	    "cut"  : "dijet_SubJPt>20", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "p_{t}(jet_{2})[GeV]"
@@ -21,16 +21,16 @@
 	    "norm" : false, 
 	    "title": "p_{t}(jet_{3})[GeV]"
 	},
-	"jet1_eta": {
+	"dijet_leadEta": {
 	    "hist": "(25,-5,5)", 
-	    "cut": "abs(jet1_eta)<4.7", 
+	    "cut": "abs(dijet_leadEta)<4.7", 
 	    "log": false, 
 	    "norm": false, 
 	    "title": "#eta(jet_{1})"
 	}, 
-	"jet2_eta": {
+	"dijet_subleadEta": {
 	    "hist": "(25,-5,5)", 
-	    "cut": "abs(jet2_eta)<4.7", 
+	    "cut": "abs(dijet_subleadEta)<4.7", 
 	    "log": false, 
 	    "norm": false, 
 	    "title": "#eta(jet_{2})"
@@ -150,14 +150,14 @@
 	},
 	"dipho_subleadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_subleadIDMVA>0", 
+	    "cut"  : "dipho_subleadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{2})"
 	}, 
 	"dipho_leadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_leadIDMVA>0", 
+	    "cut"  : "dipho_leadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{1})"
@@ -183,12 +183,19 @@
 	    "norm": false, 
 	    "title": "cos(#Delta#phi_{#gamma#gamma})"
 	},
-	"dijet_MVA": {
+	"dijet_mva": {
 	    "hist": "(100,-1,1)", 
 	    "cut": "", 
 	    "log": false, 
 	    "norm": false, 
-	    "title": "di-jet BDT_{output}"
+	    "title": "BDT_{jj}"
+	},
+	"dipho_mva": {
+	    "hist": "(100,-1,1)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "BDT_{#gamma#gamma}"
 	}
 	
     }, 
@@ -228,6 +235,13 @@
 	    "title": "Drell-Yann",
 	    "label": "background"
 	},
+	"qcd":{
+	    "color": 130,
+	    "order": 5,
+	    "name" : "QCD_DoubleEMEnriched_TuneCUETP8M1_13TeV_Pythia8",
+	    "title": "QCD",
+	    "label": "background"
+	}
     }, 
     
     "selection": {

@@ -150,14 +150,14 @@
 	},
 	"dipho_subleadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_subleadIDMVA>0", 
+	    "cut"  : "dipho_subleadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{2})"
 	}, 
 	"dipho_leadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_leadIDMVA>0", 
+	    "cut"  : "dipho_leadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{1})"
@@ -220,14 +220,7 @@
 	    "name" : "GJet_DoubleEMEnriched_TuneCUETP8M1_13TeV_Pythia8", 
 	    "title": "j#gamma",
 	    "label": "background"
-	},
-	"dy_toll_m50":{
-	    "color": 126,
-	    "order": 4,
-	    "name" : "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8",
-	    "title": "Drell-Yann",
-	    "label": "background"
-	},
+	}
     }, 
     
     "selection": {

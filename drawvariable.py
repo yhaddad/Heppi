@@ -10,7 +10,7 @@ from rootpy.interactive import wait
 samples     = {}
 variables   = {}
 rootfile    = {}
-cutflow     = [] ## save all the cuts
+#cutflow     = [] ## save all the cuts
 selections  = {}
 
 # delete me
@@ -64,113 +64,125 @@ def read_plotcard(plotcard):
             logging.debug(' -------------------')
 
 # =================================================
-def produce_histos(variable, selection='', options=[''] ,mode=''):
-    """
-    mode:
-    
-    [1] none : produce a list of histogram with with the corresponding collors. only the samples labeled 
-    'signal' or 'spectator' will non-color filled
-    the sample label 'data' will be drawn as doted points with error bars
-    [2] stack :  this will produce a histogram (signal) and hstack with all the backround stacked, 
-    as a third element a list of histogram with same order as in the hstack 
-    [3] bkgadd : this add all the backgrounds in a same histogram, the function will then retrieve:
-    the signal the spectator and background histogram
-    
-    options :
-    
-    options can be entred as a list:
-    the list of options are : ['norm', '', ... ]
-    """
-    
-    histos = {}
-    hstack = ROOT.THStack('hs_' + variable,'')
-    for proc in samples:
-        flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
-        roof  = ROOT.TFile.Open(flist[0])
-        tree  = roof.Get(treename.replace('*',proc))
-        tree.Project(
-            'h_' + variable + variables[variable]['hist'],
-            variable,
-            selection
-        )
-        
-        h = ROOT.gDirectory.Get('h_' + variable )
-        h.SetDirectory(0)
-        eventperbin = float(h.GetXaxis().GetXmax() - h.GetXaxis().GetXmin())/h.GetNbinsX()
-        if 'signal' or 'spectator' in samples[proc]['label']:
-            h.SetLineColor(samples[proc]['color'])
-        else:
-            h.SetFillColor(samples[proc]['color'])
-            h.SetLineColor(ROOT.kBlack)
-            h.SetTitle(";" + variables[variable]['title']+(";Entries/%1.1f"% eventperbin ))
-        if 'norm' in options:
-            integral = h.Integral()
-            h.Scale(1.0/integral)
-            h.GetYaxis().SetTitle("1/n dn/d"+variables[variable]['title'] +("/%1.1f" % eventperbin))
+#def produce_histos(variable, selection='', options=[''] ,mode=''):
+#    """
+#    mode:
+#    
+#    [1] none : produce a list of histogram with with the corresponding collors. only the samples labeled 
+#    'signal' or 'spectator' will non-color filled
+#    the sample label 'data' will be drawn as doted points with error bars
+#    [2] stack :  this will produce a histogram (signal) and hstack with all the backround stacked, 
+#    as a third element a list of histogram with same order as in the hstack 
+#    [3] bkgadd : this add all the backgrounds in a same histogram, the function will then retrieve:
+#    the signal the spectator and background histogram
+#    
+#    options :
+#    
+#    options can be entred as a list:
+#    the list of options are : ['norm', '', ... ]
+#    """
+#    
+#    histos = {}
+#    hstack = ROOT.THStack('hs_' + variable,'')
+#    for proc in samples:
+#        flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
+#        roof  = ROOT.TFile.Open(flist[0])
+#        tree  = roof.Get(treename.replace('*',proc))
+#        tree.Project(
+#            'h_' + variable + variables[variable]['hist'],
+#            variable,
+#            selection
+#        )
+#        
+#        h = ROOT.gDirectory.Get('h_' + variable )
+#        h.SetDirectory(0)
+#        eventperbin = float(h.GetXaxis().GetXmax() - h.GetXaxis().GetXmin())/h.GetNbinsX()
+#        if 'signal' or 'spectator' in samples[proc]['label']:
+#            h.SetLineColor(samples[proc]['color'])
+#        else:
+#            h.SetFillColor(samples[proc]['color'])
+#            h.SetLineColor(ROOT.kBlack)
+#            h.SetTitle(";" + variables[variable]['title']+(";Entries/%1.1f"% eventperbin ))
+#        if 'norm' in options:
+#            integral = h.Integral()
+#            h.Scale(1.0/integral)
+#            h.GetYaxis().SetTitle("1/n dn/d"+variables[variable]['title'] +("/%1.1f" % eventperbin))
+#
+#        if mode=='stack':
+#            if 'background' in samples[proc]['label']:
+#                hstack.Add(h);
+#            else:
+#                histos[variable].append(h)
+#            histos[variable].append(hstack)
+#        else :    
+#            histos[variable].append(h)
+#        
+#        
+#    return histos;
 
-        if mode=='stack':
-            if 'background' in samples[proc]['label']:
-                hstack.Add(h);
+def variable_cutflow(variable, select=''):
+    cutflow = ''
+    for var in variables:
+        if (len(variables[var]['cut'])!=0) and (var!=variable):
+            #logging.debug('-- %12s: %12s' % (variable, variables[var]['cut'] ) )
+            if len(cutflow)==0:
+                cutflow = '(' + variables[var]['cut'] + ')'
             else:
-                histos[variable].append(h)
-            histos[variable].append(hstack)
-        else :    
-            histos[variable].append(h)
-        
-        
-    return histos;
+                cutflow = cutflow + '&&' + '(' + variables[var]['cut'] + ')'
+                
+    if select != '':
+        cutflow = cutflow + '&&' + select
+    
+    return cutflow
 
-
-def draw_variable(variable, selection):
+def draw_variable(variable, label='VBF', select=''):
     hist = []
     sel=''
-
-    histfilename = ('plots/histogram_' + selection + '_' + variable)
+    formula = variable
+    varname = variable
+    if ':=' in variable:
+        varname  = variable.split(':=')[0]
+        formula  = variable.split(':=')[1]
+    print '\t formula::', formula
+    print '\t varname::', varname
+    histfilename = ('plots/histogram_' + varname + '_' + label)
     print ' -- ', variable,'\t',variables[variable]
     # create a list of histogram for each process
     legend = ROOT.TLegend(0.5, 0.65,
                           (0.95 - ROOT.gStyle.GetPadRightMargin()),
                           (0.95 - ROOT.gStyle.GetPadTopMargin()))
-    print ' --  cut flow', cutflow
     maximum=0;
-    if selection in selections:
-        sel = selections[selection]
+    #if selection in selections:
+    #    sel = selections[selection]
         
-    hstack = ROOT.THStack('hs_' + variable,'')
-    hstack.SetName('hs_'+ variable)
+    cutflow = variable_cutflow(variable,'')
+    if len(cutflow)!=0:
+        cutflow = variable_cutflow(variable,select)    
+    hstack = ROOT.THStack('hs_' + varname,'')
+    hstack.SetName('hs_'+ varname)
     hstack.SetTitle(";" + variables[variable]['title']+";entries")
+    if len(cutflow)!=0:
+        cutflow = 'weight*(' + cutflow + ')'
+    else:
+        cutflow = 'weight'
     for proc in samples:
         print '--', proc, ' ',samples[proc]
         flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
         roof  = ROOT.TFile.Open(flist[0])
         tree  = roof.Get(treename.replace('*',proc))
-        print 'h_' + variable + variables[variable]['hist']
-        print variable
-        print sel
-        if variables[variable]['norm'] == True or allnormhist==True:
-            tree.Project(
-                'h_' + variable + variables[variable]['hist'],
-                variable,
-                sel
-            )
-        else:
-            seltmp = ''
-            if sel =='':
-                seltmp = 'weight'
-            else:
-                seltmp = 'weight*(' + sel + ')'
-            tree.Project(
-                'h_' + variable + variables[variable]['hist'],
-                variable,
-                seltmp
-            )
-        h = ROOT.gDirectory.Get('h_' + variable )
+        print cutflow
+        tree.Project(
+            'h_' + varname + variables[variable]['hist'],
+            formula,
+            cutflow
+        )
+        h = ROOT.gDirectory.Get('h_' + varname )
         h.SetDirectory(0)
         hcolor = 0
-        for c in colors.usercolor:
-            if c in proc:
-                hcolor = colors.usercolor[c]
-                
+        #for c in colors.usercolor:
+        #    if c in proc:
+        #        hcolor = colors.usercolor[c]
+        hcolor = samples[proc]['color']        
         if ('signal' in samples[proc]['label']) or ('spectator' in samples[proc]['label']) or (variables[variable]['norm'] == True) or (allnormhist==True):
             h.SetLineColor(hcolor)
             h.SetTitle(";" + variables[variable]['title']+";entries")
@@ -195,12 +207,12 @@ def draw_variable(variable, selection):
         hist.append(h)
     print 'maximum ==', maximum     
     hist.sort(key = lambda x: x.GetEffectiveEntries())
-    c = ROOT.TCanvas('c_'+variable,variable,600,700)
+    c = ROOT.TCanvas('c_'+varname,varname,600,700)
     c.cd()
     count = 0
     ymax = maximum + maximum*0.5;
     ymin = 0;
-    if options.allloghist:
+    if options.allloghist or variables[variable]['log']:
         ROOT.gPad.SetLogy()
         histfilename = histfilename + '_log'
         ymax = 10*ymax
@@ -220,7 +232,7 @@ def draw_variable(variable, selection):
         htmp.Clear()
         ymin = 0;
         ymax = hstack.GetMaximum()
-        if  options.allloghist:
+        if  options.allloghist or variables[variable]['log']:
             ymin = 0.1
             ymax = 2000*ymax
         htmp.GetYaxis().SetRangeUser(ymin,ymax + ymax*0.5)
@@ -287,6 +299,10 @@ def get_options():
     parser.add_option("-l", "--alllog",
                       action="store_true",dest="allloghist",default=False,
                       help="all the histogram will be in log scale")
+    parser.add_option("-k", "--nocut",
+                      action="store_true",dest="nocut",default=False,
+                      help="no cut will be applied")
+    
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -301,6 +317,7 @@ if __name__ == "__main__":
     allloghist  = options.allloghist
     
     ROOT.gROOT.ProcessLine(".x ~/.rootsys/rootlogon.C")
+    ROOT.gROOT.SetBatch(ROOT.kTRUE)
     read_plotcard(options.plotcard)
     
     for var in variables:
