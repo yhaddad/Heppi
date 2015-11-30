@@ -15,7 +15,12 @@ This a python/c++ project to make plots from a ROOT tree.
 * the `*` will be replaced automatically by the remaining name of the tree found in the `VBFMVADumper` directory.
 * This is for the use of [flashgg](https://github.com/cms-analysis/flashgg) type dumper trees only, a more standard version will be pushed soon
 
+# Produce stacked plots
 
+* Stacked plots can produced by tapping:
+```bash
+
+```
 
 
 ## Color theme

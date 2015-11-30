@@ -282,8 +282,8 @@ if __name__ == "__main__":
     #treename    = options.treename
     ROOT.gROOT.ProcessLine(".x ~/.rootsys/rootlogon.C")
     read_plotcard(options.plotcard)
-    #if not options.display:
-    #ROOT.gROOT.SetBatch(ROOT.kTRUE)
+    if not options.display:
+        ROOT.gROOT.SetBatch(ROOT.kTRUE)
     #colors.declar_color()
     #ROOT.gROOT.ProcessLine(".x .color-for-root.C")
     print_cutflow()

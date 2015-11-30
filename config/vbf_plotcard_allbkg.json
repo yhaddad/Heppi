@@ -93,10 +93,10 @@
 	    "title": "#DeltaR_{min}(#gamma,j)"
 	},
 	"dipho_lead_ptoM": {
-	    "hist": "(50,0,2)", 
-	    "cut" : "", 
-	    "log" : false, 
-	    "norm": false, 
+	    "hist" : "(50,0,2)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
 	},
 	"dipho_sublead_ptoM": {
@@ -107,31 +107,31 @@
 	    "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
 	},
 	"dipho_PToM": {
-	    "hist": "(100,0,5)", 
-	    "cut" : "", 
-	    "log" : false, 
-	    "norm": false, 
+	    "hist" : "(100,0,5)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
 	},
 	"dijet_leady": {
-	    "hist": "(25,-5,5)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "y(jet_{1})"
 	},
 	"dijet_subleady": {
-	    "hist": "(25,-5,5)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "y(jet_{2})"
 	},
 	"dijet_dipho_pt": {
-	    "hist": "(100,0,200)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
+	    "hist" : "(100,0,200)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "p_{t}(#gamma#gamma,jj)"
 	}, 
 	"dijet_Zep": {
@@ -142,7 +142,7 @@
 	    "title": "#eta^{*}"
 	},
 	"dipho_mass": {
-	    "hist" : "(80,100,180)", 
+	    "hist" : "(180,0,180)", 
 	    "cut"  : "(dipho_mass>100 && dipho_mass<180)", 
 	    "log"  : false, 
 	    "norm" : false, 
@@ -191,11 +191,25 @@
 	    "title": "BDT_{jj}"
 	},
 	"dipho_mva": {
-	    "hist": "(100,-1,1)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
+	    "hist" : "(100,-1,1)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
 	    "title": "BDT_{#gamma#gamma}"
+	},
+	"dipho_lead_elveto": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "dipho_lead_elveto>0", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": ""
+	}, 
+	"dipho_sublead_elveto": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "dipho_sublead_elveto>0", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": ""
 	}
 	
     }, 
@@ -249,9 +263,10 @@
 	"title": ""
     }, 
     "tree": {
-	"name": "vbfTagDumper/*VBFDiJet"
+	"name": "vbfTagDumper/*VBFDiJet",
+	"lumifactor": 1
     },
     "labels":{
-	"name" : "Legacy VBF pre-selection \\DiPhoton Pres-selection \\Tight photon ID"
+	"name" : "Legacy VBF Preselection \\DiPhoton Preselection \\photon ID MVA > -0.2\\Electron veto (#gamma_{1}#gamma_{2})"
     }
 }
