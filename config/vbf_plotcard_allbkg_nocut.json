@@ -400,11 +400,20 @@
 	"name" : "Presel",
 	"title": ""
     }, 
+
     "tree": {
 	"name": "vbfTagDumper/*VBFDiJet",
 	"kfactor": 2.56,
 	"lumi"   : 1.00
     },
+    
+    "systematics": {
+	"UpTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"]  ,
+	//"vbfTagDumper/trees/*_13TeV_VBFDiJet_JERUp01sigma"   ],
+	"DwTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
+	//"vbfTagDumper/trees/*_13TeV_VBFDiJet_JERDown01sigma" ]
+    },
+    
     "labels":{
 	"name" : "w/o VBF Preselection\\k_{factor}=2.56"
     }
