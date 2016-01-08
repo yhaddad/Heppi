@@ -18,13 +18,14 @@ This a python/c++ project to make plots from a ROOT tree.
 
 ### produce a stacked plots
 * To run `heepi` plotmaker you have to run the script `plot`
-* you can print the options of the script by typing:
-```bash
+* you can print the options of the script by typing `.\plot --help`   
+* you have to combine the trees using `rootmerge.py` script
+* the commend I'm using is the follwing:
+`./plot -s /dir/to/merged/trees --load plotcard.json --all` 
 
-
-```
-
-* For flashgg users at imperial you can find a plotcard example in the subdirectory configs
+### installation
+* installation : `pip install --user jsmin termcolor logging re` : this must work in lxplus:  since in imperial does not existe, you I have to find a permanent solution to include those packages for the future. For the moment do not use comments in the json files !
+* ROOT env must be set
 * 
 
 

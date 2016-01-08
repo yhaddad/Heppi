@@ -1,8 +1,8 @@
 import ROOT # needed
 import os, sys, glob, sys, json, re, logging, collections
 from   collections        import OrderedDict
-from   termcolor          import colored
-from   jsmin              import jsmin
+# from   termcolor          import colored
+# from   jsmin              import jsmin
 
 #logging.basicConfig(filename='plot_output.log', level=logging.INFO)
 logging.basicConfig(level=logging.INFO)
@@ -35,7 +35,8 @@ def read_plotcard(plotcard):
     global treesDwSys
     config = None
     with open(plotcard) as f:
-        config = json.loads(jsmin(f.read()))
+        #config = json.loads(jsmin(f.read()))
+        config = json.loads(f.read())
     
     for key in config:
         if 'variables' in key:
@@ -381,7 +382,8 @@ def draw_instack(variable, label='VBF', select=''):
         varname  = variable.split(':=')[0]
         formula  = variable.split(':=')[1]
 
-    print colored('varname::'+ varname+ ' <-- ' + formula, 'red', attrs=['bold'])
+    #print colored('varname::'+ varname+ ' <-- ' + formula, 'red', attrs=['bold'])
+    print 'varname::'+ varname+ ' <-- ' + formula
 
     histfilename = ('histogram_stack_' +
                     varname + '_' + label+ '_'
