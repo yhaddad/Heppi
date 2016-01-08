@@ -81,7 +81,7 @@
 	    "title": "Cos(#Delta#phi(jj,#gamma#gamma))"
 	},
 	"dijet_dipho_dphi": {
-	    "hist" : "(64,-3.2,3.2)" ,//"(32,0,3.2)", 
+	    "hist" : "(64,-3.2,3.2)" ,
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
@@ -256,22 +256,6 @@
 	    "norm" : false, 
 	    "title": "electron veto (#gamma_{2})"
 	},
-	//"btag_1:=(jet1_btag<0)*-1 + (jet1_btag<0)*jet1_btag": {
-	//    "hist" : "(50,0,1)", 
-	//    "cut"  : "",
-	//    "blind": "",
-	//    "log"  : false, 
-	//    "norm" : false, 
-	//    "title": "b_{tag} (jet_1)"
-	//},
-	//"btag_2:=(jet2_btag<0)*-1 + (jet2_btag<0)*jet2_btag": {
-	//    "hist" : "(50,0,1)", 
-	//    "cut"  : "",
-	//    "blind": "",
-	//    "log"  : false, 
-	//    "norm" : false, 
-	//    "title": "b_{tag} (jet_2)"
-	//},
 	"n_jets": {
 	    "hist" : "(11,1.5,12.5)", 
 	    "cut"  : "",
@@ -359,7 +343,7 @@
 	    "order": 2,
 	    "name" : "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa", 
 	    "title": "#gamma#gamma",
-	    "cut"  : "",//(prompt_pho_1==1 && prompt_pho_2==1)",
+	    "cut"  : "",
 	    "label": "background"
 	},
 	"gamJet": {
@@ -391,7 +375,6 @@
 	    "order": 6,
 	    "name" : "DoubleEG_sethzenz-RunIISpring15-ReMiniAOD-SilverNotGold-BetaV7-25ns",
 	    "title": "data",
-	    //"cut"  : "",
 	    "label": "data"
 	}
     }, 
@@ -409,9 +392,8 @@
     
     "systematics": {
 	"UpTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"]  ,
-	//"vbfTagDumper/trees/*_13TeV_VBFDiJet_JERUp01sigma"   ],
 	"DwTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
-	//"vbfTagDumper/trees/*_13TeV_VBFDiJet_JERDown01sigma" ]
+	
     },
     
     "labels":{
