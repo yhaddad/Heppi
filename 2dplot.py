@@ -109,7 +109,7 @@ def draw_labels(label):
                        (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
         shift = shift + 0.03
 # ---- draw norm histograms
-def draw_instack(variable, label='VBF', select=''):
+def draw_2d(variable, label='VBF', select=''):
     histos = []
     formula = variable
     varname = variable

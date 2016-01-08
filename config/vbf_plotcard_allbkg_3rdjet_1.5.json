@@ -14,13 +14,6 @@
 	    "norm" : false, 
 	    "title": "p_{t}(jet_{2})[GeV]"
 	}, 
-	"jet3_pt": {
-	    "hist" : "(61,15,260)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "p_{t}(jet_{3})[GeV]"
-	},
 	"dijet_leadEta": {
 	    "hist": "(25,-5,5)", 
 	    "cut": "abs(dijet_leadEta)<4.7", 
@@ -35,14 +28,7 @@
 	    "norm": false, 
 	    "title": "#eta(jet_{2})"
 	},
-	"jet3_eta": {
-	    "hist" : "(25,-5,5)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "#eta(jet_{3})"
-	},
-	"dijet_Mjj": {
+    	"dijet_Mjj": {
 	    "hist": "(85,0,850)", 
 	    "cut" : "dijet_Mjj>250", 
 	    "log" : false, 
@@ -77,21 +63,6 @@
 	    "norm" : false, 
 	    "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
 	},
-	"numberOfMatches": {
-	    "hist" : "(4,0,4)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "N_{matches}"
-	},
-	
-	"dijet_minDRJetPho": {
-	    "hist" : "(23,0.4,5)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "#DeltaR_{min}(#gamma,j)"
-	},
 	"dipho_lead_ptoM": {
 	    "hist" : "(50,0,2)", 
 	    "cut"  : "dipho_lead_ptoM>0.333333", 
@@ -107,31 +78,17 @@
 	    "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
 	},
 	"dipho_PToM": {
-	    "hist" : "(100,0,5)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
+	    "hist": "(100,0,5)", 
+	    "cut" : "", 
+	    "log" : false, 
+	    "norm": false, 
 	    "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
 	},
-	"dijet_leady": {
-	    "hist" : "(25,-5,5)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "y(jet_{1})"
-	},
-	"dijet_subleady": {
-	    "hist" : "(25,-5,5)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "y(jet_{2})"
-	},
 	"dijet_dipho_pt": {
-	    "hist" : "(100,0,200)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
+	    "hist": "(100,0,200)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
 	    "title": "p_{t}(#gamma#gamma,jj)"
 	}, 
 	"dijet_Zep": {
@@ -154,7 +111,35 @@
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{2})"
-	}, 
+	},
+	"delta_mjj_merged:=(dijet_Mjj-Mjj)": {
+	    "hist" : "(200,0,200)", 
+	    "cut"  : "", 
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "(m_{jj}^{rr}-m_{jj}^{std})"
+	},
+	"delta_pt1_merged:=(dijet_LeadJPt-jet1_pt)": {
+	    "hist" : "(200,0,100)", 
+	    "cut"  : "", 
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "(p_{t}^{rr}(1)-p_{t}^{std}(1))"
+	},
+	"delta_pt2_merged:=(dijet_SubJPt-jet2_pt)": {
+	    "hist" : "(200,0,100)", 
+	    "cut"  : "", 
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "(p_{t}^{rr}(2)-p_{t}^{std}(2))"
+	},
+	"merging_rate:=min(dijet_SubJPt-jet2_pt,1)": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "merging rate : min{#delta pt,1}"
+	},
 	"dipho_leadIDMVA": {
 	    "hist" : "(100,-1,1)", 
 	    "cut"  : "dipho_leadIDMVA>-0.2", 
@@ -162,62 +147,13 @@
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{1})"
 	},
-	"dipho_sumpt": {
-	    "hist" : "(50,50,400)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "p_{t}(#gamma_{1})+p_{t}(#gamma_{2}) [GeV]"
-	}, 
-	"has3Jet": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "Has Valid 3rd Jet"
-	},
-	"dipho_cosphi": {
-	    "hist": "(100,0,1)", 
-	    "cut" : "", 
-	    "log" : false, 
-	    "norm": false, 
-	    "title": "cos(#Delta#phi_{#gamma#gamma})"
-	},
 	"dijet_mva": {
 	    "hist": "(100,-1,1)", 
 	    "cut": "", 
 	    "log": false, 
 	    "norm": false, 
-	    "title": "BDT_{jj}"
-	},
-	"dipho_mva": {
-	    "hist" : "(100,-1,1)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "BDT_{#gamma#gamma}"
-	},
-	"dijetVBF_BDToutput": {
-	    "hist" : "(100,-1,1)", 
-	    "cut"  : "", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "BDT_{jj}"
-	},
-	"dipho_lead_elveto": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "dipho_lead_elveto>0", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": ""
-	}, 
-	"dipho_sublead_elveto": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "dipho_sublead_elveto>0", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": ""
-	}
+	    "title": "di-jet BDT_{output}"
+	}	
     }, 
     "processes": {
 	"vbf_m125" : {
@@ -270,9 +206,9 @@
     }, 
     "tree": {
 	"name": "vbfTagDumper/*VBFDiJet",
-	"lumifactor": 1
+	"lumifactor": 0.211
     },
     "labels":{
-	"name" : "Legacy VBF Preselection \\DiPhoton Preselection \\photon ID MVA > -0.2\\Electron veto (#gamma_{1}#gamma_{2})"
+	"name" : "QCD-RR VBF (#Delta R = 1.5)\\VBF+DiPhoton Preselection \\photon ID MVA > -0.2\\Electron veto (#gamma_{1}&#gamma_{2})"
     }
 }

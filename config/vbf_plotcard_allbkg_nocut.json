@@ -2,7 +2,7 @@
     "variables": {
 	"dijet_LeadJPt": {
 	    "hist" : "(30,15,265)", 
-	    "cut"  : "dijet_LeadJPt>30",
+	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
 	    "norm" : false, 
@@ -10,7 +10,7 @@
 	}, 
 	"dijet_SubJPt": {
 	    "hist" : "(30,15,265)", 
-	    "cut"  : "dijet_SubJPt>20",
+	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
 	    "norm" : false, 
@@ -25,19 +25,19 @@
 	    "title": "p_{t}(jet_{3})[GeV]"
 	},
 	"dijet_leadEta": {
-	    "hist": "(25,-5,5)", 
-	    "cut"  : "abs(dijet_leadEta)<4.7",
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
 	    "norm" : false, 
 	    "title": "#eta(jet_{1})"
 	}, 
 	"dijet_subleadEta": {
-	    "hist": "(25,-5,5)", 
-	    "cut": "abs(dijet_subleadEta)<4.7",
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "",
 	    "blind": "",
-	    "log": true, 
-	    "norm": false, 
+	    "log"  : true, 
+	    "norm" : false, 
 	    "title": "#eta(jet_{2})"
 	},
 	"eta3:=((jet3_pt==0)*-100 + (jet3_pt>0)*jet3_eta)": {
@@ -49,11 +49,11 @@
 	    "title": "#eta(jet_{3})"
 	},
 	"mjj:=(dijet_Mjj/1000.0)": {
-	    "hist": "(50,0,2)", 
-	    "cut" : "dijet_Mjj>250",
+	    "hist" : "(50,0,2)", 
+	    "cut"  : "",
 	    "blind": "",
-	    "log" : true, 
-	    "norm": false, 
+	    "log"  : true, 
+	    "norm" : false, 
 	    "title": "m_{jj}[TeV]"
 	}, 
 	"dijet_Zep": {
@@ -65,11 +65,11 @@
 	    "title": "#eta^{*}"
 	}, 
 	"dijet_abs_dEta": {
-	    "hist": "(20,0,10)", 
-	    "cut": "",
+	    "hist" : "(20,0,10)", 
+	    "cut"  : "",
 	    "blind": "",
-	    "log": true, 
-	    "norm": false, 
+	    "log"  : true, 
+	    "norm" : false, 
 	    "title": "|#Delta#eta_{jj}|"
 	},
 	"cosdphi:=abs(cos(dijet_dipho_dphi))": {
@@ -77,19 +77,19 @@
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
-	    "norm" : true, 
-	    "title": "cos(#Delta#phi(jj,#gamma#gamma))"
+	    "norm" : false, 
+	    "title": "Cos(#Delta#phi(jj,#gamma#gamma))"
 	},
 	"dijet_dipho_dphi": {
-	    "hist" : "(63,0,6.3)", 
+	    "hist" : "(64,-3.2,3.2)" ,//"(32,0,3.2)", 
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
-	    "norm" : true, 
+	    "norm" : false, 
 	    "title": "#Delta#phi(jj,#gamma#gamma)"
 	},
 	"dijet_dipho_dphi_trunc": {
-	    "hist" : "(100,0,3)", 
+	    "hist" : "(30,0,3)", 
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
@@ -170,8 +170,8 @@
 	},
 	"dipho_mass": {
 	    "hist" : "(80,100,180)", 
-	    "cut"  : "(dipho_mass>100 && dipho_mass<180)",
-	    "blind": "(dipho_mass<115 || dipho_mass>135)",
+	    "cut"  : "( dipho_mass>100 && dipho_mass<180 )",
+	    "blind": "( dipho_mass<115 || dipho_mass>135 )",
 	    "log"  : true, 
 	    "norm" : false,
 	    "title": "m_{#gamma#gamma} [GeV]"
@@ -180,12 +180,12 @@
 	    "hist" : "(100,-1,1)", 
 	    "cut"  : "dipho_subleadIDMVA>-0.9",
 	    "blind": "",
-	    "log"  : false, 
+	    "log"  : true, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{2})"
 	}, 
 	"dipho_leadIDMVA": {
-	    "hist" : "(50,-1,1)", 
+	    "hist" : "(100,-1,1)", 
 	    "cut"  : "dipho_leadIDMVA>-0.9",
 	    "blind": "",
 	    "log"  : true, 
@@ -200,14 +200,6 @@
 	    "norm" : false, 
 	    "title": "p_{t}(#gamma_{1})+p_{t}(#gamma_{2}) [GeV]"
 	}, 
-	"has3Jet": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : true, 
-	    "norm" : false, 
-	    "title": "Has Valid 3rd Jet"
-	},
 	"dipho_cosphi": {
 	    "hist": "(50,0,1)", 
 	    "cut" : "",
@@ -236,7 +228,7 @@
 	    "hist" : "(40,0,40)", 
 	    "cut"  : "",
 	    "blind": "",
-	    "log"  : false, 
+	    "log"  : true, 
 	    "norm" : false, 
 	    "title": "N_{vtx}"
 	},
@@ -244,38 +236,47 @@
 	    "hist" : "(50,0,50)", 
 	    "cut"  : "", 
 	    "blind": "",
-	    "log"  : false, 
+	    "log"  : true, 
 	    "norm" : false, 
 	    "title": "#rho"
 	},
-	"npu": {
-	    "hist" : "(40,0,40)", 
-	    "cut"  : "",
+	"dipho_lead_elveto": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "dipho_lead_elveto>0",
 	    "blind": "",
 	    "log"  : false, 
 	    "norm" : false, 
-	    "title": "N_{pu}"
+	    "title": "electron veto (#gamma_{1})"
+	}, 
+	"dipho_sublead_elveto": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "dipho_sublead_elveto>0",
+	    "blind": "",
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "electron veto (#gamma_{2})"
 	},
-	"btag_1:=(jet1_btag<0)*-1 + (jet1_btag<0)*jet1_btag": {
-	    "hist" : "(50,0,1)", 
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "b_{tag} (jet_1)"
-	},
-	"btag_2:=(jet2_btag<0)*-1 + (jet2_btag<0)*jet2_btag": {
-	    "hist" : "(50,0,1)", 
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": "b_{tag} (jet_2)"	},
+	//"btag_1:=(jet1_btag<0)*-1 + (jet1_btag<0)*jet1_btag": {
+	//    "hist" : "(50,0,1)", 
+	//    "cut"  : "",
+	//    "blind": "",
+	//    "log"  : false, 
+	//    "norm" : false, 
+	//    "title": "b_{tag} (jet_1)"
+	//},
+	//"btag_2:=(jet2_btag<0)*-1 + (jet2_btag<0)*jet2_btag": {
+	//    "hist" : "(50,0,1)", 
+	//    "cut"  : "",
+	//    "blind": "",
+	//    "log"  : false, 
+	//    "norm" : false, 
+	//    "title": "b_{tag} (jet_2)"
+	//},
 	"n_jets": {
 	    "hist" : "(11,1.5,12.5)", 
 	    "cut"  : "",
 	    "blind": "",
-	    "log"  : false, 
+	    "log"  : true, 
 	    "norm" : false, 
 	    "title": "N_{jets}"
 	},
@@ -285,16 +286,56 @@
 	    "blind": "",
 	    "log"  : true, 
 	    "norm" : false, 
-	    "title": "N_{jets}"
+	    "title": "combined BDT"
 	},
 	"dipho_leadR9": {
-	    "hist" : "(100,0,100)", 
+	    "hist" : "(21,0,1.05)", 
 	    "cut"  : "",
 	    "blind": "",
-	    "log"  : false, 
+	    "log"  : true, 
 	    "norm" : false, 
-	    "title": ""
-	}
+	    "title": "R_{9}(#gamma_{1})"
+	},
+	"dipho_subleadR9": {
+	    "hist" : "(21,0,1.05)", 
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "R_{9}(#gamma_{2})"
+	},
+	"dipho_leadEt":{
+	    "hist" : "(50,20,120)", 
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "E_{T}(#gamma_{1})"
+	},
+	"dipho_subleadEt":{
+	    "hist" : "(50,20,120)", 
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "E_{T}(#gamma_{2})"
+	},
+	"dipho_leadEta":{
+	    "hist" : "(50,-5,5)", 
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "#eta(#gamma_{1})"
+	},
+	"dipho_subleadEta":{
+	    "hist" : "(50,-5,5)", 
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "#eta(#gamma_{2})"
+	}	
     }, 
     "processes": {
 	"vbf_m125" : {
@@ -318,7 +359,7 @@
 	    "order": 2,
 	    "name" : "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa", 
 	    "title": "#gamma#gamma",
-	    "cut"  : "",
+	    "cut"  : "",//(prompt_pho_1==1 && prompt_pho_2==1)",
 	    "label": "background"
 	},
 	"gamJet": {
@@ -350,7 +391,7 @@
 	    "order": 6,
 	    "name" : "DoubleEG_sethzenz-RunIISpring15-ReMiniAOD-SilverNotGold-BetaV7-25ns",
 	    "title": "data",
-	    "cut"  : "",
+	    //"cut"  : "",
 	    "label": "data"
 	}
     }, 
@@ -361,11 +402,11 @@
     }, 
     "tree": {
 	"name": "vbfTagDumper/*VBFDiJet",
-	"kfactor": 0.82,
-	"lumi"   : 2.56
+	"kfactor": 2.56,
+	"lumi"   : 1.00
     },
     "labels":{
-	"name" : "Legacy VBF Preselection \\DiPhoton Preselection \\photon ID MVA > -0.8\\Electron veto (#gamma_{1}#gamma_{2})"
+	"name" : "w/o VBF Preselection\\k_{factor}=2.56"
     }
     
 

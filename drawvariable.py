@@ -216,7 +216,7 @@ def draw_variable(variable, label='VBF', select=''):
         ROOT.gPad.SetLogy()
         histfilename = histfilename + '_log'
         ymax = 10*ymax
-        ymin = 0.001
+        ymin = 0.00001
     if variables[variable]['norm'] == True or allnormhist==True:
         for h in hist:
             print 'orderded histo::', h.GetName()
@@ -302,14 +302,15 @@ def get_options():
     parser.add_option("-k", "--nocut",
                       action="store_true",dest="nocut",default=False,
                       help="no cut will be applied")
-    
+    parser.add_option("--label", dest="label",default='VBF',
+                      help="label to the produced plots")
     return parser.parse_args()
 
 if __name__ == "__main__":
     (opt, args) = get_options()
     options  = opt
-    if opt.display :
-        ROOT.gROOT.SetBatch(ROOT.kTRUE) 
+    #if opt.display :
+    #    ROOT.gROOT.SetBatch(ROOT.kTRUE) 
     # reading the plotcard from json
     #logging.basicConfig(level=options.loglevel
     allnormhist = options.allnormhist
@@ -321,8 +322,8 @@ if __name__ == "__main__":
     read_plotcard(options.plotcard)
     
     for var in variables:
-        draw_variable(var,'VBF')
-    
+        draw_variable(var,options.label)
+        raw_input("...")
     #hist = produce_histos('jet1_pt','',['norm'],'')
     #print 'voila ::',hist
     

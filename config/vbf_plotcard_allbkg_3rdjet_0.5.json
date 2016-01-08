@@ -63,16 +63,16 @@
 	    "norm" : false, 
 	    "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
 	},
-	"dipho_lead_ptoM": {
+	"lead_ptoM": {
 	    "hist" : "(50,0,2)", 
-	    "cut"  : "dipho_lead_ptoM>0.333333", 
+	    "cut"  : "lead_ptoM>0.333333", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
 	},
-	"dipho_sublead_ptoM": {
+	"sublead_ptoM": {
 	    "hist" : "(50,0,2)", 
-	    "cut"  : "dipho_sublead_ptoM>0.25", 
+	    "cut"  : "sublead_ptoM>0.25", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
@@ -84,13 +84,6 @@
 	    "norm": false, 
 	    "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
 	},
-	"dijet_dipho_pt": {
-	    "hist": "(100,0,200)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
-	    "title": "p_{t}(#gamma#gamma,jj)"
-	}, 
 	"dijet_Zep": {
 	    "hist" : "(50,0,10)", 
 	    "cut"  : "", 
@@ -98,16 +91,16 @@
 	    "norm" : false, 
 	    "title": "#eta^{*}"
 	},
-	"dipho_mass": {
+	"mass": {
 	    "hist" : "(80,100,180)", 
-	    "cut"  : "(dipho_mass>100 && dipho_mass<180)", 
+	    "cut"  : "(mass>100 && mass<180)", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "m_{#gamma#gamma} [GeV]"
 	},
-	"dipho_subleadIDMVA": {
+	"subleadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_subleadIDMVA>-0.2", 
+	    "cut"  : "subleadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{2})"
@@ -140,33 +133,12 @@
 	    "norm" : false, 
 	    "title": "merging rate : min{#delta pt,1}"
 	},
-	"dipho_leadIDMVA": {
+	"leadIDMVA": {
 	    "hist" : "(100,-1,1)", 
-	    "cut"  : "dipho_leadIDMVA>-0.2", 
+	    "cut"  : "leadIDMVA>-0.2", 
 	    "log"  : false, 
 	    "norm" : false, 
 	    "title": "Photon ID BDT (#gamma_{1})"
-	},
-	"dijet_mva": {
-	    "hist": "(100,-1,1)", 
-	    "cut": "", 
-	    "log": false, 
-	    "norm": false, 
-	    "title": "di-jet BDT_{output}"
-	},
-	"dipho_lead_elveto": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "dipho_lead_elveto>0", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": ""
-	}, 
-	"dipho_sublead_elveto": {
-	    "hist" : "(2,0,2)", 
-	    "cut"  : "dipho_sublead_elveto>0", 
-	    "log"  : false, 
-	    "norm" : false, 
-	    "title": ""
 	}
 	
     }, 
@@ -224,6 +196,6 @@
 	"lumifactor": 0.211
     },
     "labels":{
-	"name" : "Radiation recovered VBF\\VBF+DiPhoton Preselection \\photon ID MVA > -0.2\\Electron veto (#gamma_{1}&#gamma_{2})"
+	"name" : "QCD-RR VBF (#Delta R = 0.5)\\VBF+DiPhoton Preselection \\photon ID MVA > -0.2\\Electron veto (#gamma_{1}&#gamma_{2})"
     }
 }
