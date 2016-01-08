@@ -220,8 +220,8 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={}):
             # maxerr = max(sys_up,sys_dw)
             #minerr = min(sys_up,sys_dw)
         
-        statPrecision.SetBinContent(ibin,   (sys_up + sys_dw)/2.0);
-        statPrecision.SetBinError  (ibin,abs(sys_up - sys_dw)/2.0);
+        #statPrecision.SetBinContent(ibin,   (sys_up + sys_dw)/2.0);
+        #statPrecision.SetBinError  (ibin,abs(sys_up - sys_dw)/2.0);
         
     return statPrecision
     #if norm:
