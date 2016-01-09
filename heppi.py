@@ -207,21 +207,33 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={}):
     for ibin in range(myHisto.GetNbinsX()+1):
         y   = statPrecision.GetBinContent(ibin);
         err = statPrecision.GetBinError  (ibin);
-        sys_up = 0
-        sys_dw = 0
+#        sys_up = 0
+#        sys_dw = 0
+#        for sys in histUpSys:
+#            er = abs(y - histUpSys[sys].GetBinContent(ibin));
+#            print '(%f, %f)' % (y, histUpSys[sys].GetBinContent(ibin) )
+#            sys_up = max(sys_up, er)
+#        for sys in histDwSys:
+#            er = abs(y - histDwSys[sys].GetBinContent(ibin));
+#            sys_dw = max(sys_dw, er)
+
+        vals = [y]
+        print "Central:",y
         for sys in histUpSys:
-            er = abs(y - histUpSys[sys].GetBinContent(ibin));
-            print '(%f, %f)' % (y, histUpSys[sys].GetBinContent(ibin) )
-            sys_up = max(sys_up, er)
+            val = histUpSys[sys].GetBinContent(ibin)
+            vals += [val]
+            print sys,val
         for sys in histDwSys:
-            er = abs(y - histDwSys[sys].GetBinContent(ibin));
-            sys_dw = max(sys_dw, er)
+            val= histDwSys[sys].GetBinContent(ibin)
+            vals += [val]
+            print sys,val
+     
+        largest_val  = max(vals)
+        smallest_val = min(vals)
+
             
-            # maxerr = max(sys_up,sys_dw)
-            #minerr = min(sys_up,sys_dw)
-        
-        #statPrecision.SetBinContent(ibin,   (sys_up + sys_dw)/2.0);
-        #statPrecision.SetBinError  (ibin,abs(sys_up - sys_dw)/2.0);
+        statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
+        statPrecision.SetBinError  (ibin,   (largest_val - smallest_val)/2.0);
         
     return statPrecision
     #if norm:
