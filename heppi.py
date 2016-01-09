@@ -194,7 +194,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={}, title=""):
     return statPrecision
 
 #---------------------------------------------------------
-def drawStatErrorBand(myHisto,histDwSys={},histUpSys={}):
+def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},actuallyDrawSystErrorBand=True):
     """
     Draw this histogram with the statistical
     precision error in each bin
@@ -203,37 +203,28 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={}):
     ROOT.SetOwnership(statPrecision,0)
     statPrecision.SetFillColorAlpha(2, 0.5)
     statPrecision.SetMarkerColorAlpha(0,0)
-    
-    for ibin in range(myHisto.GetNbinsX()+1):
-        y   = statPrecision.GetBinContent(ibin);
-        err = statPrecision.GetBinError  (ibin);
-#        sys_up = 0
-#        sys_dw = 0
-#        for sys in histUpSys:
-#            er = abs(y - histUpSys[sys].GetBinContent(ibin));
-#            print '(%f, %f)' % (y, histUpSys[sys].GetBinContent(ibin) )
-#            sys_up = max(sys_up, er)
-#        for sys in histDwSys:
-#            er = abs(y - histDwSys[sys].GetBinContent(ibin));
-#            sys_dw = max(sys_dw, er)
 
-        vals = [y]
-        print "Central:",y
-        for sys in histUpSys:
-            val = histUpSys[sys].GetBinContent(ibin)
-            vals += [val]
-            print sys,val
-        for sys in histDwSys:
-            val= histDwSys[sys].GetBinContent(ibin)
-            vals += [val]
-            print sys,val
-     
-        largest_val  = max(vals)
-        smallest_val = min(vals)
-
+    if actuallyDrawSystErrorBand:
+        for ibin in range(myHisto.GetNbinsX()+1):
+            y   = statPrecision.GetBinContent(ibin);
+            err = statPrecision.GetBinError  (ibin);
             
-        statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
-        statPrecision.SetBinError  (ibin,   (largest_val - smallest_val)/2.0);
+            vals = [y]
+            print "Central:",y
+            for sys in histUpSys:
+                val = histUpSys[sys].GetBinContent(ibin)
+                vals += [val]
+                print sys,val
+            for sys in histDwSys:
+                val= histDwSys[sys].GetBinContent(ibin)
+                vals += [val]
+                print sys,val
+     
+            largest_val  = max(vals)
+            smallest_val = min(vals)
+
+            statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
+            statPrecision.SetBinError  (ibin,   (largest_val - smallest_val)/2.0);
         
     return statPrecision
     #if norm:
