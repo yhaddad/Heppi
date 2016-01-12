@@ -80,22 +80,22 @@
 	    "norm" : false, 
 	    "title": "Cos(#Delta#phi(jj,#gamma#gamma))"
 	},
-	"dijet_dipho_dphi": {
-	    "hist" : "(64,-3.2,3.2)" ,
+	"dphi_trunc:=min(abs(dijet_dipho_dphi), 2.9416)": {
+	    "hist" : "(30,0,3)" ,
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : true, 
 	    "norm" : false, 
-	    "title": "#Delta#phi(jj,#gamma#gamma)"
+	    "title": "#Delta#phi_{trunc}(jj,#gamma#gamma)"
 	},
-	"dijet_dipho_dphi_trunc": {
-	    "hist" : "(30,0,3)", 
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : true, 
-	    "norm" : false, 
-	    "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
-	},
+	//"dijet_dipho_dphi_trunc": {
+	//    "hist" : "(30,0,3)", 
+	//    "cut"  : "",
+	//    "blind": "",
+	//    "log"  : true, 
+	//    "norm" : false, 
+	//    "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
+	//},
 	"dijet_minDRJetPho": {
 	    "hist" : "(23,0.4,5)", 
 	    "cut"  : "",
@@ -373,8 +373,8 @@
 	"Data":{
 	    "color": 1,
 	    "order": 6,
-	    "name" : "DoubleEG_sethzenz-RunIISpring15-ReMiniAOD-SilverNotGold-BetaV7-25ns",
-	    "title": "data",
+	    "name" : "DoubleEG_sethzenz-RunIISpring15-1_1_0-25ns-Run2015",
+	    "title": "Data",
 	    "label": "data"
 	}
     }, 
@@ -383,21 +383,21 @@
 	"name" : "Presel",
 	"title": ""
     }, 
-
+    
     "tree": {
-	"name": "vbfTagDumper/*VBFDiJet",
+	"name": "vbfTagDumper/trees/*_13TeV_VBFDiJet",
 	"kfactor": 2.56,
 	"lumi"   : 1.00
     },
     
     "systematics": {
-	"UpTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"]  ,
-	"DwTrees" : ["vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
+	"UpTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"  ]  ,
+	"DwTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
 	
     },
     
     "labels":{
-	"name" : "w/o VBF Preselection\\k_{factor}=2.56"
+	"name" : "diphoton preselection \\electron veto\\photonID < -0.9\\100<m_{#gamma#gamma}<180GeV"
     }
     
 

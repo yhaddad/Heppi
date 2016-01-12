@@ -2,7 +2,7 @@ import ROOT # needed
 import os, sys, glob, sys, json, re, logging, collections
 from   collections        import OrderedDict
 # from   termcolor          import colored
-# from   jsmin              import jsmin
+from   jsmin              import jsmin
 
 #logging.basicConfig(filename='plot_output.log', level=logging.INFO)
 logging.basicConfig(level=logging.INFO)
@@ -33,10 +33,11 @@ def read_plotcard(plotcard):
     global treeinfo
     global treesUpSys
     global treesDwSys
+    global treename
     config = None
     with open(plotcard) as f:
-        #config = json.loads(jsmin(f.read()))
-        config = json.loads(f.read())
+        config = json.loads(jsmin(f.read()))
+        #config = json.loads(f.read())
     
     for key in config:
         if 'variables' in key:
@@ -59,14 +60,15 @@ def read_plotcard(plotcard):
             logging.info(' -- %12s %12s' % (key, plotlabels.get('name','')))
         if 'tree' in key:
             treeinfo = config[key]
-            
+            treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
+            logging.info(' -- %12s' % ( treename ))
         if 'systematics' in key:
             logging.info(' ---- book selections ---')
             treesUpSys = config[key].get('UpTrees',[])
             treesDwSys = config[key].get('DwTrees',[])
             logging.info(' -- %12s' % ( treesUpSys))
             logging.info(' -- %12s' % ( treesUpSys))
-
+        
         logging.info(' -------------------')
 # ---- create a cut flow except the considered variables
 def variable_cutflow(variable, select=''):
@@ -101,6 +103,10 @@ def draw_cut_line(hist, variable=''):
             line.SetLineStyle(7)
             if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
                 line.DrawLine(xcut,ymin,xcut,ymax)
+
+#---------------------------------------------------------                
+
+    
 
 #---------------------------------------------------------                
 def draw_labels(label):
@@ -424,9 +430,10 @@ def draw_instack(variable, label='VBF', select=''):
     for proc in ordsam:
         logging.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
         flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
+        print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc),' :: ',flist  
+
         roof  = ROOT.TFile.Open(flist[0])
         tree  = roof.Get(treename.replace('*',proc))
-        print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc)
         if samples[proc].get('cut','') != '':
             cutflow = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
         if variables[variable]['blind'] != '' and proc == 'Data':
@@ -568,12 +575,20 @@ def draw_instack(variable, label='VBF', select=''):
     errorHist.GetYaxis().CenterTitle(True)
     customizeHisto(errorHist)
     errorHist.Draw('E2')
-    
-    ratioHist = makeRatio(hdata,hstack.GetStack().Last())
-    ROOT.SetOwnership(ratioHist,0)
-    ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
-    ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
-    
+
+    ratioHist = None
+    if hdata==None:
+        ratioHist = hstack.GetStack().Last().Clone('_temp_')
+        ratioHist.Clear()
+        ROOT.SetOwnership(ratioHist,0)
+        ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
+        ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
+    else:    
+        ratioHist = makeRatio(hdata,hstack.GetStack().Last())
+        ROOT.SetOwnership(ratioHist,0)
+        ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
+        ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
+        
     line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
     line.SetLineColor(4)
     line.SetLineStyle(7)
