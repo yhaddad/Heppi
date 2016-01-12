@@ -27,5 +27,6 @@ AutoDict_*
 .ipynb_checkpoints*
 Untitled*
 data*
+config/*vbf*
 *test*
 *text*
