@@ -1,6 +1,5 @@
-## `plotmaker` 
-This a python/c++ project to make plots from a ROOT tree.
-
+## `Heppi`
+Hight Energy Physics Plotting Interface; a `python` project to make plots from a ROOT trees.
 
 ## how to run ? 
 
