@@ -1,6 +1,8 @@
 #!/usr/bin/python
 from optparse import OptionParser
+import logging
 import heppi 
+import ROOT
 
 def get_options():
     parser = OptionParser()
@@ -13,18 +15,17 @@ def get_options():
     
     parser.add_option("-s", "--sampledir", dest="sampledir",default='./data/',
                       help="""
-                      specify the detrectory where the trees are. 
+                      Specify the detrectory where the trees are. 
                       example: --filedir /data/trees
-                      """,
-                      metavar="FILE")
-    
-    parser.add_option("-t", "--tree", dest="treename",default='vbfTagDumper/trees/*VBFDiJet',
-                      help="dumper tree that you want to use", metavar="FILE")
+                      """)
+    parser.add_option("-t", "--tree",
+                      dest="treename", default='vbfTagDumper/trees/*VBFDiJet',
+                      help="Tree path in the root file that you want to use")
     parser.add_option("-a", "--all", 
                       action="store_true", dest="draw_all", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-d", "--display", 
-                      action="store_true", dest="display", default=False,
+                      action="store_false", dest="display", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-v", "--variable",
                       dest="variable",default="",
@@ -39,25 +40,42 @@ def get_options():
                       action="store_true",dest="nocuts",default=False,
                       help="all the histogram will be in log scale")
     parser.add_option("--label", dest="label",default='VBF',
-                      help="label to the produced plots")
-    
+                      help="Label added in the plot file names")
+    parser.add_option('--verbose', dest='verbose', action='count',
+                     help="Increase verbosity (specify multiple times for more)")
     return parser.parse_args()
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    options  = opt
-    ROOT.gROOT.SetBatch( opt.display ) 
+    heppi.options  = opt
     
-    allnormhist = options.allnormhist
-    allloghist  = options.allloghist
-    sampledir   = options.sampledir
+    heppi.allnormhist = opt.allnormhist
+    heppi.allloghist  = opt.allloghist
+    heppi.sampledir   = opt.sampledir
     
-    ROOT.gROOT.ProcessLine(".x .rootlogon.C")
-    heppi.read_plotcard(options.plotcard)
+    log_level = logging.WARNING # default
+    if opt.verbose == 1:
+        log_level = logging.INFO
+    elif opt.verbose >= 2:
+        log_level = logging.DEBUG
+
+    # Set up basic configuration, out to stderr with a reasonable default format.
+    logging.basicConfig(level=log_level)
+  
+    ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+    if opt.display:
+        ROOT.gROOT.SetBatch( ROOT.kFALSE ) 
+    else:
+        ROOT.gROOT.SetBatch( ROOT.kTRUE  ) 
+    heppi.read_plotcard(heppi.options.plotcard)
     heppi.print_cutflow()
     
-    if opt.variable == "":
-        for var in variables:
-            draw_instack(var,options.label,selection['title'])
-    
-    
+    if opt.draw_all and opt.variable == '':
+        for var in heppi.variables:
+            heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
+    else:
+        if opt.variable != '':
+            heppi.draw_instack(opt.variable,heppi.options.label,heppi.selection['title'])
+        else:
+            logging.error('please specify the variable you wnat to plot ...')
+            
