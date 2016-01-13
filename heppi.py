@@ -87,6 +87,7 @@ def print_cutflow():
         if (len(variables[var]['cut'])!=0):
             print ('-- %20s: %12s' % (var, variables[var]['cut'] ) )
 
+
 #---------------------------------------------------------
 def draw_cut_line(hist, variable=''):
     if variables[variable].get('cut','')!='':
@@ -381,6 +382,19 @@ def customizeHisto(hist):
     hist.GetXaxis().SetLabelFont  (43)
     hist.GetXaxis().SetLabelSize  (18)
 
+def book_trees(select=''):
+    ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
+    for proc in ordsam:
+        logging.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
+        flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
+        logging.info(' -- sample:%17s  tree:%12s ' % ( proc, treename.replace('*',proc) ))
+        
+        roof  = ROOT.TFile.Open(flist[0])
+        tree  = roof.Get(treename.replace('*',proc))
+        samples[proc].update({'_root_tree_': tree})
+    #print samples
+    for s in ordsam:
+        print s, ':: ', samples[s].get('_root_tree_')
 #---------------------------------------------------------
 def draw_instack(variable, label='VBF', select=''):
     histos = []

@@ -69,13 +69,14 @@ if __name__ == "__main__":
         ROOT.gROOT.SetBatch( ROOT.kTRUE  ) 
     heppi.read_plotcard(heppi.options.plotcard)
     heppi.print_cutflow()
-    
-    if opt.draw_all and opt.variable == '':
-        for var in heppi.variables:
-            heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
-    else:
-        if opt.variable != '':
-            heppi.draw_instack(opt.variable,heppi.options.label,heppi.selection['title'])
-        else:
-            logging.error('please specify the variable you wnat to plot ...')
+
+    heppi.book_trees('')
+    #if opt.draw_all and opt.variable == '':
+    #    for var in heppi.variables:
+    #        heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
+    #else:
+    #    if opt.variable != '':
+    #        heppi.draw_instack(opt.variable,heppi.options.label,heppi.selection['title'])
+    #    else:
+    #        logging.error('please specify the variable you wnat to plot ...')
             
