@@ -369,14 +369,15 @@
 	    "title": "QCD",
 	    "cut"  : "!(prompt_pho_1==1 && prompt_pho_2==1)",
 	    "label": "background"
-	},
-	"Data":{
-	    "color": 1,
-	    "order": 6,
-	    "name" : "DoubleEG_sethzenz-RunIISpring15-1_1_0-25ns-Run2015",
-	    "title": "Data",
-	    "label": "data"
 	}
+	//,
+	//"Data":{
+	//    "color": 1,
+	//    "order": 6,
+	//    "name" : "DoubleEG_sethzenz-RunIISpring15-1_1_0-25ns-Run2015",
+	//    "title": "Data",
+	//    "label": "data"
+	//}
     }, 
     
     "selection": {
