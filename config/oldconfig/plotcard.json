@@ -1,0 +1,203 @@
+{
+    "variables": {
+	"jet3_pt": {
+	    "hist" : "(50,0,250)", 
+	    "cut"  : "", 
+	    "log"  : true, 
+	    "norm" : false, 
+	    "title": "p_{t}(jet_{3})[GeV]"
+	}, 
+	"jet3_eta": {
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "#eta(jet_{3})"
+	}, 
+	"weight": {
+	    "hist" : "(100,0,100)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "w_{event}"
+	}, 
+	"dijet_leadEta": {
+	    "hist"  : "(25,-5,5)", 
+	    "cut"   : "", 
+	    "log"   : false, 
+	    "norm"  : false, 
+	    "title" : "#eta(jet_{1})[GeV]"
+	}, 
+	"jet2_pt": {
+	    "hist" : "(50,0,250)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "p_{t}(jet_{2})[GeV]"
+	}, 
+	"jet1_pt": {
+	    "hist" : "(50,0,250)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "p_{t}(jet_{1})[GeV]"
+	}, 
+	"sublPho_PToM": {
+	    "hist": "(25,0,2)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
+	}, 
+	"dijet_dphi_trunc": {
+	    "hist": "(30,0,3)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#Delta#phi(jj)_{trunc}"
+	}, 
+	"jet2_eta": {
+	    "hist": "(25,-5,5)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#eta(jet_{2})"
+	}, 
+	"dijet_minDRJetPho": {
+	    "hist": "(25,0,5)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "min#DeltaR(#gamma,j)"
+	}, 
+	"dijet_dipho_dphi": {
+	    "hist": "(40,0,3.2)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#Delta#phi(#gamma#gamma,jj)"
+	}, 
+	"dijet_dipho_dphi_trunc": {
+	    "hist": "(30,0,3)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#Delta#phi(#gamma#gamma,jj)_{trunc}"
+	}, 
+	"nvtx": {
+	    "hist" : "(50,0,50)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "N_{pv}"
+	}, 
+	"dijet_Mjj": {
+	    "hist": "(85,0,850)", 
+	    "cut" : "", 
+	    "log" : false, 
+	    "norm": false, 
+	    "title": "m_{jj}[GeV]"
+	}, 
+	"dijet_Zep": {
+	    "hist" : "(50,0,10)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "#eta^{*}"
+	}, 
+	"rho": {
+	    "hist": "(50,0,50)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#rho"
+	}, 
+	"dijet_leady": {
+	    "hist": "(25,-5,5)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "y(jet_{1})"
+	}, 
+	"leadPho_PToM": {
+	    "hist": "(50,0,2)", 
+	    "cut" : "", 
+	    "log" : false, 
+	    "norm": false, 
+	    "title": "p_{t}^{#gamma_1}/m_{#gamma#gamma}"
+	}, 
+	"dijet_dipho_pt": {
+	    "hist": "(100,0,100)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "p_{t}(#gamma#gamma,jj)"
+	}, 
+	"has3Jet": {
+	    "hist" : "(2,0,2)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "has(3d jet)"
+	}, 
+	"dipho_PToM": {
+	    "hist": "(25,0,2)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
+	}, 
+	"dijet_dphi": {
+	    "hist": "(100,0,100)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "|#Delta#phi(jj)|"
+	}, 
+	"jet1_eta": {
+	    "hist": "(25,-5,5)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "#eta(jet_{1})"
+	}, 
+	"dijet_abs_dEta": {
+	    "hist": "(20,0,10)", 
+	    "cut": "", 
+	    "log": false, 
+	    "norm": false, 
+	    "title": "|#Delta#eta_{jj}|"
+	}, 
+	"dijet_subleady": {
+	    "hist" : "(25,-5,5)", 
+	    "cut"  : "", 
+	    "log"  : false, 
+	    "norm" : false, 
+	    "title": "y(jet_{2})"
+	}
+    }, 
+    "processes": {
+	"vbf_m125": {
+	    "color": "pomegranate", 
+	    "name" : "VBFHToGG_M-125_13TeV_powheg_pythia8", 
+	    "title": "VBF(m_{h}=125)",
+	    "label": "signal"
+	}, 
+	"ggf_m125": {
+	    "color": "peter_river", 
+	    "name" : "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
+	    "title": "ggf(m_{h}=125)",
+	    "label"  : "background"
+	}
+	"ggf_m125": {
+	    "color": "peter_river", 
+	    "name" : "GluGluHToGG_M-125_13TeV_powheg_pythia8", 
+	    "title": "ggf(m_{h}=125)",
+	    "label"  : "background"
+	}
+    }, 
+    "selections": {
+	"VBF"     : "", 
+	"diphoton": ""
+    }
+}
