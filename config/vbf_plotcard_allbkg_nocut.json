@@ -369,15 +369,14 @@
 	    "title": "QCD",
 	    "cut"  : "!(prompt_pho_1==1 && prompt_pho_2==1)",
 	    "label": "background"
+	},
+	"Data":{
+	    "color": 1,
+	    "order": 6,
+	    "name" : "DoubleEG_sethzenz-RunIISpring15-1_1_0-25ns-Run2015",
+	    "title": "Data",
+	    "label": "data"
 	}
-	//,
-	//"Data":{
-	//    "color": 1,
-	//    "order": 6,
-	//    "name" : "DoubleEG_sethzenz-RunIISpring15-1_1_0-25ns-Run2015",
-	//    "title": "Data",
-	//    "label": "data"
-	//}
     }, 
     
     "selection": {
@@ -392,13 +391,14 @@
     },
     
     "systematics": {
-	"UpTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"  ]  ,
-	"DwTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
-	
+	"UpTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"   ,
+		      "vbfTagDumper/trees/*_13TeV_VBFDiJet_JERUp01sigma"  ],
+	"DwTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma",
+		      "vbfTagDumper/trees/*_13TeV_VBFDiJet_JERDown01sigma"]
     },
     
     "labels":{
-	"name" : "diphoton preselection \\electron veto\\photonID < -0.9\\100<m_{#gamma#gamma}<180GeV"
+	"name" : "diphoton preselection \\electron veto\\photonID > -0.9\\100<m_{#gamma#gamma}<180GeV"
     }
     
 
