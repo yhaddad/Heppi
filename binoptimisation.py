@@ -56,7 +56,9 @@ def draw_point(x,y, size=0.01, color=121):
 
     point.Draw()
 
-def draw_ROC(var ='dipho_dijet_MVA', label='VBF', title = 'variable', bkg = [], select='', categories=[]):
+def draw_ROC(var ='dipho_dijet_MVA',
+             label='VBF', title = 'variable',
+             bkg = [], select='', categories=[]):
     #c = ROOT.TCanvas("c_ROC","ROC's BDT",600,600)
     #c.cd()
     histos = []
