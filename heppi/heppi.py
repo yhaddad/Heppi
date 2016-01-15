@@ -1,12 +1,31 @@
-import ROOT # needed
-import os, sys, glob, sys, json, re, logging, collections
+try:
+    import ROOT
+except ImportError:
+    raise ImportError(
+        """
+        ROOT is not in your environement, or not intsalled. 
+        Please check!
+        """
+    )
+try:
+    from   termcolor import colored
+    from   jsmin     import jsmin
+    from progressbar import ProgressBar, Bar, Percentage, ETA
+except ImportError:
+    raise ImportError(
+        """
+        please install termcolor and jsmin, and try again.
+        Suggestion: pip install --user jsmin termcolor progressbar
+        """)
+import os, sys, glob, sys, json, re, logging, collections, math
 from   collections        import OrderedDict
-# from   termcolor          import colored
-from   jsmin              import jsmin
 
-#logging.basicConfig(filename='plot_output.log', level=logging.INFO)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
+                    + colored('%(name)s:','blue') + ' %(message)s')
+logger = logging.getLogger('heppi')
+logger.setLevel(level=logging.INFO)
 
+# 'application' code
 samples     = collections.OrderedDict()
 variables   = {}
 rootfile    = {}
@@ -37,39 +56,43 @@ def read_plotcard(plotcard):
     config = None
     with open(plotcard) as f:
         config = json.loads(jsmin(f.read()))
-        #config = json.loads(f.read())
-    
+        
     for key in config:
         if 'variables' in key:
-            logging.info(' ---- book variables ----')
+            logger.info(' ---- book variables ----------')
             for var in config[key]:
-                logging.info(' -- %17s  %12s ' % ( var ,config[key][var]['hist']))
-                variables[var] = config[key][var]
+                formula = var
+                varname = var
+                if ':=' in var:
+                    varname  = var.split(':=')[0]
+                    formula  = var.split(':=')[1]
+                logger.info(' -- %20s  %15s' % (
+                    varname ,
+                    config[key][var]['hist']))
+                variables[varname] = config[key][var]
+                variables[varname].update({"formula":formula})
         if 'processes' in key:
-            logging.info(' ---- book processes ----')
+            logger.info(' ---- book processes ----------')
             for proc in config[key]:
                 samples[proc] = config[key][proc]
-                logging.info(' -- %12s %12s' % (key, samples[proc].get('cut','')))
+                logger.info(' -- %12s %12s' % (proc, samples[proc].get('cut','')))
         if 'selection' in key:
-            logging.info(' ---- book selections ---')
+            logger.info(' ---- book selections ---------')
             selection = config[key]
-            logging.info(' -- %12s %12s' % (selection['name'], selection['title']))
+            logger.info(' -- %12s' % (selection['title']))
         if 'labels' in key:
-            logging.info(' ------ book labels -----')
             plotlabels = config[key]
-            logging.info(' -- %12s %12s' % (key, plotlabels.get('name','')))
         if 'tree' in key:
             treeinfo = config[key]
             treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
-            logging.info(' -- %12s' % ( treename ))
         if 'systematics' in key:
-            logging.info(' ---- book selections ---')
+            logger.info(' ---- book selections ---------')
             treesUpSys = config[key].get('UpTrees',[])
             treesDwSys = config[key].get('DwTrees',[])
-            logging.info(' -- %12s' % ( treesUpSys))
-            logging.info(' -- %12s' % ( treesUpSys))
-        
-        logging.info(' -------------------')
+            logger.info(' -- %12s' % ( treesUpSys) )
+            logger.info(' -- %12s' % ( treesUpSys) )
+    logger.info(' ------------------------------')
+    
 # ---- create a cut flow except the considered variables
 def variable_cutflow(variable, select=''):
     cutflow = ''
@@ -85,7 +108,9 @@ def variable_cutflow(variable, select=''):
 def print_cutflow():
     for var in variables:
         if (len(variables[var]['cut'])!=0):
-            print ('-- %20s: %12s' % (var, variables[var]['cut'] ) )
+            logger.info('-- %20s: %12s' % (var, variables[var]['cut'] ))
+    
+    logger.info(' ------------------------------')
 
 #---------------------------------------------------------
 def draw_cut_line(hist, variable=''):
@@ -105,10 +130,6 @@ def draw_cut_line(hist, variable=''):
                 line.DrawLine(xcut,ymin,xcut,ymax)
 
 #---------------------------------------------------------                
-
-    
-
-#---------------------------------------------------------                
 def draw_labels(label):
     t = ROOT.TLatex()
     t.SetTextAlign(12);
@@ -119,18 +140,6 @@ def draw_labels(label):
         t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
                        (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
         shift = shift + 0.03
-#def draw_labels(labels=[]):
-#    print 'here ?? '
-#    t = ROOT.TLatex()
-#    t.SetTextAlign(12);
-#    t.SetTextFont (43);
-#    t.SetTextSize (18);
-#    shift = 0;
-#    print 'labels ::' , labels 
-#    for s in labels:
-#        t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
-#                       (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
-#        shift = shift + 0.03
 #---------------------------------------------------------
 def draw_cms_headlabel(label_left ='CMS Preliminary',
                        label_right='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
@@ -156,51 +165,64 @@ def makeRatioCanvas(name='_ratio_'):
     padup.Draw()
     paddw.Draw()
     Rcanv.cd()
-    #ROOT.SetOwnership(Rcanv,0)
     ROOT.SetOwnership(padup,0)
     ROOT.SetOwnership(paddw,0)
-    #print "check stuff", canv.GetPad(1)
     return Rcanv
 
 
 #---------------------------------------------------------
-def MakeStatProgression(myHisto,histDwSys={},histUpSys={}, title=""):
+def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
+                        title="", systematic_only=True, combine_with_systematic=True):
     """This function returns a function with the statistical precision in each bin"""
     statPrecision = myHisto.Clone('_ratioErrors_')
-    ##statPrecision.Reset()
     statPrecision.SetTitle(title)
     statPrecision.SetFillColorAlpha(2, 0.5)
     statPrecision.SetMarkerColorAlpha(0,0)
     
-    for bin in range(myHisto.GetNbinsX()+1):
-        y   = statPrecision.GetBinContent(bin);
-        err = statPrecision.GetBinError  (bin);
-        #sys_up = 0
-        #sys_dw = 0
-        #for sys in treesUpSys:
-        #    er = statPrecision.GetBinContent(bin)-treesUpSys[sys].GetBinContent(bin);
-        #    sys_up += er*er
-        #for sys in treesDwSys:
-        #    er = statPrecision.GetBinContent(bin)-treesDwSys[sys].GetBinContent(bin);
-        #    sys_dw += er*er
-        #
-        #sys_up = math.sqrt(sys_up)
-        #sys_dw = math.sqrt(sys_dw)
-        
-        if (y>0):
-            statPrecision.SetBinContent(bin,1);
-            statPrecision.SetBinError  (bin,err/y);
-        else:
-            statPrecision.SetBinContent(bin,1);
-            statPrecision.SetBinError  (bin,0);
+    if systematic_only:
+        for ibin in range(myHisto.GetNbinsX()+1):
+            y    = statPrecision.GetBinContent(ibin);
+            stat = statPrecision.GetBinError  (ibin);
+            
+            vals = [y]
+            for sys in histUpSys:
+                val = histUpSys[sys].GetBinContent(ibin)
+                vals += [val]
+            for sys in histDwSys:
+                val= histDwSys[sys].GetBinContent(ibin)
+                vals += [val]
+            largest_val  = max(vals)
+            smallest_val = min(vals)
+            
+            error  = 0
+            if combine_with_systematic:
+                syst  = 0.5*(largest_val - smallest_val)
+                error = math.sqrt(syst*syst + stat*stat) 
+            else:
+                error = 0.5*(largest_val - smallest_val)
+                
+            if (y>0):
+                statPrecision.SetBinContent(ibin,   0.5*(largest_val + smallest_val)/y);
+                statPrecision.SetBinError  (ibin,   error/y );
+            else:
+                statPrecision.SetBinContent(ibin,   1);
+                statPrecision.SetBinError  (ibin,   0);
+    else:
+        for bin in range(myHisto.GetNbinsX()+1):
+            y   = statPrecision.GetBinContent(bin);
+            err = statPrecision.GetBinError  (bin);
+            if (y>0):
+                statPrecision.SetBinContent(bin,1);
+                statPrecision.SetBinError  (bin,err/y);
+            else:
+                statPrecision.SetBinContent(bin,1);
+                statPrecision.SetBinError  (bin,0);
+                
     statPrecision.GetYaxis().SetRangeUser(0.01,3.1)    
-
-    #if i in range(len(histUpSys)):
-    
     return statPrecision
 
 #---------------------------------------------------------
-def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},actuallyDrawSystErrorBand=True):
+def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, combine_with_systematic=True):
     """
     Draw this histogram with the statistical
     precision error in each bin
@@ -209,36 +231,34 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},actuallyDrawSystErrorBan
     ROOT.SetOwnership(statPrecision,0)
     statPrecision.SetFillColorAlpha(2, 0.5)
     statPrecision.SetMarkerColorAlpha(0,0)
-
-    if actuallyDrawSystErrorBand:
+    
+    if combine_with_systematic : systematic_only = True
+    if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
-            y   = statPrecision.GetBinContent(ibin);
-            err = statPrecision.GetBinError  (ibin);
+            y    = statPrecision.GetBinContent(ibin);
+            stat = statPrecision.GetBinError  (ibin);
             
             vals = [y]
-            print "Central:",y
             for sys in histUpSys:
                 val = histUpSys[sys].GetBinContent(ibin)
                 vals += [val]
-                print sys,val
             for sys in histDwSys:
                 val= histDwSys[sys].GetBinContent(ibin)
                 vals += [val]
-                print sys,val
-     
             largest_val  = max(vals)
             smallest_val = min(vals)
-
+            
+            error  = 0
+            if combine_with_systematic:
+                syst  = 0.5*(largest_val - smallest_val)
+                error = math.sqrt(syst*syst + stat*stat) 
+            else:
+                error = 0.5*(largest_val - smallest_val)
+                
             statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
-            statPrecision.SetBinError  (ibin,   (largest_val - smallest_val)/2.0);
+            statPrecision.SetBinError  (ibin,   error);
         
     return statPrecision
-    #if norm:
-    #myHisto.Draw(drawOpt)
-    #statPrecision.Draw('e2,same')
-    #else:
-    #myHisto.DrawNormalized(drawOpt)
-    #statPrecision.DrawNormalized('e2,same')
 
 #---------------------------------------------------------
 def makeRatioPlotCanvas(name=''):
@@ -318,7 +338,7 @@ def DataMCratio(histMC,histData,
                 ratioMax=1.7):
     """Takes two histograms as inputs and returns a canvas with a ratio plot of the two.
     The two optional arguments are for the x Axis and y Axis titles"""
-
+    
     c = makeRatioPlotCanvas()#makeDivCan()
     pad1 = c.cd(1)
     pad2 = c.cd(2)
@@ -381,19 +401,66 @@ def customizeHisto(hist):
     hist.GetXaxis().SetLabelFont  (43)
     hist.GetXaxis().SetLabelSize  (18)
 
+def book_trees(select = ''):
+    ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
+    for proc in ordsam:
+        chain      = ROOT.TChain(treename.replace('*',proc))
+        chainSysUp = []
+        chainSysDw = []
+        if type(samples[proc].get('name')) == type([]):
+            for sam in samples[proc].get('name',[]):
+                for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                    chain.Add(f)
+            for sys in treesUpSys:
+                chainUp = ROOT.TChain(sys.replace('*',proc))
+                for sam in samples[proc].get('name',[]):
+                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                        chainUp.Add(f)
+                chainSysUp.append(chainUp)
+            for sys in treesDwSys:
+                chainDw = ROOT.TChain(sys.replace('*',proc))
+                for sam in samples[proc].get('name',[]):
+                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                        chainDw.Add(f)
+                chainSysDw.append(chainDw)
+        else:
+            sam = samples[proc].get('name')
+            for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                chain.Add(f)
+            if samples[proc].get('label') != 'Data':
+                for sys in treesUpSys:
+                    chainUp = ROOT.TChain(sys.replace('*',proc))
+                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                        chainUp.Add(f)
+                    chainSysUp.append(chainUp)
+                    
+                for sys in treesDwSys:
+                    chainDw = ROOT.TChain(sys.replace('*',proc))
+                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+                        chainDw.Add(f)
+                    chainSysDw.append(chainDw)
+        # read systematic trees
+        samples[proc].update({'_root_tree_'       : chain})
+        samples[proc].update({'_root_tree_sysDw_' : chainSysDw})
+        samples[proc].update({'_root_tree_sysUp_' : chainSysUp})
+
+
+
+def test_tree_book():
+    for sam in samples:
+        print 'nominal tree: ', samples[sam].get('_root_tree_')
+        print 'syst up tree: ', samples[sam].get('_root_tree_sysUp_',[])
+        print 'syst dw tree: ', samples[sam].get('_root_tree_sysDw_',[])
+
 #---------------------------------------------------------
 def draw_instack(variable, label='VBF', select=''):
     histos = []
-    
-    formula = variable
     varname = variable
+    formula = variables[varname].get('formula',varname)
     if ':=' in variable:
         varname  = variable.split(':=')[0]
         formula  = variable.split(':=')[1]
-
-    #print colored('varname::'+ varname+ ' <-- ' + formula, 'red', attrs=['bold'])
-    print 'varname::'+ varname+ ' <-- ' + formula
-
+        
     histfilename = ('histogram_stack_' +
                     varname + '_' + label+ '_'
                     + selection['name'])
@@ -410,7 +477,7 @@ def draw_instack(variable, label='VBF', select=''):
     hstack = ROOT.THStack('hs_' + varname,'')
     
     hstack.SetName('hs_'+ varname)
-    hstack.SetTitle(";" + variables[variable]['title']+";entries")
+    hstack.SetTitle(";" + variables[varname]['title']+";entries")
 
     histUpSys = {}
     histDwSys = {}
@@ -430,13 +497,19 @@ def draw_instack(variable, label='VBF', select=''):
         histfilename = histfilename + '_nocuts'
     # loop over the samples
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
+    logger.info(colored(('variable:: %17s :: %s' % (varname, formula)),'red', attrs=['bold']))
+    #Percentage(), ' ' ,Bar('>'), ' ', ETA()]
+    #pbar    = ProgressBar(widgets=widgets)
+    #for proc in pbar(ordsam):
     for proc in ordsam:
-        logging.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
+        logger.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
+        
         flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
-        print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc),' :: ',flist  
-
+        #print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc),' :: ',flist  
         roof  = ROOT.TFile.Open(flist[0])
         tree  = roof.Get(treename.replace('*',proc))
+        
+        #tree = samples[proc].get('_root_tree_')
         if samples[proc].get('cut','') != '':
             cutflow = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
         if variables[variable]['blind'] != '' and proc == 'Data':
@@ -546,8 +619,11 @@ def draw_instack(variable, label='VBF', select=''):
             h.Draw('hist,same')
     herrstat = drawStatErrorBand(hstack.GetStack().Last(), histDwSys, histUpSys)
     herrstat.Draw('E2,same')
-    legend.AddEntry(herrstat, "Stat Uncert.", "f" )
-    # cosmetics
+    if len(histUp)>0 and len(histDw)>0:
+        legend.AddEntry(herrstat, "Stat #oplus Syst", "f" )
+    else:
+        legend.AddEntry(herrstat, "Stat Uncert", "f" )
+        # cosmetics
     draw_cut_line(htmp,variable)
     ROOT.gPad.RedrawAxis();
 
@@ -571,7 +647,7 @@ def draw_instack(variable, label='VBF', select=''):
     
     c.cd()
     c.cd(2)
-    errorHist = MakeStatProgression(hstack.GetStack().Last(),title="")
+    errorHist = MakeStatProgression(hstack.GetStack().Last(),histDwSys, histUpSys)
     ROOT.SetOwnership(errorHist,0)
     errorHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
     errorHist.GetYaxis().SetTitle('Data/MC')

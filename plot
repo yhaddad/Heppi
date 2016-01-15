@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from optparse import OptionParser
 import logging
-import heppi 
+from heppi import heppi
 import ROOT
 
 def get_options():
@@ -58,18 +58,20 @@ if __name__ == "__main__":
         log_level = logging.INFO
     elif opt.verbose >= 2:
         log_level = logging.DEBUG
-
-    # Set up basic configuration, out to stderr with a reasonable default format.
-    logging.basicConfig(level=log_level)
+    
+    #logging.basicConfig(level=log_level)
   
     ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
     if opt.display:
         ROOT.gROOT.SetBatch( ROOT.kFALSE ) 
     else:
-        ROOT.gROOT.SetBatch( ROOT.kTRUE  ) 
+        ROOT.gROOT.SetBatch( ROOT.kTRUE  )
+        #ROOT.gErrorIgnoreLevel = ROOT.kError
     heppi.read_plotcard(heppi.options.plotcard)
-    heppi.print_cutflow()
-    
+    #heppi.print_cutflow()
+
+    #heppi.book_trees('')    
+    heppi.test_tree_book()
     if opt.draw_all and opt.variable == '':
         for var in heppi.variables:
             heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])

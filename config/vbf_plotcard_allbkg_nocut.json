@@ -391,13 +391,14 @@
     },
     
     "systematics": {
-	"UpTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"  ]  ,
-	"DwTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma"]
-	
+	"UpTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECUp01sigma"   ,
+		      "vbfTagDumper/trees/*_13TeV_VBFDiJet_JERUp01sigma"  ],
+	"DwTrees" : [ "vbfTagDumper/trees/*_13TeV_VBFDiJet_JECDown01sigma",
+		      "vbfTagDumper/trees/*_13TeV_VBFDiJet_JERDown01sigma"]
     },
     
     "labels":{
-	"name" : "diphoton preselection \\electron veto\\photonID < -0.9\\100<m_{#gamma#gamma}<180GeV"
+	"name" : "diphoton preselection \\electron veto\\photonID > -0.9\\100<m_{#gamma#gamma}<180GeV"
     }
     
 
