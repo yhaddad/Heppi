@@ -57,3 +57,37 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Editors temp files
+*.swp
+*~
+
+# SCRAM business
+__init__.py
+*.pyc
+
+# ROOT-related files
+*.root
+*_cc.d
+*_cc.so
+*_C.d
+*_C.so
+*\#*
+.\#*
+AutoDict_*
+
+# Other temp files
+*.txt
+*.log
+*.png
+*.pdf
+
+
+# some directories
+.ipynb_checkpoints*
+Untitled*
+data*
+config/*vbf*
+*test*
+*text*
+
