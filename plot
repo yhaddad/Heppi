@@ -1,8 +1,17 @@
 #!/usr/bin/python
-from optparse import OptionParser
-import logging
-from heppi import heppi
-import ROOT
+from __future__ import print_function
+
+from optparse   import OptionParser
+from heppi      import heppi
+from termcolor  import colored
+import ROOT, logging, sys, logging, time 
+
+from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
+
+logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
+                    + colored('%(name)s:','blue') + ' %(message)s')
+logger = logging.getLogger('heppi')
+logger.setLevel(level=logging.INFO)
 
 def get_options():
     parser = OptionParser()
@@ -60,20 +69,42 @@ if __name__ == "__main__":
         log_level = logging.DEBUG
     
     #logging.basicConfig(level=log_level)
-  
+    
     ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
     if opt.display:
         ROOT.gROOT.SetBatch( ROOT.kFALSE ) 
     else:
         ROOT.gROOT.SetBatch( ROOT.kTRUE  )
-        #ROOT.gErrorIgnoreLevel = ROOT.kError
+        ROOT.gErrorIgnoreLevel = ROOT.kError
     heppi.read_plotcard(heppi.options.plotcard)
-    #heppi.print_cutflow()
+    heppi.print_cutflow()
+    
+    heppi.book_trees('')    
 
-    #heppi.book_trees('')    
-    heppi.test_tree_book()
+
+    #files = {
+    #    'CentOS-7.0-1406-x86_64-DVD.iso': 10 ,
+    #    'CentOS-7.0-1406-x86_64-Everything.iso': 15 ,
+    #    'md5sum.txt': 5,
+    #}
+    #for file_name, file_size in files.items():
+    #    bar = ProgressBarYum(file_size, file_name)
+    #    for i in range(0, file_size + 1):
+    #        bar.numerator = i
+    #        print(bar, end='\r')
+    #        sys.stdout.flush()
+    #        time.sleep(0.25)
+    #    bar.numerator = file_size
+    #    bar.force_done = True
+    #    print(bar)
+    
     if opt.draw_all and opt.variable == '':
+        logger.info(colored(
+            ('(%i) booked variables will be drawn ::\r' % len(heppi.variables)),
+            'red', attrs=['bold']
+        ))
         for var in heppi.variables:
+            
             heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
     else:
         if opt.variable != '':

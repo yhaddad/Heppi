@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 try:
     import ROOT
 except ImportError:
@@ -12,6 +14,7 @@ try:
     from   termcolor import colored
     from   jsmin     import jsmin
     from progressbar import ProgressBar, Bar, Percentage, ETA
+    
 except ImportError:
     raise ImportError(
         """
@@ -180,6 +183,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
     statPrecision.SetFillColorAlpha(2, 0.5)
     statPrecision.SetMarkerColorAlpha(0,0)
     
+    if len(histUpSys)==0 or len(histDwSys)==0 : return statPrecision
     if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
@@ -232,7 +236,10 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
     ROOT.SetOwnership(statPrecision,0)
     statPrecision.SetFillColorAlpha(2, 0.5)
     statPrecision.SetMarkerColorAlpha(0,0)
-    
+
+    #print '-->', histUpSys
+    #print '-->', histDwSys
+        
     if combine_with_systematic : systematic_only = True
     if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
@@ -298,10 +305,7 @@ def makeRatio(hist1,hist2,ymax=False,ymin=False,norm=False):
     if one of the histograms is a stack put it in as argument 2!"""
 
     if norm:
-        print 'scaling!'
         try:
-            print 'scale 1: ',1/hist1.Integral()
-            print 'scale 2: ',1/hist2.Integral()
             hist1.Scale(1/hist1.Integral())
             hist2.Scale(1/hist2.Integral())
         except(ZeroDivisionError):
@@ -319,7 +323,7 @@ def makeRatio(hist1,hist2,ymax=False,ymin=False,norm=False):
         retH.Divide(sumHist)
     except(AttributeError):
         #this is the error you get if hist1 is a stack
-        print "Did you use a stack as argument 1? please use stack as argument 2!"
+        logger.error("Did you use a stack as argument 1? please use stack as argument 2!")
         raise AttributeError
     if ymax or ymin:
         retH.GetYaxis().SetRangeUser(0,2.1)
@@ -449,9 +453,9 @@ def book_trees(select = ''):
 
 def test_tree_book():
     for sam in samples:
-        print 'nominal tree: ', samples[sam].get('_root_tree_')
-        print 'syst up tree: ', samples[sam].get('_root_tree_sysUp_',[])
-        print 'syst dw tree: ', samples[sam].get('_root_tree_sysDw_',[])
+        logger.info('nominal tree: '+ samples[sam].get('_root_tree_'))
+        logger.info('syst up tree: '+ samples[sam].get('_root_tree_sysUp_',[]))
+        logger.info('syst dw tree: '+ samples[sam].get('_root_tree_sysDw_',[]))
 
 #---------------------------------------------------------
 def draw_instack(variable, label='VBF', select=''):
@@ -497,19 +501,17 @@ def draw_instack(variable, label='VBF', select=''):
     if  options.nocuts:
         histfilename = histfilename + '_nocuts'
     # loop over the samples
+    bar    = ProgressBar(widgets=[colored('-- variables:: %20s   ' % variable, 'green'),
+                                  Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
-    logger.info(colored(('variable:: %17s :: %s' % (varname, formula)),'red', attrs=['bold']))
-    #Percentage(), ' ' ,Bar('>'), ' ', ETA()]
-    #pbar    = ProgressBar(widgets=widgets)
-    #for proc in pbar(ordsam):
-    for proc in ordsam:
+    for proc in bar(ordsam):
         logger.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
         
-        flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
+        #flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
         #print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc),' :: ',flist  
-        roof  = ROOT.TFile.Open(flist[0])
-        tree  = roof.Get(treename.replace('*',proc))
-        
+        #roof  = ROOT.TFile.Open(flist[0])
+        #tree  = roof.Get(treename.replace('*',proc))
+        tree = samples[proc].get('_root_tree_')
         #tree = samples[proc].get('_root_tree_')
         if samples[proc].get('cut','') != '':
             cutflow = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
@@ -530,7 +532,8 @@ def draw_instack(variable, label='VBF', select=''):
         
         for sys in treesUpSys:
             if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
-                treeUp    = roof.Get(sys.replace('*',proc))
+                treeUp = samples[proc].get('_root_tree_sysUp_')[0]
+                #treeUp = roof.Get(sys.replace('*',proc))
                 sysname   = sys.split('*')[1]
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
@@ -545,7 +548,8 @@ def draw_instack(variable, label='VBF', select=''):
                     histUpSys[sysname].Add(histUp)
         for sys in treesDwSys:
             if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
-                treeDw    = roof.Get(sys.replace('*',proc))
+                treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
+                #treeDw  = roof.Get(sys.replace('*',proc))
                 sysname   = sys.split('*')[1]
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
@@ -681,3 +685,4 @@ def draw_instack(variable, label='VBF', select=''):
         histfilename = histfilename + '_norm'
     c.SaveAs( 'plots/' + histfilename + '.png')
     c.SaveAs( 'plots/' + histfilename + '.pdf')
+    
