@@ -23,13 +23,17 @@ How to run
 Produce a stacked plots
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-* To run `heepi` plotmaker you have to run the script `plot`
-* you can print the options of the script by typing `.\plot --help`   
-* you have to combine the trees using `rootmerge.py` script
+* To run ``heepi`` plotmaker you have to run the script ``plot``
+* you can print the options of the script by typing ``.\plot --help``   
+* you have to combine the trees using ``rootmerge.py`` script
 * the commend I'm using is the follwing:
-`./plot -s /dir/to/merged/trees --load plotcard.json --all`
-* if you want to print one variable in the plotcard you can replace the option `--all` by `--variable` or just `-v` followed by the name of the variable.
-example : `./plot -s /dir/to/merged/trees --load plotcard.json -v var1`
+.. code-block::
+    ./plot -s /dir/to/merged/trees --load plotcard.json --all
+    
+* if you want to print one variable in the plotcard you can replace the option ``--all`` by ``--variable`` or just ``-v`` followed by the name of the variable.
+example : 
+.. code-block:: 
+    ./plot -s /dir/to/merged/trees --load plotcard.json -v var1
 
 Write a valid plotcard ?
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,17 +42,16 @@ Write a valid plotcard ?
 * The tree name must be specified
 
 .. code-block:: bash
-
    ./makeplotcard.py --load  /path/to/root/file.root \
                      --out   plotcard.json \
                      --tree  VBFMVADumper/*VBFDiJet
 
-* the `*` will be replaced automatically by the remaining name of the tree found in the `VBFMVADumper` directory.
-* This is for the use of [flashgg](https://github.com/cms-analysis/flashgg) type dumper trees only, a more standard version will be pushed soon
+* the ``*`` will be replaced automatically by the remaining name of the tree found in the ``VBFMVADumper`` directory.
+* This is for the use of .. _``flashgg``: https://github.com/cms-analysis/flashgg type dumper trees only, a more standard version will be pushed soon
 
 installation
 ------------
-* installation : `pip install --user jsmin termcolor progressbar` : this must work in lxplus:  since in imperial does not existe, you I have to find a permanent solution to include those packages for the future. For the moment do not use comments in the json files !
+* installation : ``pip install --user jsmin termcolor progressbar`` : this must work in lxplus:  since in imperial does not existe, you I have to find a permanent solution to include those packages for the future. For the moment do not use comments in the json files !
 * ROOT env must be set
 
 Credits
