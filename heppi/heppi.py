@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+#from __future__ import print_function
 
 try:
     import ROOT
@@ -27,7 +27,7 @@ from   collections        import OrderedDict
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-logger.setLevel(level=logging.INFO)
+logger.setLevel(level=logging.DEBUG)
 
 # 'application' code
 samples     = collections.OrderedDict()
@@ -453,9 +453,9 @@ def book_trees(select = ''):
 
 def test_tree_book():
     for sam in samples:
-        logger.info('nominal tree: '+ samples[sam].get('_root_tree_'))
-        logger.info('syst up tree: '+ samples[sam].get('_root_tree_sysUp_',[]))
-        logger.info('syst dw tree: '+ samples[sam].get('_root_tree_sysDw_',[]))
+        logger.info('nominal::'+ sam +' tree: '+ samples[sam].get('_root_tree_').GetName())
+        #logger.info('syst up tree: '+ samples[sam].get('_root_tree_sysUp_',[]))
+        #logger.info('syst dw tree: '+ samples[sam].get('_root_tree_sysDw_',[]))
 
 #---------------------------------------------------------
 def draw_instack(variable, label='VBF', select=''):
@@ -505,40 +505,38 @@ def draw_instack(variable, label='VBF', select=''):
                                   Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
     for proc in bar(ordsam):
-        logger.debug(' -- %17s  %12s ' % (proc,  samples[proc]['name']))
+        logger.debug(' -- %17s  %12s ' % (proc,  samples[proc].get('name')))
         
-        #flist = glob.glob( sampledir + '/*'+ samples[proc]['name'] +'*.root')
-        #print 'treename.replace(\'*\',', proc, ')', treename.replace('*',proc),' :: ',flist  
-        #roof  = ROOT.TFile.Open(flist[0])
-        #tree  = roof.Get(treename.replace('*',proc))
-        tree = samples[proc].get('_root_tree_')
-        #tree = samples[proc].get('_root_tree_')
+        tree       = samples[proc].get('_root_tree_')
+        sample_cut = samples[proc].get('cut','')
+        _cutflow_  = cutflow
+
         if samples[proc].get('cut','') != '':
-            cutflow = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
+            _cutflow_ = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
         if variables[variable]['blind'] != '' and proc == 'Data':
-            cutflow = cutflow[:-1] + '&&' +  variables[variable]['blind']+ ')'
+            _cutflow_ = cutflow[:-1] + '&&' +  variables[variable]['blind']+ ')'
+            
         if proc != 'Data':        
             tree.Project(
                 'h_' + varname + variables[variable]['hist'],
                 formula,
-                cutflow.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
             )
         else:
             tree.Project(
                 'h_' + varname + variables[variable]['hist'],
                 formula,
-                cutflow
+                _cutflow_
             )
         
         for sys in treesUpSys:
             if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
-                treeUp = samples[proc].get('_root_tree_sysUp_')[0]
-                #treeUp = roof.Get(sys.replace('*',proc))
+                treeUp  = samples[proc].get('_root_tree_sysUp_')[0]
                 sysname   = sys.split('*')[1]
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    cutflow.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                    _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
                 )
                 histUp = ROOT.gDirectory.Get('h_UpSys_' + sysname +'_'+ varname )
                 histUp.SetDirectory(0)
@@ -554,7 +552,7 @@ def draw_instack(variable, label='VBF', select=''):
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    cutflow.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                    _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
                 )
                 histDw = ROOT.gDirectory.Get('h_DwSys_' + sysname +'_'+ varname )
                 histDw.SetDirectory(0)
@@ -562,7 +560,7 @@ def draw_instack(variable, label='VBF', select=''):
                     histDwSys[sysname] = histDw
                 else:
                     histDwSys[sysname].Add(histDw)
-        
+                    
         # ----------------------------------------------    
         hist = ROOT.gDirectory.Get('h_' + varname )
         hist.SetDirectory(0)
@@ -648,7 +646,7 @@ def draw_instack(variable, label='VBF', select=''):
         draw_labels('w/o cuts')
     else:
         draw_labels(plotlabels['name'])
-    draw_cms_headlabel()
+    draw_cms_headlabel(label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % treeinfo.get('lumi',2.63))
     
     c.cd()
     c.cd(2)

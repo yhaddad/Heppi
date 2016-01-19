@@ -1,12 +1,12 @@
 #!/usr/bin/python
-from __future__ import print_function
+#from __future__ import print_function
 
 from optparse   import OptionParser
 from heppi      import heppi
 from termcolor  import colored
 import ROOT, logging, sys, logging, time 
 
-from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
+#from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
@@ -79,7 +79,8 @@ if __name__ == "__main__":
     heppi.read_plotcard(heppi.options.plotcard)
     heppi.print_cutflow()
     
-    heppi.book_trees('')    
+    heppi.book_trees('')
+    heppi.test_tree_book()    
 
 
     #files = {
