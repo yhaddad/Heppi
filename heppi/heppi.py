@@ -520,7 +520,7 @@ def draw_instack(variable, label='VBF', select=''):
             tree.Project(
                 'h_' + varname + variables[variable]['hist'],
                 formula,
-                _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                _cutflow_.replace('weight','weight*%f*%f' % (treeinfo.get('kfactor',1.0), samples[proc].get('kfactor',1)) )
             )
         else:
             tree.Project(
@@ -536,7 +536,7 @@ def draw_instack(variable, label='VBF', select=''):
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                    _cutflow_.replace('weight','weight*%f*%f' % (treeinfo.get('kfactor',1.0), samples[proc].get('kfactor',1)) )
                 )
                 histUp = ROOT.gDirectory.Get('h_UpSys_' + sysname +'_'+ varname )
                 histUp.SetDirectory(0)
@@ -552,7 +552,7 @@ def draw_instack(variable, label='VBF', select=''):
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    _cutflow_.replace('weight','weight*%f' % treeinfo.get('kfactor',1.0) )
+                    _cutflow_.replace('weight','weight*%f*%f' % (treeinfo.get('kfactor',1.0), samples[proc].get('kfactor',1)) )
                 )
                 histDw = ROOT.gDirectory.Get('h_DwSys_' + sysname +'_'+ varname )
                 histDw.SetDirectory(0)
@@ -575,7 +575,12 @@ def draw_instack(variable, label='VBF', select=''):
             hist.SetLineWidth(2)
             hist.SetFillStyle(0)
             histos.append(hist)
-            legend.AddEntry( hist, samples[proc]["title"], "l" );
+            if samples[proc].get('kfactor',1) !=1:
+                legend.AddEntry(hist,
+                                samples[proc]["title"] + ("#times%i"%samples[proc].get('kfactor',1)),
+                                "l" );
+            else:
+                legend.AddEntry( hist, samples[proc]["title"], "l" );
         if 'data' in samples[proc]['label']:
             hist.SetMarkerColor(ROOT.kBlack)
             hist.SetLineColor  (ROOT.kBlack)
