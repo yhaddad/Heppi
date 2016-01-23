@@ -34,7 +34,7 @@ def get_options():
                       action="store_true", dest="draw_all", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-d", "--display", 
-                      action="store_false", dest="display", default=False,
+                      action="store_true", dest="display", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-v", "--variable",
                       dest="variable",default="",
@@ -105,11 +105,13 @@ if __name__ == "__main__":
             'red', attrs=['bold']
         ))
         for var in heppi.variables:
-            
             heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
     else:
         if opt.variable != '':
             heppi.draw_instack(opt.variable,heppi.options.label,heppi.selection['title'])
+            if opt.display:
+                raw_input('... Press any key to exit ...')
         else:
             logging.error('please specify the variable you wnat to plot ...')
+    
             
