@@ -8,12 +8,12 @@ except ImportError:
         """
         ROOT is not in your environement, or not intsalled. 
         Please check!
-        """
-    )
+        """)
 try:
-    from   termcolor import colored
-    from   jsmin     import jsmin
-    from progressbar import ProgressBar, Bar, Percentage, ETA
+    from   termcolor    import colored
+    from   jsmin        import jsmin
+    from   progressbar  import ProgressBar, Bar, Percentage, ETA
+    from   jsonmerge    import merge
     
 except ImportError:
     raise ImportError(
@@ -46,9 +46,8 @@ options     = None
 allnormhist = False
 treeinfo    = {}
 
-
 # ---- plot card
-def read_plotcard(plotcard):
+def read_plotcard(plotcard, cut_card=''):
     global plotlabels
     global selection
     global variables
@@ -60,7 +59,12 @@ def read_plotcard(plotcard):
     config = None
     with open(plotcard) as f:
         config = json.loads(jsmin(f.read()))
-        
+    if cut_card != '':
+        logger.info(' ---- cut card is specified ----')
+        logger.info(' -- %20s ' % ( cut_card )        )
+        with open(cut_card) as f:
+            cuts   = json.loads(jsmin(f.read()))
+            config = merge(config, cuts)
     for key in config:
         if 'variables' in key:
             logger.info(' ---- book variables ----------')

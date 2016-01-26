@@ -52,15 +52,17 @@ def get_options():
                       help="Label added in the plot file names")
     parser.add_option('--verbose', dest='verbose', action='count',
                      help="Increase verbosity (specify multiple times for more)")
+    parser.add_option("--cut-card", dest="cut_card",default='',
+                      help="Specify all the cut through a cut-card. This might be included also in the plotcard. Check the documentation")
     return parser.parse_args()
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    heppi.options  = opt
-    
+    heppi.options     = opt
     heppi.allnormhist = opt.allnormhist
     heppi.allloghist  = opt.allloghist
     heppi.sampledir   = opt.sampledir
+    heppi.cut_card    = opt.cut_card
     
     log_level = logging.WARNING # default
     if opt.verbose == 1:
