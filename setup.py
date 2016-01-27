@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 try:
     from setuptools import setup
 except ImportError:
@@ -15,38 +14,48 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    "jsmin",
+    "termcolor",
+    "progressbar",
+    "jsonmerge"
 ]
 
-test_requirements = [
-    # TODO: put package test requirements here
-]
+test_requirements = []
 
 setup(
-    name        = 'heppi',
-    version     = '0.1.0',
-    description = "Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    name             = 'heppi',
+    version          = '0.1.0',
+    description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
-    author_email = 'yhaddad@cern.ch',
-    url          = 'https://github.com/yhaddad/heppi',
+    author_email     = 'yhaddad@cern.ch',
+    url              = 'https://github.com/yhaddad/heppi',
     packages = [
         'heppi',
     ],
-    package_dir = {'heppi':
-                   'heppi'},
+    package_dir          = {'heppi': 'heppi'},
     include_package_data = True,
-    install_requires     = requirements,
+    entry_points = {
+        'console_scripts': [
+            'plot = plot',
+            #        'rootplotmpl = rootplot.core:cli_rootplotmpl',
+            #        'tree2hists = rootplot.tree2hists:main',
+            #        'rootinfo = rootplot.rootinfo:main'
+        ]
+    },
+    install_requires    = requirements,
     license     = "ISCL",
     zip_safe    = False,
     keywords    = 'heppi',
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
+        'Environment :: Console',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Topic :: Utilities',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',

@@ -1,12 +1,12 @@
 #!/usr/bin/python
-from __future__ import print_function
+#from __future__ import print_function
 
 from optparse   import OptionParser
 from heppi      import heppi
 from termcolor  import colored
 import ROOT, logging, sys, logging, time 
 
-from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
+#from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
@@ -34,7 +34,7 @@ def get_options():
                       action="store_true", dest="draw_all", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-d", "--display", 
-                      action="store_false", dest="display", default=False,
+                      action="store_true", dest="display", default=False,
                       help="draw all the variables specified in the plotcard")
     parser.add_option("-v", "--variable",
                       dest="variable",default="",
@@ -52,15 +52,17 @@ def get_options():
                       help="Label added in the plot file names")
     parser.add_option('--verbose', dest='verbose', action='count',
                      help="Increase verbosity (specify multiple times for more)")
+    parser.add_option("--cut-card", dest="cut_card",default='',
+                      help="Specify all the cut through a cut-card. This might be included also in the plotcard. Check the documentation")
     return parser.parse_args()
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    heppi.options  = opt
-    
+    heppi.options     = opt
     heppi.allnormhist = opt.allnormhist
     heppi.allloghist  = opt.allloghist
     heppi.sampledir   = opt.sampledir
+    heppi.cut_card    = opt.cut_card
     
     log_level = logging.WARNING # default
     if opt.verbose == 1:
@@ -79,7 +81,8 @@ if __name__ == "__main__":
     heppi.read_plotcard(heppi.options.plotcard)
     heppi.print_cutflow()
     
-    heppi.book_trees('')    
+    heppi.book_trees('')
+    heppi.test_tree_book()    
 
 
     #files = {
@@ -104,11 +107,13 @@ if __name__ == "__main__":
             'red', attrs=['bold']
         ))
         for var in heppi.variables:
-            
             heppi.draw_instack(var,heppi.options.label,heppi.selection['title'])
     else:
         if opt.variable != '':
             heppi.draw_instack(opt.variable,heppi.options.label,heppi.selection['title'])
+            if opt.display:
+                raw_input('... Press any key to exit ...')
         else:
             logging.error('please specify the variable you wnat to plot ...')
+    
             

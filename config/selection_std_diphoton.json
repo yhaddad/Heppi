@@ -1,0 +1,25 @@
+{
+    "variables": {
+	"dipho_lead_ptoM"    : {"cut"  : "dipho_lead_ptoM>(0.3333)"},
+	"dipho_sublead_ptoM" : {"cut"  : "dipho_sublead_ptoM>(0.25)"},
+	"dipho_mass"         : {"cut"  : "(dipho_mass>70 && dipho_mass<110 )"},
+	"dipho_subleadIDMVA" : {"cut"  : "dipho_subleadIDMVA>-0.9"}, 
+	"dipho_leadIDMVA"    : {"cut"  : "dipho_leadIDMVA>-0.9"},
+    }, 
+    "selection" : {
+	"name"  : "zee_rms_full_dipho",
+	"title" : ""
+    }, 
+    "tree": {
+	"kfactor": 2.2,
+	"lumi"   : 2.63
+    },
+    "labels":{
+	"name" : [
+	    "v_1_3_0 CMSSW-76X",
+	    "std dipho-presel",
+	    "inverted electron veto",
+	    "70 < m_{#gamma#gamma}<110 GeV"
+	]
+    }
+}
