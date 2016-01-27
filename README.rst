@@ -51,8 +51,7 @@ Write a valid plotcard ?
 
 installation
 ------------
-* Run the setup script to install the dependencies:
-`` python setup.py build --user``
+* Run the setup script to install the dependencies: `` python setup.py build --user``
 * installation : ``pip install --user jsmin termcolor progressbar`` : this must work in lxplus:  since in imperial does not existe, you I have to find a permanent solution to include those packages for the future. For the moment do not use comments in the json files !
 * ROOT env must be set
 
