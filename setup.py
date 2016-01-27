@@ -24,7 +24,7 @@ test_requirements = []
 
 setup(
     name             = 'heppi',
-    version          = __version__,
+    version          = '0.1.0',
     description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
@@ -35,14 +35,14 @@ setup(
     ],
     package_dir          = {'heppi': 'heppi'},
     include_package_data = True,
-    #entry_points = {
-    #    'console_scripts': [
-    #        'rootplot = rootplot.core:cli_rootplot',
-    #        'rootplotmpl = rootplot.core:cli_rootplotmpl',
-    #        'tree2hists = rootplot.tree2hists:main',
-    #        'rootinfo = rootplot.rootinfo:main'
-    #    ]
-    #},
+    entry_points = {
+        'console_scripts': [
+            'plot = plot',
+            #        'rootplotmpl = rootplot.core:cli_rootplotmpl',
+            #        'tree2hists = rootplot.tree2hists:main',
+            #        'rootinfo = rootplot.rootinfo:main'
+        ]
+    },
     install_requires    = requirements,
     license     = "ISCL",
     zip_safe    = False,
