@@ -44,8 +44,8 @@ treesDwSys  = []
 #treename    = '*_13TeV_VBFDiJet'
 options     = None   
 allnormhist = False
-treeinfo    = {}
-
+treeinfo      = {}
+title_on_plot = []
 # ---- plot card
 def read_plotcard(plotcard, cut_card=''):
     global plotlabels
@@ -90,6 +90,8 @@ def read_plotcard(plotcard, cut_card=''):
             logger.info(' -- %12s' % (selection['title']))
         if 'labels' in key:
             plotlabels = config[key]
+            if title_on_plot != []:
+                plotlabels['name'] = title_on_plot
         if 'tree' in key:
             treeinfo = config[key]
             treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
@@ -678,10 +680,12 @@ def draw_instack(variable, label='VBF', select=''):
     if hdata==None:
         ratioHist = hstack.GetStack().Last().Clone('_temp_')
         ratioHist.Clear()
+        ratioHist.SetLineColorAlpha(0,0)
+        ratioHist.SetMarkerColorAlpha(0,0)
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
         ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
-    else:    
+    else:
         ratioHist = makeRatio(hdata,hstack.GetStack().Last())
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())

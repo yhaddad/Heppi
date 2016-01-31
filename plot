@@ -50,6 +50,8 @@ def get_options():
                       help="all the histogram will be in log scale")
     parser.add_option("--label", dest="label",default='VBF',
                       help="Label added in the plot file names")
+    parser.add_option("--title", dest="title_on_plot",default=[],
+                      help="replace labels name from the plot card")
     parser.add_option('--verbose', dest='verbose', action='count',
                      help="Increase verbosity (specify multiple times for more)")
     parser.add_option("--cut-card", dest="cut_card",default='',
@@ -58,11 +60,12 @@ def get_options():
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    heppi.options     = opt
-    heppi.allnormhist = opt.allnormhist
-    heppi.allloghist  = opt.allloghist
-    heppi.sampledir   = opt.sampledir
-    heppi.cut_card    = opt.cut_card
+    heppi.options       = opt
+    heppi.allnormhist   = opt.allnormhist
+    heppi.allloghist    = opt.allloghist
+    heppi.sampledir     = opt.sampledir
+    heppi.cut_card      = opt.cut_card
+    heppi.title_on_plot = opt.title_on_plot.split(',')
     
     log_level = logging.WARNING # default
     if opt.verbose == 1:
