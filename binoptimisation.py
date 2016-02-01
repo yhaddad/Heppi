@@ -14,7 +14,7 @@ cutflow     = []
 selection   = {}
 plotlabels  = {}
 variables   = {}
-
+treeinfo    = {}
 treename    = '*_13TeV_VBFDiJet'
 sampledir   = '../data/output_data_rms_002/new/new/'
 
@@ -64,10 +64,10 @@ def draw_point(x,y, size=0.01, color=121):
     point.Draw()
 
 def draw_ROC(var ='dipho_dijet_MVA',
-             label='VBF', title = 'variable',
+             label='VBF', title = 'variable', axistitle='',
              bkg = [], select='', categories=[]):
-    #c = ROOT.TCanvas("c_ROC","ROC's BDT",600,600)
-    #c.cd()
+    c = ROOT.TCanvas("c_ROC","ROC's BDT",600,600)
+    c.cd()
     histos = []
     histfilename = ('plots/histogram_stack_'  +
                     var + '_' + label + '_'
@@ -85,6 +85,7 @@ def draw_ROC(var ='dipho_dijet_MVA',
         cutflow = 'weight*(' + cutflow + ')'
     else:
         cutflow = 'weight'
+
         
     # === loop over the samples
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
@@ -93,12 +94,16 @@ def draw_ROC(var ='dipho_dijet_MVA',
         #roof  = ROOT.TFile.Open(flist[0])
         tree  = samples[proc].get('_root_tree_')#roof.Get(treename.replace('*',proc))
         histstr = '(%i,%f,%f)' %(int(400),-1, 1)
+        if proc == 'Data':
+            cutflow = cutflow.replace('weight*','').replace('weight','')
+            
         tree.Project(
             'h_'+var + histstr,
             var,
             cutflow
         )
-        if (samples[proc]['label']== 'background' or samples[proc]['label']== 'spectator' or samples[proc]['label']== 'Data') and proc in bkg:
+        if samples[proc]['label']!= 'Signal' and proc in bkg:
+            print '--> have ', proc
             hbkg.Add(ROOT.gDirectory.Get('h_'+var))
         if samples[proc]['label']== 'signal':
             hsig.Add(ROOT.gDirectory.Get('h_'+var))
@@ -111,13 +116,13 @@ def draw_ROC(var ='dipho_dijet_MVA',
     
     roc   = ROOT.TGraph()
     roc.SetName ('fom_cat_'+label)
-    roc.SetTitle(';#varepsilon_{bkg};#varepsilon_{sig}')
+    roc.SetTitle( axistitle )
     catcut = []
     point = []
     cutpt = []
     roc.SetPoint (0,1,1)
     for ibin in range(0, hsig.GetNbinsX()+1):
-        print hbkg.Integral() 
+        #print hbkg.Integral() 
         beff = hbkg.Integral(ibin,hsig.GetNbinsX())/hbkg.Integral() 
         seff = hsig.Integral(ibin,hsig.GetNbinsX())/hsig.Integral()
         #print beff, '  ', seff
@@ -131,18 +136,26 @@ def draw_ROC(var ='dipho_dijet_MVA',
                 point.append(p)
         roc.SetPoint (ibin+1,beff,seff)
     roc.SetPoint (hsig.GetNbinsX()+2,0,0)
-    roc.GetYaxis().SetLabelSize(0.032)
-    roc.SetLineColor(132)
+    #roc.GetYaxis().SetLabelSize(25)
+    roc.GetYaxis().SetTitleSize(25)
+    roc.GetXaxis().SetTitleSize(25)
+    roc.GetYaxis().SetTitleOffset (1)
+    roc.GetXaxis().SetTitleOffset (1)
+    roc.SetLineColor(129)
+    roc.SetLineWidth(3)
     roc.Draw('AL')
     roc.GetYaxis().SetRangeUser(0,1)
     roc.GetXaxis().SetRangeUser(0,1)
     roc.Draw('AL')
+    
     c.Update()
+    
     draw_labels("Integral = %1.3f" % (roc.Integral()+0.5),"bl",0.035)
     for p in point[:-1]:
         p.Draw()
-    #c.SaveAs('plots/rocky_' + label + '.pdf')
-    #c.SaveAs('plots/rocky_' + label + '.png')
+    #raw_input()
+    c.SaveAs('plots/rocky_' + label + '.pdf')
+    c.SaveAs('plots/rocky_' + label + '.png')
     
     return roc
 
@@ -151,7 +164,7 @@ def read_plotcard(plotcard):
     global selection
     global variables
     global samples
-
+    global treeinfo
     config = None
     with open(plotcard) as f:
         config = json.loads(jsmin(f.read()))
@@ -184,6 +197,9 @@ def read_plotcard(plotcard):
             print plotlabels
             plotlabels = config[key]
             logging.debug(' -- %12s %12s' % (key, plotlabels['name']))
+        if 'tree' in key:
+            treeinfo = config[key]
+            treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
         logging.debug(' -------------------')
 
 def book_trees(select = ''):
@@ -226,7 +242,14 @@ def print_cutflow():
 
             
 #---------------------------------------------------------------
-def GetBondaryBin(var ='dijet_BDT', label='VBF', select='', fom='', xmin=-1, xmax=1,catidx=0, nbin = 10000):
+def GetBondaryBin(var    = 'dijet_BDT',
+                  label  = 'VBF',
+                  select = '',
+                  fom    = '',
+                  xmin   =-1,
+                  xmax   = 1,
+                  catidx = 0,
+                  nbin = 10000):
     histos = []
     histfilename = ('plots/histogram_stack_'  +
                     var + '_' + label + '_'
@@ -234,13 +257,11 @@ def GetBondaryBin(var ='dijet_BDT', label='VBF', select='', fom='', xmin=-1, xma
     legend  = ROOT.TLegend(0.55, 0.72,
                            (0.95 - ROOT.gStyle.GetPadRightMargin()),
                            (0.98 - ROOT.gStyle.GetPadTopMargin()))
+    
     cutflow = variable_cutflow(var,'')
     if len(cutflow)!=0:
         cutflow = variable_cutflow(var,select)
     # === define the stack
-    
-    #hbkg = ROOT.TH1F('hbkg','',nbin,xmin,xmax)
-    #hsig = ROOT.TH1F('hsig','',nbin,xmin,xmax)
     hbkg = ROOT.TH1F('hbkg','',nbin,-1,1)
     hsig = ROOT.TH1F('hsig','',nbin,-1,1)
     hbkg.SetTitle(";" + variables[var]['title']+";entries")
@@ -283,6 +304,12 @@ def GetBondaryBin(var ='dijet_BDT', label='VBF', select='', fom='', xmin=-1, xma
     roc.SetName ('fom_cat_' + str(catidx)+label)
     roc.SetTitle(';BDT_{output};Z(BDT_{output})')
     catcut = []
+    
+    if len(cutflow)!=0 :
+        cutflow = 'weight*(' + cutflow + ('&& %s > %f' % (var, xmin)) + ('&& %s < %f' % (var, xmax)) + ')'
+    else:
+        cutflow = 'weight'
+        
     for ibin in range(0, hsig.GetNbinsX()+1):
         Z  = 0
         if fom == 'signif':
@@ -318,9 +345,98 @@ def GetBondaryBin(var ='dijet_BDT', label='VBF', select='', fom='', xmin=-1, xma
     draw_labels(('Category VBF-%i' % catidx)+ ' \\BDT > '+('%1.3f'%catvalue[0]))
     c.SaveAs('plots/fom_cat'+ str(catidx) + '.pdf')
     c.SaveAs('plots/fom_cat'+ str(catidx) + '.png')
-    #raw_input("Press ENTER to continue ... ")
     return catvalue
 
+def print_categories(var, categories = [], select=''):
+    for cat in categories:
+        variables.update(
+            {
+                "_entries_":{
+                    "hist" : "(3,0,3)", 
+	            "cut"  : "",
+	            "blind": "",
+	            "log"  : True, 
+	            "norm" : False, 
+	            "title": "entries"
+                }
+            }
+        )
+        cutflow = variable_cutflow('_entries_','')
+        if len(cutflow)!=0:
+            cutflow = variable_cutflow('_entries_',select)
+        # === define the stack
+        hbkg_sel = ROOT.TH1F('hbkg_sel','',3,0,3)
+        hsig_sel = ROOT.TH1F('hsig_sel','',3,0,3)
+        hspc_sel = ROOT.TH1F('hspc_sel','',3,0,3)
+
+        hbkg_all = ROOT.TH1F('hbkg_all','',3,0,3)
+        hsig_all = ROOT.TH1F('hsig_all','',3,0,3)
+        hspc_all = ROOT.TH1F('hspc_all','',3,0,3)
+
+        # === cutflow
+        logger.info('\hline')
+        logger.info('category( %i ) &%12.3f &&\\' % (categories.index(cat),cat))
+        logger.info('\hline')
+        logger.info('%12s &%12s &%12s &%12s \\' % ('process', 'total event', 'selection', 'efficiency'))
+        ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
+        for proc in ordsam:
+            tree  = samples[proc].get('_root_tree_')
+            cutflow_sel = ''
+            cutflow_all = ''
+            if len(cutflow)!=0 :
+                cutflow_sel = 'weight*(' + cutflow + ('&& %s > %f' % (var, cat)) +')'
+                cutflow_all = 'weight*(' + cutflow + ')'
+            else:
+                cutflow_sel = 'weight*(' + ('%s > %f' % (var, cat)) +')'
+                cutflow_all = 'weight'
+
+            if 'Data' != proc:
+                cutflow_all = cutflow_all.replace('weight','weight*%f' % (treeinfo.get('kfactor',1.0)))
+                cutflow_sel = cutflow_sel.replace('weight','weight*%f' % (treeinfo.get('kfactor',1.0)))
+            else:
+                cutflow_all = cutflow_all.replace('weight*','')
+                cutflow_sel = cutflow_sel.replace('weight*','')
+                
+            tree.Project(
+                'h_sel_entries_' + proc + variables['_entries_']['hist'],
+                '1',
+                cutflow_sel
+            )
+            tree.Project(
+                'h_all_entries_' + proc + variables['_entries_']['hist'],
+                '1',
+                cutflow_all
+            )
+            h_sel = ROOT.gDirectory.Get('h_sel_entries_'+proc)
+            h_all = ROOT.gDirectory.Get('h_all_entries_'+proc)
+            logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % (proc,h_all.Integral(),
+                                                           h_sel.Integral(),
+                                                           100*float(h_sel.Integral())/float(h_all.Integral())))
+            if samples[proc]['label']== 'background':
+                hbkg_sel.Add(h_sel)
+                hbkg_all.Add(h_all)
+            if samples[proc]['label']== 'signal':
+                hsig_sel.Add(h_sel)
+                hsig_all.Add(h_all)
+            if samples[proc]['label']== 'spectator':
+                hspc_sel.Add(h_sel)
+                hspc_all.Add(h_all)
+                
+        # -------------------------------------------------------------------
+        logger.info('\hline')
+        logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % ('BKG ',
+                                                         hbkg_all.Integral(),
+                                                         hbkg_sel.Integral(),
+                                                         100*float(hbkg_sel.Integral())/float(hbkg_all.Integral())))
+        logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % ('SIG',
+                                                         hsig_all.Integral(),
+                                                         hsig_sel.Integral(),
+                                                         100*float(hsig_sel.Integral())/float(hsig_all.Integral())))
+        logger.info('\hline')
+        logger.info('S/\sqrt(S+B) = %12.3f' % (
+            float(hsig_sel.Integral())/math.sqrt(hsig_sel.Integral()+hbkg_sel.Integral()) ))
+        logger.info('\hline')
+        
 if __name__ == "__main__":
     #for sam in ['gjet','qcd','dipho','ggh_125','Data','qcd+dipho+gjet']:
     #i in range(2,5):
@@ -329,15 +445,15 @@ if __name__ == "__main__":
     ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
     read_plotcard('config/plotcard_data_vbf.json')
     book_trees()
-    ROOT.gROOT.SetBatch(ROOT.kTRUE)
+    #ROOT.gROOT.SetBatch(ROOT.kTRUE)
     
     print_cutflow()
     
     #cat3 = GetBondaryBin('VBF', '','signif',-1,cat2 ,2)
     #cat3 = GetBondaryBin('VBF', '','signif',-1,cat2 ,2)
-    cat1 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=1     ,catidx=0)
-    cat2 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=cat1[0]  ,catidx=1)
-    cat3 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=cat2[0]  ,catidx=2)
+    #cat1 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass<127', fom='signif2', xmin=-1, xmax=1        ,catidx=0)
+    #cat2 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass<127', fom='signif2', xmin=-1, xmax=cat1[0]  ,catidx=1)
+    #cat3 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass<127', fom='signif2', xmin=-1, xmax=cat2[0]  ,catidx=2)
     #dijet_roc_ggf = draw_ROC(var   =  'dijet_BDT'     ,
     #                         label =  'dijetVBFMVA_ggf' ,
     #                         bkg   = ['ggf_m125'], categories=[])
@@ -345,16 +461,31 @@ if __name__ == "__main__":
     #dijet_roc_ggf = draw_ROC(var   =  'dijet_BDT'     ,
     #                         label =  'dijetVBFMVA_allbkg' ,
     #                         bkg   = ['gamgamjetbox','gamJet','qcd','ggf_m125'], categories=[])
+    #c = ROOT.TCanvas('c_Opt_'+label,'MVA',600,600)
+    #c.cd()
+    dijet_roc_ggf = draw_ROC(var       =  'combined_BDT'     ,
+                             label     =  'combined_with_cat' ,
+                             axistitle =  ';#varepsilon_{SM-bkg};#varepsilon_{VBF}',
+                             bkg       = ['gjet','qcd','dipho'],
+                             categories= [])
+                             #categories=[0.9449,0.5819])
+    
+    dijet_roc_ggf = draw_ROC(var       =  'combined_BDT'     ,
+                             label     =  'combined_with_cat_data' ,
+                             axistitle =  ';#varepsilon_{Data};#varepsilon_{VBF}',
+                             bkg       = ['Data'],
+                             categories=[])
+                             #categories=[0.9449,0.5819])
     
     
+    print_categories('combined_BDT', categories = [0.9449,0.5819])
     #label = 'VBFMVA_%s_rmscut_00%i'%(sam, i)
     ##label = 'VBFMVA_qcd'
     ##label = 'VBFMVA_ggf'
     ##label = 'VBFMVA_gamgamjetbox'
     #
     ##label = 'dijetMVA_sm'
-    #c = ROOT.TCanvas('c_Opt_'+label,'MVA',600,600)
-    #c.cd()
+    
     ##
     #legend  = ROOT.TLegend(0.55, 0.5,
     #                       (0.9 - ROOT.gStyle.GetPadRightMargin()),
@@ -390,7 +521,10 @@ if __name__ == "__main__":
     ##gmul.SetTitle(';#varepsilon_{#gamma#gamma};#varepsilon_{VBF}')
     ##gmul.SetTitle(';#varepsilon_{GGF};#varepsilon_{VBF}')
     ##gmul.SetTitle(';#varepsilon_{jet-jet};#varepsilon_{VBF}')
-    #
+
+    #dijet_roc_ggf.SetTitle(';#varepsilon_{GGF};#varepsilon_{VBF}')
+    #dijet_roc_ggf.Draw('AL')
+    
     #gmul.Draw('AL')
     #gmul.GetYaxis().SetRangeUser(0,1)
     #gmul.GetXaxis().SetRangeUser(0,1)
@@ -401,8 +535,8 @@ if __name__ == "__main__":
     #legend.Draw()
     ##draw_labels("dijet-MVA : Integral = %1.3f\\com-MVA : Integral = %1.3f" % (dijet_roc_ggf.Integral()+0.5,combi_roc_ggf.Integral()+0.5),"br",0.035)
     #draw_labels("dijet-MVA : Integral = %1.3f\\RMS( |#eta|>2.5 ) < 0.0%i"% (dijet_roc_ggf.Integral()+0.5,i),"br",0.035)
-    #c.SaveAs('plots/rocky_' + label + '.pdf')
-    #c.SaveAs('plots/rocky_' + label + '.png')
+    #c.SaveAs('plots/roc_' + label + '.pdf')
+    #c.SaveAs('plots/roc_' + label + '.png')
     #raw_input()
             #
             #c.cd()

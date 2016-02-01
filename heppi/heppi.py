@@ -185,8 +185,14 @@ def makeRatioCanvas(name='_ratio_'):
     ROOT.SetOwnership(padup,0)
     ROOT.SetOwnership(paddw,0)
     return Rcanv
-
-
+#---------------------------------------------------------
+def draw_categories(categories = [], miny=0, maxy=100):
+    for cat in categories:
+        line = ROOT.TLine()
+        line.SetLineColor(129)
+        line.SetLineStyle(7)
+        line.SetLineWidth(2)
+        line.DrawLine(cat,miny,cat,maxy)
 #---------------------------------------------------------
 def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
                         title="", systematic_only=True, combine_with_systematic=True):
@@ -649,6 +655,9 @@ def draw_instack(variable, label='VBF', select=''):
         legend.AddEntry(herrstat, "Stat Uncert", "f" )
         # cosmetics
     draw_cut_line(htmp,variable)
+    draw_categories(variables[varname].get('boudaries',[]),
+                    miny=htmp.GetMinimum(),
+                    maxy=htmp.GetMaximum())
     ROOT.gPad.RedrawAxis();
     # this is for the legend
     legend.SetTextAlign( 12 )
@@ -696,6 +705,9 @@ def draw_instack(variable, label='VBF', select=''):
     line.SetLineColor(4)
     line.SetLineStyle(7)
     line.Draw()
+    draw_categories(variables[varname].get('boudaries',[]),
+                    miny=htmp.GetMinimum(),
+                    maxy=htmp.GetMaximum())
     ROOT.SetOwnership(line,0)
     ratioHist.Draw('same')
     c.cd()
