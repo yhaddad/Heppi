@@ -65,8 +65,9 @@ if __name__ == "__main__":
     heppi.allloghist    = opt.allloghist
     heppi.sampledir     = opt.sampledir
     heppi.cut_card      = opt.cut_card
-    heppi.title_on_plot = opt.title_on_plot.split(',')
-    
+    if len(opt.title_on_plot) != 0:
+        heppi.title_on_plot = opt.title_on_plot.split(',')
+        
     log_level = logging.WARNING # default
     if opt.verbose == 1:
         log_level = logging.INFO

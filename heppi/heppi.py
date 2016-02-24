@@ -81,6 +81,12 @@ def read_plotcard(plotcard, cut_card=''):
                     config[key][var]['hist']))
                 variables[varname] = config[key][var]
                 variables[varname].update({"formula":formula})
+                if variables[varname].get('unit','')=='':
+                    s = variables[varname].get('title','')
+                    if '(' or '[' or ')' or ']' in s:
+                        variables[varname].update({'unit':(find_between( s, "(", ")" ) or
+                                                           find_between( s, "[", "]" ))})
+                    
         if 'processes' in key:
             logger.info(' ---- book processes ----------')
             for proc in config[key]:
@@ -128,7 +134,14 @@ def print_cutflow():
             logger.info('-- %20s: %12s' % (var, variables[var]['cut'] ))
     
     logger.info(' ------------------------------')
-
+#---------------------------------------------------------
+def find_between( s, first, last ):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 #---------------------------------------------------------
 def draw_cut_line(hist, variable=''):
     if variables[variable].get('cut','')!='':
@@ -164,18 +177,36 @@ def draw_labels(label):
         t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
                        (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
         shift = shift + 0.04
+
 #---------------------------------------------------------
-def draw_cms_headlabel(label_left ='CMS Preliminary',
-                       label_right='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
-    t = ROOT.TLatex()
-    t.SetTextAlign(12);
-    t.SetTextFont (42);
-    t.SetTextSize (0.035);
-    shift = 0;
-    t.DrawLatexNDC(ROOT.gStyle.GetPadLeftMargin(),
-                   1.028 - ROOT.gStyle.GetPadTopMargin(),label_left)
-    t.DrawLatexNDC(0.55,
-                   1.028 - ROOT.gStyle.GetPadTopMargin(),label_right)
+def fformat(num):
+    """
+    Formating the float number to string
+    1.0     --> ''
+    2.0     --> 2
+    0.21    --> 0.21
+    0.32112 --> 0.32
+    """
+    if num != 1:
+        s = ('%g'% (num)).rstrip('0').rstrip('.')
+    else:
+        s = ''
+    return s#('%1.2f' % float(s) ) 
+#---------------------------------------------------------
+def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
+                       label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
+    tex_left  = ROOT.TLatex()
+    tex_left.SetTextAlign (11);
+    tex_left.SetTextFont  (42);
+    tex_left.SetTextSize  (0.036);
+    tex_right = ROOT.TLatex()
+    tex_right.SetTextAlign(31);
+    tex_right.SetTextFont (42);
+    tex_right.SetTextSize (0.036);
+    tex_left.DrawLatexNDC (0.14,
+                           1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
+    tex_right.DrawLatexNDC(1-0.05,
+                           1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
 #---------------------------------------------------------
 def makeRatioCanvas(name='_ratio_'):
     """returns a divided canvas for ratios"""
@@ -442,7 +473,10 @@ def book_trees(select = ''):
     bkg_chain  = ROOT.TChain('bkg_data')
     
     for proc in ordsam:
-        chain      = ROOT.TChain(treename.replace('*',proc))
+        chainName = treename.replace('*',proc)
+        if ordsam[proc].get("tree","") != "":
+            chainName =  treename.replace('*',ordsam[proc].get("tree",""))
+        chain      = ROOT.TChain(chainName)
         chainSysUp = []
         chainSysDw = []
         if type(samples[proc].get('name')) == type([]):
@@ -494,10 +528,10 @@ def book_trees(select = ''):
         samples[proc].update({'_root_tree_'       : chain})
         samples[proc].update({'_root_tree_sysDw_' : chainSysDw})
         samples[proc].update({'_root_tree_sysUp_' : chainSysUp})
-
+        
     logger.info('-- sig_chain.GetEntries() = %i' % sig_chain.GetEntries())
     logger.info('-- bkg_chain.GetEntries() = %i' % bkg_chain.GetEntries())
-    
+    return (sig_chain, bkg_chain)
         
         
 
@@ -520,11 +554,18 @@ def draw_instack(variable, label='VBF', select=''):
     histfilename = ('histogram_stack_' +
                     varname + '_' + label+ '_'
                     + selection['name'])
-    legend  = ROOT.TLegend(0.45, 0.72,
-                           (1 - ROOT.gStyle.GetPadRightMargin()),
-                           (0.96 - ROOT.gStyle.GetPadTopMargin()))
-    legend.SetNColumns(2)
-    legend.SetColumnSeparation(0)
+    
+    legend  = None
+    if True:
+        legend  = ROOT.TLegend(0.45, 0.72,
+                               (1 - ROOT.gStyle.GetPadRightMargin()),
+                               (0.96 - ROOT.gStyle.GetPadTopMargin()))
+        legend.SetNColumns(2)
+        legend.SetColumnSeparation(0)
+    else:
+        legend  = ROOT.TLegend(0.6, 0.62,
+                               (1 - ROOT.gStyle.GetPadRightMargin()),
+                               (0.96 - ROOT.gStyle.GetPadTopMargin()))
 
     cutflow = variable_cutflow(variable,'')
     if len(cutflow)!=0:
@@ -660,7 +701,9 @@ def draw_instack(variable, label='VBF', select=''):
     c.cd(1)
     htmp   = histos[0].Clone('__htmp__')
     bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variables[variable]['hist'])]
-    htmp.SetTitle(';' + variables[variable]['title']+(';events/(%1.2f)'% ((bounds[2]-bounds[1])/bounds[0])))
+    htmp.SetTitle(';' + variables[variable]['title']
+                  + (';events/( %s %s )'% ( fformat((bounds[2]-bounds[1])/bounds[0]),
+                                            variables[variable].get('unit',''))    ))
     htmp.Reset()
     if  options.allloghist or variables[variable]['log']:
         ymin = 0.01 - 0.003
@@ -722,6 +765,7 @@ def draw_instack(variable, label='VBF', select=''):
     customizeHisto(errorHist)
     errorHist.Draw('E2')
     ratioHist = None
+    sig_and_bkg_ratio = []
     if hdata==None:
         ratioHist = hstack.GetStack().Last().Clone('_temp_')
         ratioHist.Clear()
@@ -730,12 +774,36 @@ def draw_instack(variable, label='VBF', select=''):
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
         ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
+        if False:
+            for sig in histos:
+                sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
+                sig_and_bkg.Add(sig)
+                sig_and_bkg_ratio_ = makeRatio(sig_and_bkg,hstack.GetStack().Last())
+                ROOT.SetOwnership(sig_and_bkg_ratio_,0)
+                sig_and_bkg_ratio_.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
+                sig_and_bkg_ratio_.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
+                sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
+                sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
+                sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
     else:
         ratioHist = makeRatio(hdata,hstack.GetStack().Last())
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
         ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
-        
+        if False:
+            for sig in histos:
+                sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
+                sig_and_bkg.Add(sig)
+                sig_and_bkg_ratio_ = makeRatio(sig_and_bkg,hstack.GetStack().Last())
+                ROOT.SetOwnership(sig_and_bkg_ratio_,0)
+                sig_and_bkg_ratio_.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
+                sig_and_bkg_ratio_.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
+                sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
+                sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
+                sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
+                
+    for o in sig_and_bkg_ratio:
+        o.Draw('same,hist')
     draw_cut_line(errorHist,variable)
     line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
     line.SetLineColor(4)
