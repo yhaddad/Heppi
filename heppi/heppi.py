@@ -649,8 +649,8 @@ def draw_instack(variable, label='VBF', select=''):
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
                     _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
-                                                                 treeinfo.get('lumi'   ,1.0),
-                                                                 samples[proc].get('kfactor',1.0)))
+                                                                     treeinfo.get('lumi'   ,1.0),
+                                                                     samples[proc].get('kfactor',1.0)))
                 )
                 histDw = ROOT.gDirectory.Get('h_DwSys_' + sysname +'_'+ varname )
                 histDw.SetDirectory(0)

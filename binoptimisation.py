@@ -335,9 +335,9 @@ if __name__ == "__main__":
     
     #cat3 = GetBondaryBin('VBF', '','signif',-1,cat2 ,2)
     #cat3 = GetBondaryBin('VBF', '','signif',-1,cat2 ,2)
-    cat1 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=1     ,catidx=0)
-    cat2 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=cat1[0]  ,catidx=1)
-    cat3 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>123 && dipho_mass>127', fom='signif2', xmin=-1, xmax=cat2[0]  ,catidx=2)
+    cat1 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>115 && dipho_mass>135', fom='signif2', xmin=-1, xmax=1        ,catidx=0)
+    cat2 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>115 && dipho_mass>135', fom='signif2', xmin=-1, xmax=cat1[0]  ,catidx=1)
+    cat3 = GetBondaryBin('combined_BDT', 'combined_BDT_cat', select='dipho_mass>115 && dipho_mass>135', fom='signif2', xmin=-1, xmax=cat2[0]  ,catidx=2)
     #dijet_roc_ggf = draw_ROC(var   =  'dijet_BDT'     ,
     #                         label =  'dijetVBFMVA_ggf' ,
     #                         bkg   = ['ggf_m125'], categories=[])
