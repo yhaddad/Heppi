@@ -23,13 +23,14 @@ requirements = [
 test_requirements = []
 
 setup(
-    name             = 'heppi',
-    version          = '0.1.0',
+    name             = 'Heppi',
+    version          = '0.1',
     description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
     author_email     = 'yhaddad@cern.ch',
-    url              = 'https://github.com/yhaddad/heppi',
+    url              = 'https://github.com/yhaddad/Heppi',
+    download_url     = 'https://github.com/yhaddad/Heppi/tarball/0.1',
     packages = [
         'heppi',
     ],
@@ -46,7 +47,7 @@ setup(
     install_requires    = requirements,
     license     = "ISCL",
     zip_safe    = False,
-    keywords    = 'heppi',
+    keywords    = ['Heppi','heppi'],
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

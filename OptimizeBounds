@@ -1,0 +1,31 @@
+#!/user/bin/python
+
+import ROOT  # needed
+from   heppi import heppi
+import os, sys, glob, sys, json, re, logging, collections, math, numpy 
+from   termcolor    import colored
+from   progressbar  import ProgressBar, Bar, Percentage, ETA
+from   collections  import OrderedDict
+
+
+
+def optimise(trees):
+    (sig_tree, bkg_tree) = trees
+    
+    init_bouds = [0.0, 0.5]
+
+    
+    
+if __name__ == "__main__":
+    i = 3
+    heppi.sampledir   = '../data/training/rms003/merged'
+    ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+    ROOT.gROOT.ProcessLine(".L  macros/kernelH1.cc+")
+    
+    heppi.read_plotcard('config/plotcard_data_vbf.json')
+    heppi.print_cutflow()
+    (tsig, tbkg) = heppi.book_trees('')
+    heppi.test_tree_book()
+    
+    trees = (tsig.GetTree(), tbkg.GetTree())
+    ws    = optimise(trees)
