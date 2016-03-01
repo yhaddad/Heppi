@@ -21,8 +21,9 @@ except ImportError:
         please install termcolor and jsmin, and try again.
         Suggestion: pip install --user jsmin termcolor progressbar
         """)
-import os, sys, glob, sys, json, re, logging, collections, math, parser
-from   collections        import OrderedDict
+import  os, sys, glob, sys, json, re, logging, collections, math, parser
+from    collections        import OrderedDict
+import  settings #as settings 
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
@@ -83,10 +84,9 @@ def read_plotcard(plotcard, cut_card=''):
                 variables[varname].update({"formula":formula})
                 if variables[varname].get('unit','')=='':
                     s = variables[varname].get('title','')
-                    if '(' or '[' or ')' or ']' in s:
-                        variables[varname].update({'unit':(find_between( s, "(", ")" ) or
-                                                           find_between( s, "[", "]" ))})
-                    
+                    if '[' and ']' in s:
+                        variables[varname].update({'unit':(find_between( s, "[", "]" ))})
+                        
         if 'processes' in key:
             logger.info(' ---- book processes ----------')
             for proc in config[key]:
@@ -154,8 +154,8 @@ def draw_cut_line(hist, variable=''):
                 stmp = cut.split('<')
             xcut = eval(parser.expr(stmp[1]).compile())
             line = ROOT.TLine()
-            line.SetLineColor(134)
-            line.SetLineStyle(7)
+            line.SetLineColor(settings.cut_line_color)
+            line.SetLineStyle(settings.cut_line_style)
             if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
                 line.DrawLine(xcut,ymin,xcut,ymax)
 
@@ -163,8 +163,8 @@ def draw_cut_line(hist, variable=''):
 def draw_labels(label):
     t = ROOT.TLatex()
     t.SetTextAlign(12)
-    t.SetTextFont (43)
-    t.SetTextSize (18)
+    t.SetTextFont (settings.text_font)
+    t.SetTextSize (settings.text_size)
     shift = 0
     lines = []
     if type(label) == type(''):
@@ -176,7 +176,7 @@ def draw_labels(label):
     for s in lines:
         t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
                        (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
-        shift = shift + 0.04
+        shift = shift + settings.label_shift
 
 #---------------------------------------------------------
 def fformat(num):
@@ -237,7 +237,8 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
     """This function returns a function with the statistical precision in each bin"""
     statPrecision = myHisto.Clone('_ratioErrors_')
     statPrecision.SetTitle(title)
-    statPrecision.SetFillColorAlpha(2, 0.5)
+    statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
+    statPrecision.SetFillStyle(settings.ratio_error_band_style)
     statPrecision.SetMarkerColorAlpha(0,0)
     
     if len(histUpSys)==0 or len(histDwSys)==0 :
@@ -281,7 +282,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
                 statPrecision.SetBinContent(bin,1);
                 statPrecision.SetBinError  (bin,0);
                 
-    range_ = globalOptions.get("ratio_range",[0,2.1])
+    range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
     statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
     return statPrecision
 
@@ -293,7 +294,8 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
     """
     statPrecision = myHisto.Clone('_statErrors_')
     ROOT.SetOwnership(statPrecision,0)
-    statPrecision.SetFillColorAlpha(2, 0.5)
+    statPrecision.SetFillColorAlpha(settings.error_band_color,settings.error_band_opacity)
+    statPrecision.SetFillStyle(settings.error_band_style)
     statPrecision.SetMarkerColorAlpha(0,0)
 
     #print '-->', histUpSys
@@ -332,7 +334,7 @@ def makeRatioPlotCanvas(name=''):
     returns a divided canvas for ratios
     
     """
-    canv  = ROOT.TCanvas("c_" + name, name,  700, 700+150)
+    canv  = ROOT.TCanvas("c_" + name, name,settings.canvas_width,settings.canvas_height)
     canv.cd()
     #padup = ROOT.TPad("padup", "padup", 0, 0.4, 1, 1.0)
     padup = ROOT.TPad("padup", "padup", 0, 0.3, 1, 1.0)
@@ -358,10 +360,9 @@ def makeRatioPlotCanvas(name=''):
     ROOT.SetOwnership(paddw,0)
     return canv
 #---------------------------------------------------------
-def makeRatio(hist1,hist2,ymax=2.1,ymin=0,norm=False):
+def makeRatio(hist1,hist2,ymax=2.1,ymin=0,norm=False, isdata =False):
     """returns the ratio plot hist2/hist1
     if one of the histograms is a stack put it in as argument 2!"""
-
     if norm:
         try:
             hist1.Scale(1/hist1.Integral())
@@ -369,24 +370,20 @@ def makeRatio(hist1,hist2,ymax=2.1,ymin=0,norm=False):
         except(ZeroDivisionError):
             pass
     retH = hist1.Clone()
-    try:
-        retH.Divide(hist2)
-    except(TypeError):
-        #this is the error you get if hist2 is a stack
-        hList = hist2.GetHists()
-        sumHist = hist1.Clone("sumHist")
-        sumHist.Reset()
-        for h in hList:
-            sumHist.Add(h)
-        retH.Divide(sumHist)
-    except(AttributeError):
-        #this is the error you get if hist1 is a stack
-        logger.error("Did you use a stack as argument 1? please use stack as argument 2!")
-        raise AttributeError
-    if ymax or ymin:
-        retH.GetYaxis().SetRangeUser(ymin,ymax)
-        retH.SetLineColor(hist1.GetLineColor())
-        retH.SetMarkerColor(hist1.GetMarkerColor())
+    retH.Divide(hist2)
+    if isdata:
+        for ibin in range(hist2.GetNbinsX()+1):
+            ymc  = hist2.GetBinContent(ibin);
+            stat = hist1.GetBinError  (ibin);
+            #print "ibin ", ibin , " :: ymc ", ymc, " :: data error ", stat, " :: err/ymc ", stat/ymc
+            if (ymc>0):
+                retH.SetBinError  (ibin,stat/ymc);
+            else:
+                retH.SetBinError  (ibin,0);
+    #if ymax or ymin:
+    #    retH.GetYaxis().SetRangeUser(ymin,ymax)
+    #    retH.SetLineColor(hist1.GetLineColor())
+    #    retH.SetMarkerColor(hist1.GetMarkerColor())
     ROOT.SetOwnership(retH,0)
     return retH
 #---------------------------------------------------------
@@ -556,7 +553,7 @@ def draw_instack(variable, label='VBF', select=''):
                     + selection['name'])
     
     legend  = None
-    if True:
+    if settings.two_colomn_legend:
         legend  = ROOT.TLegend(0.45, 0.72,
                                (1 - ROOT.gStyle.GetPadRightMargin()),
                                (0.96 - ROOT.gStyle.GetPadTopMargin()))
@@ -702,7 +699,7 @@ def draw_instack(variable, label='VBF', select=''):
     htmp   = histos[0].Clone('__htmp__')
     bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variables[variable]['hist'])]
     htmp.SetTitle(';' + variables[variable]['title']
-                  + (';events/( %s %s )'% ( fformat((bounds[2]-bounds[1])/bounds[0]),
+                  + (';events %s %s '% ( fformat((bounds[2]-bounds[1])/bounds[0]),
                                             variables[variable].get('unit',''))    ))
     htmp.Reset()
     if  options.allloghist or variables[variable]['log']:
@@ -774,7 +771,7 @@ def draw_instack(variable, label='VBF', select=''):
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
         ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
-        if False:
+        if settings.ratio_draw_signal:
             for sig in histos:
                 sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
                 sig_and_bkg.Add(sig)
@@ -786,11 +783,11 @@ def draw_instack(variable, label='VBF', select=''):
                 sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
                 sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
     else:
-        ratioHist = makeRatio(hdata,hstack.GetStack().Last())
+        ratioHist = makeRatio(hist1 = hdata, hist2 = hstack.GetStack().Last(), isdata = True)
         ROOT.SetOwnership(ratioHist,0)
         ratioHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
         ratioHist.GetYaxis().SetTitle(htmp.GetYaxis().GetTitle())
-        if False:
+        if settings.ratio_draw_signal:
             for sig in histos:
                 sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
                 sig_and_bkg.Add(sig)
@@ -814,6 +811,7 @@ def draw_instack(variable, label='VBF', select=''):
                     maxy=htmp.GetMaximum())
     ROOT.SetOwnership(line,0)
     ratioHist.Draw('same')
+
     c.cd()
     
     if variables[variable]['norm']==True or allnormhist==True:

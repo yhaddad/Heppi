@@ -82,12 +82,11 @@ AutoDict_*
 *.png
 *.pdf
 
-
 # some directories
 .ipynb_checkpoints*
 Untitled*
 data*
-config/*vbf*
+plotcards/*
 *test*
 *text*
 
