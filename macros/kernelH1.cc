@@ -71,25 +71,22 @@ class zfom
 {
 private:
   //! private declarations
-  TF1 * _function;
+  TF1    * _fsig;
+  TF1    * _fbkg;
+  int      _ncat;
 public:
-  zfom(TF1 *function) : _function(function)
+  zfom(TF1* sig, TF1* bkg, int ncat=2): _fsig(sig), _fbkg(bkg), _ncat(ncat)
   {/*_function = (TF1*)function->Clone();*/}
   
-  double operator () (double * x) const 
+  double Eval(const double * x) const 
   {
-    if (x[0] < x[1]){
-      return _function->Integral(x[0],x[1]);
-    }else{
-      return _function->Integral(x[1],x[0]);
-    }
-  }
-  double Eval (double *x) const {
-    if (x[0] < x[1]){
-      return _function->Integral(x[0],x[1]);
-    }else{
-      return _function->Integral(x[1],x[0]);
-    }
+    double z = (_fsig->Integral(-1,x[0]) * _fsig->Integral(-1,x[0]))/_fbkg->Integral(-1,x[0]);
+    for (int i = 0; i < _ncat-2; i++ )
+      {
+	z += (_fsig->Integral(x[i],x[i+1]) * _fsig->Integral(x[i],x[i+1]))/_fbkg->Integral(x[i],x[i+1]);
+      }
+    z += (_fsig->Integral(x[_ncat-1],1) * _fsig->Integral(x[_ncat-1],1))/_fbkg->Integral(x[_ncat-1],1);
+    return z;
   }
 };
 
@@ -97,9 +94,8 @@ class optimizer
 {
   
 private:
-  //! private declarations
   ROOT::Math::Minimizer * _min;
-  
+
   TF1    * _fsig;
   TF1    * _fbkg;
 public:
@@ -110,16 +106,8 @@ public:
     _min->SetMaxIterations(10000);  // for GSL
     _min->SetTolerance(0.001);
     _min->SetPrintLevel(1);
-    ROOT::Math::Functor f([&](double*x){
-	double z = (_fsig->Integral(-1,x[0]) * _fsig->Integral(-1,x[0]))/_fbkg->Integral(-1,x[0]);
-	for (int i = 0; i < ncat-2; i++ )
-	  {
-	    z += (_fsig->Integral(x[i],x[i+1]) * _fsig->Integral(x[i],x[i+1]))/_fbkg->Integral(x[i],x[i+1]);
-	  }
-	z += (_fsig->Integral(x[ncat-1],1) * _fsig->Integral(x[ncat-1],1))/_fbkg->Integral(x[ncat-1],1);
-	return z;
-      },
-      ncat);
+    zfom myfom(_fsig, _fbkg, ncat);
+    ROOT::Math::Functor f(  &myfom, &zfom::Eval, ncat);
     std::vector<double> initbounds(ncat);
     std::vector<double> variable  (ncat);
     double minbound = -1;
@@ -133,14 +121,14 @@ public:
     _min->SetFunction(f);
     for (int i = 0; i < ncat-2; i++ )
       {
-	_min->SetVariable(i,Form("bound_%i",i),variable[i], step[i]);
+	_min->SetVariable(i,Form("bound_%i",i),variable[i], initbounds[i]);
       }
     _min->Minimize();
     const double *xs = _min->X();
     std::cout << "Minimum: f(" ;
     for (int i = 0; i < ncat-2; i++ )
       std::cout << xs[i] << ",";
-    std::cout<< _min->MinValue()  << std::endl;
+    std::cout<< ") :: " <<  _min->MinValue()  << std::endl;
   }
   virtual ~optimizer();
 };
