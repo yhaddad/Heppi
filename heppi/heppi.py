@@ -61,7 +61,8 @@ def read_plotcard(plotcard, cut_card=''):
     global globalOptions
     config = None
     with open(plotcard) as f:
-        config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
+        #config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
+        config = json.loads(jsmin(f.read()))
     if cut_card != '':
         logger.info(' ---- cut card is specified ----')
         logger.info(' -- %20s ' % ( cut_card )        )
@@ -257,46 +258,35 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
             
             valup = {}
             valdw = {}
-            #vals  = [y]
-            #print "--> Nm[",ibin,"]::  (", y ,")"
             for sys in histUpSys:
                 val   = histUpSys[sys].GetBinContent(ibin)
-                #vals += [val]
                 valup[sys] = val
-                #print "--> Up[",ibin,"]:: ", sys, " (", val ,")"
             for sys in histDwSys:
                 val   = histDwSys[sys].GetBinContent(ibin)
-                #vals += [val]
                 valdw[sys] = val
-                #print "--> Dw[",ibin,"]:: ", sys, " (", val ,")"
                 
-            #largest_val  = max(vals)
-            #smallest_val = min(vals)
-
             systError2   = 0
             for up in valup:
                 dw = up.replace("Up","Down")
                 e = 0.5*(valup[up] - valdw[dw])
-                #print "--> error[",ibin,"]:: ", up, " (", e ,")"
                 systError2 += e*e 
                             
             error  = 0
             if combine_with_systematic:
-                #math.sqrt(syst*syst + stat*stat) 
                 error = math.sqrt(systError2 + stat*stat)
             else:
-                #error = 0.5*(largest_val - smallest_val)
                 error = math.sqrt(systError2)
-            #print "--> stat error[",ibin,"]:: (", stat ,")"
-            #print "--> syst error[",ibin,"]:: (", math.sqrt(systError2) ,")"
-            #print "--> combined error[",ibin,"]:: (", error ,")"
+
             if (y>0):
+                systPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
+                systPrecision.SetBinError  (ibin,   error/y );
                 statPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
-                statPrecision.SetBinError  (ibin,   error/y );
-                
+                statPrecision.SetBinError  (ibin,   stat/y );
             else:
                 statPrecision.SetBinContent(ibin,   1);
                 statPrecision.SetBinError  (ibin,   0);
+                systPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
+                systPrecision.SetBinError  (ibin,   0);
     else:
         for bin in range(myHisto.GetNbinsX()+1):
             y   = statPrecision.GetBinContent(bin);
@@ -304,13 +294,18 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
             if (y>0):
                 statPrecision.SetBinContent(bin,1);
                 statPrecision.SetBinError  (bin,err/y);
+                systPrecision.SetBinContent(bin,1);
+                systPrecision.SetBinError  (bin,err/y);
             else:
                 statPrecision.SetBinContent(bin,1);
                 statPrecision.SetBinError  (bin,0);
+                systPrecision.SetBinContent(bin,1);
+                systPrecision.SetBinError  (bin,0);
                 
     range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
     statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
-    return statPrecision
+    systPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
+    return (statPrecision, systPrecision)
 
 #---------------------------------------------------------
 def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, combine_with_systematic=True):
@@ -323,36 +318,54 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
     statPrecision.SetFillColorAlpha(settings.error_band_color,settings.error_band_opacity)
     statPrecision.SetFillStyle(settings.error_band_style)
     statPrecision.SetMarkerColorAlpha(0,0)
+    
+    systPrecision = myHisto.Clone('_systErrors_')
+    ROOT.SetOwnership(systPrecision,0)
+    systPrecision.SetFillColorAlpha(settings.syst_error_band_color,settings.syst_error_band_opacity)
+    systPrecision.SetFillStyle(settings.syst_error_band_style)
+    systPrecision.SetMarkerColorAlpha(0,0)
 
-    #print '-->', histUpSys
-    #print '-->', histDwSys
-        
+    
     if combine_with_systematic : systematic_only = True
     if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
             
-            vals = [y]
+            valup = {}
+            valdw = {}
             for sys in histUpSys:
-                val = histUpSys[sys].GetBinContent(ibin)
-                vals += [val]
+                val   = histUpSys[sys].GetBinContent(ibin)
+                valup[sys] = val
             for sys in histDwSys:
-                val= histDwSys[sys].GetBinContent(ibin)
-                vals += [val]
-            largest_val  = max(vals)
-            smallest_val = min(vals)
-            
+                val   = histDwSys[sys].GetBinContent(ibin)
+                valdw[sys] = val
+                
+            systError2   = 0
+            for up in valup:
+                dw = up.replace("Up","Down")
+                e = 0.5*(valup[up] - valdw[dw])
+                systError2 += e*e 
+                            
             error  = 0
             if combine_with_systematic:
-                syst  = 0.5*(largest_val - smallest_val)
-                error = math.sqrt(syst*syst + stat*stat) 
+                error = math.sqrt(systError2 + stat*stat)
             else:
-                error = 0.5*(largest_val - smallest_val)
-                
-            statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
-            statPrecision.SetBinError  (ibin,   error);      
-    return statPrecision
+                error = math.sqrt(systError2)
+
+            if (y>0):
+                systPrecision.SetBinContent(ibin,   y)#0.5*(largest_val + smallest_val)/y);
+                systPrecision.SetBinError  (ibin,   error );
+                statPrecision.SetBinContent(ibin,   y)#0.5*(largest_val + smallest_val)/y);
+                statPrecision.SetBinError  (ibin,   stat );
+            else:
+                statPrecision.SetBinContent(ibin,   0);
+                statPrecision.SetBinError  (ibin,   0);
+                systPrecision.SetBinContent(ibin,   0)#0.5*(largest_val + smallest_val)/y);
+                systPrecision.SetBinError  (ibin,   0);
+
+            # ------
+    return (statPrecision, systPrecision)
 
 #---------------------------------------------------------
 def makeRatioPlotCanvas(name=''):
@@ -422,8 +435,8 @@ def DataMCratio(histMC,histData,
                 norm=False,
                 ratioMin=0.7,
                 ratioMax=1.3):
-                #ratioMin=0.3,
-                #ratioMax=1.7):
+    #ratioMin=0.3,
+    #ratioMax=1.7):
     """Takes two histograms as inputs and returns a canvas with a ratio plot of the two.
     The two optional arguments are for the x Axis and y Axis titles"""
     
@@ -457,12 +470,14 @@ def DataMCratio(histMC,histData,
     c.cd()
     c.cd(2)
     
-    errorHist = MakeStatProgression(histMC,title="")
+    (errorHist,systHist) = MakeStatProgression(histMC,title="")
     ROOT.SetOwnership(errorHist,0)
+    ROOT.SetOwnership(systHist ,0)
     errorHist.GetXaxis().SetTitle(xTitle)
     errorHist.GetYaxis().SetTitle(yTitle)
+    #
     errorHist.Draw('E2')
-    
+    sysrHist.Draw('E2,same')
     ratioHist = makeRatio(histData,histMC,ymax= ratioMax,ymin=ratioMin,norm=norm)
     ROOT.SetOwnership(ratioHist,0)
     ratioHist.GetXaxis().SetTitle(xTitle)
@@ -742,8 +757,10 @@ def draw_instack(variable, label='VBF', select=''):
     customizeHisto(htmp)
     htmp.Draw('')
     hstack.Draw('hist,same')
-    herrstat = drawStatErrorBand(hstack.GetStack().Last(), histDwSys, histUpSys)
+    (herrstat, herrsyst) = drawStatErrorBand(hstack.GetStack().Last(), histDwSys, histUpSys)
+    herrsyst.Draw('E2,same')
     herrstat.Draw('E2,same')
+    
     hdata = None
     for h in histos:
         if 'data' not in h.GetName():
@@ -753,7 +770,8 @@ def draw_instack(variable, label='VBF', select=''):
             hdata = h
 
     if len(histUpSys)>0 and len(histDwSys)>0:
-        legend.AddEntry(herrstat, "Stat #oplus Syst", "f" )
+        legend.AddEntry(herrstat, "Stat", "f" )
+        legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
     else:
         legend.AddEntry(herrstat, "Stat Uncert", "f" )
         # cosmetics
@@ -781,13 +799,20 @@ def draw_instack(variable, label='VBF', select=''):
     
     c.cd()
     c.cd(2)
-    errorHist = MakeStatProgression(hstack.GetStack().Last(),histDwSys, histUpSys)
+    (errorHist,systHist) = MakeStatProgression(hstack.GetStack().Last(),histDwSys, histUpSys)
     ROOT.SetOwnership(errorHist,0)
+    ROOT.SetOwnership(systHist ,0)
     errorHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
     errorHist.GetYaxis().SetTitle('Data/MC')
     errorHist.GetYaxis().CenterTitle(True)
+    systHist.GetXaxis().SetTitle(htmp.GetXaxis().GetTitle())
+    systHist.GetYaxis().SetTitle('Data/MC')
+    systHist.GetYaxis().CenterTitle(True)
     customizeHisto(errorHist)
+    #systHist.Draw('E2')
     errorHist.Draw('E2')
+    systHist.Draw('E2,same')
+    errorHist.Draw('E2,same')
     ratioHist = None
     sig_and_bkg_ratio = []
     if hdata==None:
