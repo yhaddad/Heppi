@@ -610,6 +610,7 @@ def draw_instack(variable, label='VBF', select=''):
     if len(cutflow)!=0:
         cutflow = variable_cutflow(variable,select)
 
+    print "--> ", cutflow
     hstack = ROOT.THStack('hs_' + varname,'')
     
     hstack.SetName('hs_'+ varname)
