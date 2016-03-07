@@ -12,7 +12,8 @@ install:
   - travis_retry pip install tox==2.1.1
   - python setup.py install
 # command to run tests, e.g. python setup.py test
-# script: tox
+script:
+  - echo "... TODO ..."
 
 # After you create the Github repo and add it to Travis, run the
 # travis_pypi_setup.py script to finish PyPI deployment setup
