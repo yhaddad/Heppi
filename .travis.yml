@@ -4,28 +4,26 @@
 language: python
 
 env:
-  - TOXENV=py35
-  - TOXENV=py34
-  - TOXENV=py33
   - TOXENV=py27
-  - TOXENV=py26
-  - TOXENV=pypy
 
+sudo: required
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -U tox
-
+install:
+  - travis_retry pip install tox==2.1.1
+  - python setup.py install
 # command to run tests, e.g. python setup.py test
-script: tox
+script:
+  - echo "... TODO ..."
 
 # After you create the Github repo and add it to Travis, run the
 # travis_pypi_setup.py script to finish PyPI deployment setup
-deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: yhaddad
-  password:
-    secure: PLEASE_REPLACE_ME
-  on:
-    tags: true
-    repo: yhaddad/heppi
-    condition: $TOXENV == py27
+#deploy:
+#  provider: pypi
+#  distributions: sdist bdist_wheel
+#  user: yhaddad
+#  password:
+#    secure: PLEASE_REPLACE_ME
+#  on:
+#    tags: true
+#    repo: yhaddad/heppi
+#    condition: $TOXENV == py27
