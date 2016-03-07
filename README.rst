@@ -25,17 +25,17 @@ Produce a stacked plots
 
 * To run ``heepi`` plotmaker you have to run the script ``plot``
 * you can print the options of the script by typing ``.\plot --help``   
-* you have to combine the trees using ``rootmerge.py`` script
-* the commend I'm using is the follwing:
+* To plot all the variables in a given plot card you can simply run :
 .. code-block::
-    ./plot -s /dir/to/merged/trees --load plotcard.json --all
+   ./plot -s /dir/to/merged/trees --load plotcard.json --all
     
 * if you want to print one variable in the plotcard you can replace the option ``--all`` by ``--variable`` or just ``-v`` followed by the name of the variable.
 example : 
 .. code-block:: 
-    ./plot -s /dir/to/merged/trees --load plotcard.json -v var1
+   ./plot -s /dir/to/merged/trees --load plotcard.json -v var1
+* further options can be found by just typing ``plot --help``
 
-Write a valid plotcard ?
+How to write a valid plotcard ?
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Produce the plotcard using a processe.json files and input root file. 
