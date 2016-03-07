@@ -24,13 +24,13 @@ test_requirements = []
 
 setup(
     name             = 'Heppi',
-    version          = '0.2',
+    version          = '0.3',
     description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
     author_email     = 'yhaddad@cern.ch',
     url              = 'https://github.com/yhaddad/Heppi',
-    download_url     = 'https://github.com/yhaddad/Heppi/tarball/0.1',
+    download_url     = 'https://github.com/yhaddad/Heppi/tarball/0.3',
     packages = [
         'heppi',
     ],
