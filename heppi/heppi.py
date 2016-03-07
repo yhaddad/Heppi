@@ -23,241 +23,243 @@ except ImportError:
         """)
 import  os, sys, glob, sys, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
-import  settings #as settings 
+
+import  settings
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
 logger.setLevel(level=logging.DEBUG)
+class heppi():
+    def __init__(self, plotcard):
+        # 'application' code
+        self.samples     = collections.OrderedDict()
+        self.variables   = {}
+        self.rootfile    = {}
+        self.cutflow     = []
+        self.selection   = {}
+        self.plotlabels  = {}
+        
+        # delete me
+        self.sampledir   = './data/new' ## temp variable
+        self.treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
+        self.treesUpSys  = []
+        self.treesDwSys  = []
+        self.options     = None   
+        self.allnormhist = False
+        self.treeinfo      = {}
+        self.title_on_plot = []
+        self.globalOptions = {}
 
-# 'application' code
-samples     = collections.OrderedDict()
-variables   = {}
-rootfile    = {}
-cutflow     = [] ## save all the cuts
-selection   = {}
-plotlabels  = {}
-# delete me
-sampledir   = './data/new' ## temp variable
-treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
-treesUpSys  = []
-treesDwSys  = []
-#treename    = '*_13TeV_VBFDiJet'
-options     = None   
-allnormhist = False
-treeinfo      = {}
-title_on_plot = []
-globalOptions = {}
-# ---- plot card
-def read_plotcard(plotcard, cut_card=''):
-    global plotlabels
-    global selection
-    global variables
-    global samples
-    global treeinfo
-    global treesUpSys
-    global treesDwSys
-    global treename
-    global globalOptions
-    config = None
-    with open(plotcard) as f:
-        #config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
-        config = json.loads(jsmin(f.read()))
-    if cut_card != '':
-        logger.info(' ---- cut card is specified ----')
-        logger.info(' -- %20s ' % ( cut_card )        )
-        with open(cut_card) as f:
-            cuts   = json.loads(jsmin(f.read()))
-            config = merge(config, cuts)
-    for key in config:
-        if 'variables' in key:
-            logger.info(' ---- book variables ----------')
-            for var in config[key]:
-                formula = var
-                varname = var
-                if ':=' in var:
-                    varname  = var.split(':=')[0]
-                    formula  = var.split(':=')[1]
-                logger.info(' -- %20s  %15s' % (
-                    varname ,
-                    config[key][var]['hist']))
-                variables[varname] = config[key][var]
-                variables[varname].update({"formula":formula})
-                if variables[varname].get('unit','')=='':
-                    s = variables[varname].get('title','')
-                    if '[' and ']' in s:
-                        variables[varname].update({'unit':(find_between( s, "[", "]" ))})
+    # ---- plot card
+    def read_plotcard(self, plotcard, cut_card=''):
+        self.plotlabels
+        self.selection
+        self.variables
+        self.samples
+        self.treeinfo
+        self.treesUpSys
+        self.treesDwSys
+        self.treename
+        self.globalOptions
+        config = None
+        with open(plotcard) as f:
+            #config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
+            config = json.loads(jsmin(f.read()))
+        if cut_card != '':
+            logger.info(' ---- cut card is specified ----')
+            logger.info(' -- %20s ' % ( cut_card )        )
+            with open(cut_card) as f:
+                cuts   = json.loads(jsmin(f.read()))
+                config = merge(config, cuts)
+        for key in config:
+            if 'variables' in key:
+                logger.info(' ---- book variables ----------')
+                for var in config[key]:
+                    formula = var
+                    varname = var
+                    if ':=' in var:
+                        varname  = var.split(':=')[0]
+                        formula  = var.split(':=')[1]
+                    logger.info(' -- %20s  %15s' % (
+                        varname ,
+                        config[key][var]['hist']))
+                    variables[varname] = config[key][var]
+                    variables[varname].update({"formula":formula})
+                    if variables[varname].get('unit','')=='':
+                        s = variables[varname].get('title','')
+                        if '[' and ']' in s:
+                            variables[varname].update({'unit':(find_between( s, "[", "]" ))})
                         
-        if 'processes' in key:
-            logger.info(' ---- book processes ----------')
-            for proc in config[key]:
-                samples[proc] = config[key][proc]
-                logger.info(' -- %12s %12s' % (proc, samples[proc].get('cut','')))
-        if 'selection' in key:
-            logger.info(' ---- book selections ---------')
-            selection = config[key]
-            logger.info(' -- %12s' % (selection['title']))
-        if 'labels' in key:
-            plotlabels = config[key]
-            if title_on_plot != []:
-                plotlabels['name'] = title_on_plot
-        if 'tree' in key:
-            treeinfo = config[key]
-            treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
-        if 'systematics' in key:
-            logger.info(' ---- book selections ---------')
-            treesUpSys = config[key].get('UpTrees',[])
-            treesDwSys = config[key].get('DwTrees',[])
-            logger.info(' -- %12s' % ( treesUpSys) )
-            logger.info(' -- %12s' % ( treesUpSys) )
-        if 'globalOptions' in key:
-            logger.info(' ---- book selections ---------')
-            globalOptions = config[key]
+            if 'processes' in key:
+                logger.info(' ---- book processes ----------')
+                for proc in config[key]:
+                    samples[proc] = config[key][proc]
+                    logger.info(' -- %12s %12s' % (proc, samples[proc].get('cut','')))
+            if 'selection' in key:
+                logger.info(' ---- book selections ---------')
+                selection = config[key]
+                logger.info(' -- %12s' % (selection['title']))
+            if 'labels' in key:
+                plotlabels = config[key]
+                if title_on_plot != []:
+                    plotlabels['name'] = title_on_plot
+                    if 'tree' in key:
+                        treeinfo = config[key]
+                        treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
+            if 'systematics' in key:
+                logger.info(' ---- book selections ---------')
+                treesUpSys = config[key].get('UpTrees',[])
+                treesDwSys = config[key].get('DwTrees',[])
+                logger.info(' -- %12s' % ( treesUpSys) )
+                logger.info(' -- %12s' % ( treesUpSys) )
+            if 'globalOptions' in key:
+                logger.info(' ---- book selections ---------')
+                globalOptions = config[key]
+                logger.info(' -- %12s' % ( globalOptions.get("ratio_range",[])) )
+        logger.info(' ------------------------------')
+    
+    # ---- create a cut flow except the considered variables
+    def variable_cutflow(variable, select=''):
+        cutflow = ''
+        for var in variables:
+            if (len(variables[var].get('cut',''))!= 0) and (var!=variable):
+                if len(cutflow)==0: cutflow    = '(' + variables[var].get('cut','') + ')'
+                else: cutflow = cutflow + '&&' + '(' + variables[var].get('cut','') + ')'
+                
+        if select != '':
+            cutflow = cutflow + '&&' + select
+        return cutflow
+    #---------------------------------------------------------
+    def print_cutflow():
+        for var in variables:
+            if (len(variables[var]['cut'])!=0):
+                logger.info('-- %20s: %12s' % (var, variables[var]['cut'] ))
+    
+        logger.info(' ------------------------------')
+    #---------------------------------------------------------
+    def find_between( s, first, last ):
+        try:
+            start = s.index( first ) + len( first )
+            end = s.index( last, start )
+            return s[start:end]
+        except ValueError:
+            return ""
+    #---------------------------------------------------------
+    def draw_cut_line(hist, variable=''):
+        if variables[variable].get('cut','')!='':
+            ymin = hist.GetMinimum()
+            ymax = hist.GetMaximum()
+            cuttt = variables[variable].get('cut','').replace('(','').replace(')','')
+            for cut in  cuttt.split('&&'):
+                stmp = cut.split('>')
+                if len(stmp) == 1:
+                    stmp = cut.split('<')
+                xcut = eval(parser.expr(stmp[1]).compile())
+                line = ROOT.TLine()
+                line.SetLineColor(settings.cut_line_color)
+                line.SetLineStyle(settings.cut_line_style)
+                if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
+                    line.DrawLine(xcut,ymin,xcut,ymax)
 
-            logger.info(' -- %12s' % ( globalOptions.get("ratio_range",[])) )
-    logger.info(' ------------------------------')
-    
-# ---- create a cut flow except the considered variables
-def variable_cutflow(variable, select=''):
-    cutflow = ''
-    for var in variables:
-        if (len(variables[var].get('cut',''))!= 0) and (var!=variable):
-            if len(cutflow)==0: cutflow    = '(' + variables[var].get('cut','') + ')'
-            else: cutflow = cutflow + '&&' + '(' + variables[var].get('cut','') + ')'
+    #---------------------------------------------------------                
+    def draw_labels(label):
+        t = ROOT.TLatex()
+        t.SetTextAlign(12)
+        t.SetTextFont (settings.text_font)
+        t.SetTextSize (settings.text_size)
+        shift = 0
+        lines = []
+        if type(label) == type(''):
+            lines = label.split('\\')
+        elif type(label) == type([]):
+            lines = label
+        else:
+            raise ImportError("Label format is not supported: please enter a string or a table of strings!")
+        for s in lines:
+            t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
+                           (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
+            shift = shift + settings.label_shift
             
-    if select != '':
-        cutflow = cutflow + '&&' + select
-    return cutflow
-#---------------------------------------------------------
-def print_cutflow():
-    for var in variables:
-        if (len(variables[var]['cut'])!=0):
-            logger.info('-- %20s: %12s' % (var, variables[var]['cut'] ))
-    
-    logger.info(' ------------------------------')
-#---------------------------------------------------------
-def find_between( s, first, last ):
-    try:
-        start = s.index( first ) + len( first )
-        end = s.index( last, start )
-        return s[start:end]
-    except ValueError:
-        return ""
-#---------------------------------------------------------
-def draw_cut_line(hist, variable=''):
-    if variables[variable].get('cut','')!='':
-        ymin = hist.GetMinimum()
-        ymax = hist.GetMaximum()
-        cuttt = variables[variable].get('cut','').replace('(','').replace(')','')
-        for cut in  cuttt.split('&&'):
-            stmp = cut.split('>')
-            if len(stmp) == 1:
-                stmp = cut.split('<')
-            xcut = eval(parser.expr(stmp[1]).compile())
+    #---------------------------------------------------------
+    def fformat(num):
+        """
+        Formating the float number to string
+        1.0     --> ''
+        2.0     --> 2
+        0.21    --> 0.21
+        0.32112 --> 0.32
+        """
+        if num != 1:
+            s = ('%g'% (num)).rstrip('0').rstrip('.')
+        else:
+            s = ''
+        return s#('%1.2f' % float(s) ) 
+    #---------------------------------------------------------
+    def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
+                           label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
+        tex_left  = ROOT.TLatex()
+        tex_left.SetTextAlign (11);
+        tex_left.SetTextFont  (42);
+        tex_left.SetTextSize  (0.036);
+        tex_right = ROOT.TLatex()
+        tex_right.SetTextAlign(31);
+        tex_right.SetTextFont (42);
+        tex_right.SetTextSize (0.036);
+        tex_left.DrawLatexNDC (0.14,
+                               1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
+        tex_right.DrawLatexNDC(1-0.05,
+                               1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
+    #---------------------------------------------------------
+    def makeRatioCanvas(name='_ratio_'):
+        """returns a divided canvas for ratios"""
+        Rcanv = ROOT.TCanvas("Rcanv","Rcanv",650,750+210)
+        Rcanv.cd()
+        padup = ROOT.TPad("pad1","pad1",0,0.3,1,1)
+        padup.SetNumber(1)
+        paddw = ROOT.TPad("pad2","pad2",0,0,1,0.3)
+        paddw.SetNumber(2)
+        
+        padup.Draw()
+        paddw.Draw()
+        Rcanv.cd()
+        ROOT.SetOwnership(padup,0)
+        ROOT.SetOwnership(paddw,0)
+        return Rcanv
+    #---------------------------------------------------------
+    def draw_categories(categories = [], miny=0, maxy=100):
+        for cat in categories:
             line = ROOT.TLine()
-            line.SetLineColor(settings.cut_line_color)
-            line.SetLineStyle(settings.cut_line_style)
-            if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
-                line.DrawLine(xcut,ymin,xcut,ymax)
-
-#---------------------------------------------------------                
-def draw_labels(label):
-    t = ROOT.TLatex()
-    t.SetTextAlign(12)
-    t.SetTextFont (settings.text_font)
-    t.SetTextSize (settings.text_size)
-    shift = 0
-    lines = []
-    if type(label) == type(''):
-        lines = label.split('\\')
-    elif type(label) == type([]):
-        lines = label
-    else:
-        raise ImportError("Label format is not supported: please enter a string or a table of strings!")
-    for s in lines:
-        t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
-                       (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
-        shift = shift + settings.label_shift
-
-#---------------------------------------------------------
-def fformat(num):
-    """
-    Formating the float number to string
-    1.0     --> ''
-    2.0     --> 2
-    0.21    --> 0.21
-    0.32112 --> 0.32
-    """
-    if num != 1:
-        s = ('%g'% (num)).rstrip('0').rstrip('.')
-    else:
-        s = ''
-    return s#('%1.2f' % float(s) ) 
-#---------------------------------------------------------
-def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
-                       label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
-    tex_left  = ROOT.TLatex()
-    tex_left.SetTextAlign (11);
-    tex_left.SetTextFont  (42);
-    tex_left.SetTextSize  (0.036);
-    tex_right = ROOT.TLatex()
-    tex_right.SetTextAlign(31);
-    tex_right.SetTextFont (42);
-    tex_right.SetTextSize (0.036);
-    tex_left.DrawLatexNDC (0.14,
-                           1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
-    tex_right.DrawLatexNDC(1-0.05,
-                           1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
-#---------------------------------------------------------
-def makeRatioCanvas(name='_ratio_'):
-    """returns a divided canvas for ratios"""
-    Rcanv = ROOT.TCanvas("Rcanv","Rcanv",650,750+210)
-    Rcanv.cd()
-    padup = ROOT.TPad("pad1","pad1",0,0.3,1,1)
-    padup.SetNumber(1)
-    paddw = ROOT.TPad("pad2","pad2",0,0,1,0.3)
-    paddw.SetNumber(2)
-    
-    padup.Draw()
-    paddw.Draw()
-    Rcanv.cd()
-    ROOT.SetOwnership(padup,0)
-    ROOT.SetOwnership(paddw,0)
-    return Rcanv
-#---------------------------------------------------------
-def draw_categories(categories = [], miny=0, maxy=100):
-    for cat in categories:
-        line = ROOT.TLine()
-        line.SetLineColor(129)
-        line.SetLineStyle(7)
-        line.SetLineWidth(2)
-        line.DrawLine(cat,miny,cat,maxy)
-#---------------------------------------------------------
-def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
-                        title="", systematic_only=True, combine_with_systematic=True):
-    """This function returns a function with the statistical precision in each bin"""
-    statPrecision = myHisto.Clone('_ratioErrors_')
-    systPrecision = myHisto.Clone('_ratioSysErrors_')
-    statPrecision.SetTitle(title)
-    statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
-    statPrecision.SetFillStyle(settings.ratio_error_band_style)
-    statPrecision.SetMarkerColorAlpha(0,0)
-    
-    systPrecision.SetTitle(title + "_Sys_")
-    systPrecision.SetFillColorAlpha(settings.ratio_syst_band_color,settings.ratio_error_band_opacity)
-    systPrecision.SetFillStyle(settings.ratio_syst_band_style)
-    systPrecision.SetMarkerColorAlpha(0,0)
-    
-    if len(histUpSys)==0 or len(histDwSys)==0 :
-        systematic_only = False
-    if systematic_only:
-        for ibin in range(myHisto.GetNbinsX()+1):
-            y    = statPrecision.GetBinContent(ibin);
-            stat = statPrecision.GetBinError  (ibin);
+            line.SetLineColor(129)
+            line.SetLineStyle(7)
+            line.SetLineWidth(2)
+            line.DrawLine(cat,miny,cat,maxy)
+    #---------------------------------------------------------
+    def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
+                            title="", systematic_only=True, combine_with_systematic=True):
+        """This function returns a function with the statistical precision in each bin"""
+        statPrecision = myHisto.Clone('_ratioErrors_')
+        systPrecision = myHisto.Clone('_ratioSysErrors_')
+        statPrecision.SetTitle(title)
+        statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
+        statPrecision.SetFillStyle(settings.ratio_error_band_style)
+        statPrecision.SetMarkerColorAlpha(0,0)
+        
+        systPrecision.SetTitle(title + "_Sys_")
+        systPrecision.SetFillColorAlpha(settings.ratio_syst_band_color,settings.ratio_error_band_opacity)
+        systPrecision.SetFillStyle(settings.ratio_syst_band_style)
+        systPrecision.SetMarkerColorAlpha(0,0)
+        
+        if len(histUpSys)==0 or len(histDwSys)==0 :
+            systematic_only = False
+        if systematic_only:
+            for ibin in range(myHisto.GetNbinsX()+1):
+                y    = statPrecision.GetBinContent(ibin);
+                stat = statPrecision.GetBinError  (ibin);
+                
             
-            
-            valup = {}
-            valdw = {}
+                valup = {}
+                valdw = {}
             for sys in histUpSys:
                 val   = histUpSys[sys].GetBinContent(ibin)
                 valup[sys] = val
