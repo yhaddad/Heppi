@@ -145,7 +145,7 @@ void setYacineStyle(){
   ////YacineStyle->SetLabelSize  (0.05,  "xyz");
   //
   //// Legend
-  YacineStyle->SetLegendBorderSize(0);
+  //YacineStyle->SetLegendBorderSize(0);
   //
   //// Axis
   YacineStyle->SetAxisColor  (1    , "XYZ");

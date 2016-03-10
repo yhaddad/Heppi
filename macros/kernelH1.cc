@@ -32,7 +32,7 @@ public:
       data[ibin]    = histo->GetBinCenter (ibin);
       weights[ibin] = histo->GetBinContent(ibin);
     }
-    _kde = new TKDE(n, &data[0],&weights[0], xmin, xmax, "", rho);
+    _kde = new TKDE(n, &data[0],&weights[0], xmin, xmax, "Mirror:MirrorAsymBoth ", rho);
   }
   virtual ~H1kernel()
   {
@@ -67,6 +67,28 @@ public:
   {/*delete _function;*/}
 };
 
+
+class  logistic_function
+{
+private:
+  //! private declarations
+  TF1 * _function;
+public:
+  logistic_function(TF1 *function) : _function(function)
+  {/*_function = (TF1*)function->Clone();*/}
+  TF1 * function()
+  {
+    TString name(_function->GetName());
+    return new TF1( name + "_logit",[&](double*x, double *p){
+	double y = _function->Eval(x[0]);
+	return exp(y)/(1 + exp(y)); 
+      },
+      _function->GetXmin(),_function->GetXmax(), 0);
+  }
+  virtual ~logistic_function()
+  {/*delete _function;*/}
+};
+
 class zfom 
 {
 private:
@@ -90,48 +112,48 @@ public:
   }
 };
 
-class optimizer
-{
-  
-private:
-  ROOT::Math::Minimizer * _min;
-
-  TF1    * _fsig;
-  TF1    * _fbkg;
-public:
-  optimizer(TString name,TF1* sig, TF1* bkg, int ncat=2): _fsig(sig), _fbkg(bkg)
-  {
-    _min = ROOT::Math::Factory::CreateMinimizer(name.Data(), "Minuit2");
-    _min->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
-    _min->SetMaxIterations(10000);  // for GSL
-    _min->SetTolerance(0.001);
-    _min->SetPrintLevel(1);
-    zfom myfom(_fsig, _fbkg, ncat);
-    ROOT::Math::Functor f(  &myfom, &zfom::Eval, ncat);
-    std::vector<double> initbounds(ncat);
-    std::vector<double> variable  (ncat);
-    double minbound = -1;
-    for (int i=1; i < ncat+1 ; i++)
-      {
-	initbounds[i-1] = minbound + i*(2.0/ncat);
-	TRandom2 r(1);
-	variable[i] = r.Uniform(-1,1);
-      }
-
-    _min->SetFunction(f);
-    for (int i = 0; i < ncat-2; i++ )
-      {
-	_min->SetVariable(i,Form("bound_%i",i),variable[i], initbounds[i]);
-      }
-    _min->Minimize();
-    const double *xs = _min->X();
-    std::cout << "Minimum: f(" ;
-    for (int i = 0; i < ncat-2; i++ )
-      std::cout << xs[i] << ",";
-    std::cout<< ") :: " <<  _min->MinValue()  << std::endl;
-  }
-  virtual ~optimizer();
-};
+//class optimizer
+//{
+//  
+//private:
+//  ROOT::Math::Minimizer * _min;
+//  
+//  TF1    * _fsig;
+//  TF1    * _fbkg;
+//public:
+//  optimizer(TString name,TF1* sig, TF1* bkg, int ncat=2): _fsig(sig), _fbkg(bkg)
+//  {
+//    _min = ROOT::Math::Factory::CreateMinimizer(name.Data(), "Minuit2");
+//    _min->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2
+//    _min->SetMaxIterations(10000);  // for GSL
+//    _min->SetTolerance(0.001);
+//    _min->SetPrintLevel(1);
+//    zfom myfom(_fsig, _fbkg, ncat);
+//    ROOT::Math::Functor f(  &myfom, &zfom::Eval, ncat);
+//    std::vector<double> initbounds(ncat);
+//    std::vector<double> variable  (ncat);
+//    double minbound = -1;
+//    for (int i=1; i < ncat+1 ; i++)
+//      {
+//	initbounds[i-1] = minbound + i*(2.0/ncat);
+//	TRandom2 r(1);
+//	variable[i] = r.Uniform(-1,1);
+//      }
+//
+//    _min->SetFunction(f);
+//    for (int i = 0; i < ncat-2; i++ )
+//      {
+//	_min->SetVariable(i,Form("bound_%i",i),variable[i], initbounds[i]);
+//      }
+//    _min->Minimize();
+//    const double *xs = _min->X();
+//    std::cout << "Minimum: f(" ;
+//    for (int i = 0; i < ncat-2; i++ )
+//      std::cout << xs[i] << ",";
+//    std::cout<< ") :: " <<  _min->MinValue()  << std::endl;
+//  }
+//  virtual ~optimizer();
+//};
 
 
 class perfML

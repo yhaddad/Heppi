@@ -1,4 +1,4 @@
-#!/user/bin/python
+#!/usr/bin/python
 
 import ROOT  # needed
 from   heppi import heppi
@@ -11,18 +11,65 @@ from   collections  import OrderedDict
 
 def optimise(trees):
     (sig_tree, bkg_tree) = trees
-    
     init_bouds = [0.0, 0.5]
-
+    nbins     = 500
+    variable  = "dipho_dijet_MVA"
+    
+    cutflow   = heppi.variable_cutflow(variable,'')
+    cutflow   = 'weight*(' + cutflow + ')'
+    
+    sig_tree.Project(
+        "hsig(%i,-1,1)"%nbins,
+        variable,
+        cutflow
+    )
+    bkg_tree.Project(
+        "hbkg(%i,-1,1)"%nbins,
+        variable,
+        cutflow
+    )
+    hsig  = ROOT.gDirectory.Get('hsig' )
+    hbkg  = ROOT.gDirectory.Get('hbkg' )
+    
+    hsig.SetLineColor(ROOT.kRed)
+    hbkg.SetLineColor(ROOT.kBlue)
+    
+    hsig.Scale(1./hsig.Integral(),"width");
+    hsig.SetStats(False);
+    
+    hbkg.Scale(1./hbkg.Integral(),"width");
+    hbkg.SetStats(False);
+    
+    c = ROOT.TCanvas("c","c",500,500)
+    c.cd()
+    ROOT.gPad.SetLogy()
+    hsig.Draw("hist")
+    hbkg.Draw("hist,same")
+    
+    skde = ROOT.H1kernel(hsig,0.5)
+    bkde = ROOT.H1kernel(hbkg,0.5)
+    
+    fsig  = skde.function()
+    fbkg  = bkde.function()
+    
+    fsig.SetLineColor(hsig.GetLineColor())
+    fbkg.SetLineColor(hbkg.GetLineColor())
+    
+    fsig.SetLineStyle(7)
+    fbkg.SetLineStyle(7)
+    fsig.Draw("same")
+    
+    raw_input()
+    
     
     
 if __name__ == "__main__":
     i = 3
     heppi.sampledir   = '../data/training/rms003/merged'
     ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
-    ROOT.gROOT.ProcessLine(".L  macros/kernelH1.cc+")
+    ROOT.gROOT.ProcessLine(".L  macros/kernelH1.cc++")
     
-    heppi.read_plotcard('config/plotcard_data_vbf.json')
+    heppi.read_plotcard('plotcards/vbf_plotcard_hgg.json')
     heppi.print_cutflow()
     (tsig, tbkg) = heppi.book_trees('')
     heppi.test_tree_book()
