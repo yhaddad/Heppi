@@ -183,10 +183,10 @@ def draw_labels(label):
 def fformat(num):
     """
     Formating the float number to string
-    1.0     --> ''
-    2.0     --> 2
-    0.21    --> 0.21
-    0.32112 --> 0.32
+    1.0     -->  ''
+    2.0     -->  2
+    0.21    -->  0.21
+    0.32112 -->  0.32
     """
     if num != 1:
         s = ('%g'% (num)).rstrip('0').rstrip('.')
@@ -195,7 +195,7 @@ def fformat(num):
     return s#('%1.2f' % float(s) ) 
 #---------------------------------------------------------
 def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
-                       label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
+                       label_right ='#13 TeV (2.56 fb^{-1})'):
     tex_left  = ROOT.TLatex()
     tex_left.SetTextAlign (11);
     tex_left.SetTextFont  (42);
@@ -664,7 +664,7 @@ def draw_instack(variable, label='VBF', select=''):
             )
         #=== systematics 
         for sys in treesUpSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
+            if (proc != 'Data' or samples[proc].get('label') == 'data') and ('signal' != samples[proc].get('label','') and 'spectator' != samples[proc].get('label','')):        
                 sysname = sys.split('*')[1]
                 treeUp  = [x for x in samples[proc].get('_root_tree_sysUp_') if sysname in x.GetName()][0]
                 treeUp.Project(
@@ -681,7 +681,7 @@ def draw_instack(variable, label='VBF', select=''):
                 else:
                     histUpSys[sysname].Add(histUp)
         for sys in treesDwSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
+            if (proc != 'Data' or samples[proc].get('label') == 'data') and ('signal' != samples[proc].get('label','') and 'spectator' != samples[proc].get('label','')):        
                 #treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
                 sysname   = sys.split('*')[1]
                 treeDw  = [x for x in samples[proc].get('_root_tree_sysDw_') if sysname in x.GetName()][0]
@@ -796,7 +796,7 @@ def draw_instack(variable, label='VBF', select=''):
         draw_labels('w/o cuts')
     else:
         draw_labels(plotlabels['name'])
-    draw_cms_headlabel(label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % treeinfo.get('lumi',2.63))
+    draw_cms_headlabel(label_right='%1.2f fb^{-1} (13 TeV)' % treeinfo.get('lumi',2.63))
     
     c.cd()
     c.cd(2)
