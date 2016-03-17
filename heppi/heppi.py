@@ -580,7 +580,6 @@ def test_tree_book():
                     + ' nEvent:' + str(samples[sam].get('_root_tree_',ROOT.TChain()).GetEntries()))
         #logger.info('syst up tree: '+ samples[sam].get('_root_tree_sysUp_'))
         #logger.info('syst dw tree: '+ samples[sam].get('_root_tree_sysDw_'))
-
 #---------------------------------------------------------
 def draw_instack(variable, label='VBF', select=''):
     histos = []
