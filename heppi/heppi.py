@@ -480,10 +480,8 @@ class instack ():
                     statPrecision.SetBinError  (bin,0);
                     systPrecision.SetBinContent(bin,1);
                     systPrecision.SetBinError  (bin,0);
-
-        #range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
-        #statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
-        #systPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
+        statPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
+        systPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         return (statPrecision, systPrecision)
     #---------------------------------------------------------
     def drawStatErrorBand(self,myHisto,histDwSys={},histUpSys={},systematic_only=True, combine_with_systematic=True):
@@ -673,7 +671,6 @@ class instack ():
         hist.GetYaxis().SetTitleOffset(2.1)
         hist.GetYaxis().SetLabelFont  (43)
         hist.GetYaxis().SetLabelSize  (18)
-
         hist.GetXaxis().SetTitleSize  (23)
         hist.GetXaxis().SetTitleFont  (43)
         hist.GetXaxis().SetTitleOffset( 4)
@@ -738,20 +735,22 @@ class instack ():
                             Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
             logger.info(' -- %17s  %12s ' % (proc,  sample.name) )
-            _cutflow_ = ''
+            _cutflow_ = variable.root_cutflow
             if len(sample.cut) != 0:
                 _cutflow_ = '&&'.join([variable.root_cutflow[:-1],sample.cut+')'])
             if len(variable.blind) != 0 and sample.label == 'data':
                 _cutflow_ = '&&'.join([variable.root_cutflow[:-1],variable.blind+')'])
+
+            print "cutflow--> ",_cutflow_
             if sample.label != 'data':
                 sample.root_tree.Project(
                     'h_' + variable.name + variable.hist,
                     variable.formula,
                     '*'.join(
                         [   _cutflow_,
-                            str(self.options.kfactor),
-                            str(self.options.intlumi),
-                            str(sample.kfactor)
+                            "%f" % self.options.kfactor,
+                            "%f" % self.options.intlumi,
+                            "%f" % sample.kfactor
                         ]
                     )
 #                    _cutflow_.replace('weight','weight*%f*%f*%f' % ( self.options.kfactor,
@@ -759,6 +758,7 @@ class instack ():
 #                                                                     sample.kfactor     )
                     #)
                 )
+                print "cutflow ::",  _cutflow_
                 print   '*'.join([  _cutflow_,
                                     str(self.options.kfactor),
                                     str(self.options.intlumi),
