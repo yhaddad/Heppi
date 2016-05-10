@@ -257,16 +257,16 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
             up_errsum2   = 0
             down_errsum2 = 0
             if( y > 0 ):
-		up_errsum2   = (stat/y)*(stat/y) 
-		down_errsum2 = (stat/y)*(stat/y) 
-		for sys in histUpSys:
-		    up_diff   = (histUpSys[sys].GetBinContent(ibin) - y) / y 
-		    if( up_diff > 0 ):
-			up_errsum2   += up_diff*up_diff 
-		for sys in histDwSys:
-		    down_diff = (histDwSys[sys].GetBinContent(ibin) - y) / y 
-		    if( down_diff < 0 ):
-			down_errsum2 += down_diff*down_diff 
+                up_errsum2   = (stat/y)*(stat/y) 
+                down_errsum2 = (stat/y)*(stat/y) 
+            for sys in histUpSys:
+                up_diff   = (histUpSys[sys].GetBinContent(ibin) - y) / y 
+                if( up_diff > 0 ):
+                    up_errsum2   += up_diff*up_diff 
+            for sys in histDwSys:
+                down_diff = (histDwSys[sys].GetBinContent(ibin) - y) / y 
+                if( down_diff < 0 ):
+                    down_errsum2 += down_diff*down_diff 
             
             up_error   = math.sqrt(up_errsum2)  
             down_error = math.sqrt(down_errsum2)  
@@ -306,11 +306,11 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
             for sys in histUpSys:
                 up_diff   = histUpSys[sys].GetBinContent(ibin) - y 
                 if( up_diff > 0   ):
-		    up_errsum2   += up_diff*up_diff 
+                    up_errsum2   += up_diff*up_diff 
             for sys in histDwSys:
                 down_diff = histDwSys[sys].GetBinContent(ibin) - y 
                 if( down_diff < 0 ):
-		    down_errsum2 += down_diff*down_diff 
+                    down_errsum2 += down_diff*down_diff 
             
             up_error   = math.sqrt(up_errsum2)  
             down_error = math.sqrt(down_errsum2)  
@@ -814,3 +814,10 @@ def draw_instack(variable, label='VBF', select=''):
     c.SaveAs( 'plots/' + histfilename + '.png')
     c.SaveAs( 'plots/' + histfilename + '.pdf')
     
+#// Local Variables:
+#// mode:python
+#// indent-tabs-mode:nil
+#// tab-width:4
+#// c-basic-offset:4
+#// End:
+#// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
