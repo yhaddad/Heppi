@@ -20,7 +20,7 @@ except ImportError:
     raise ImportError(
         """
         please install termcolor and jsmin, and try again.
-        Suggestion: pip install --user jsmin termcolor progressbar
+        Suggestion: pip install --user jsmin termcolor progressbar jsonmerge tabulate
         """)
 import  os, sys, glob, sys, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
