@@ -6,7 +6,7 @@ try:
 except ImportError:
     raise ImportError(
         """
-        ROOT is not in your environement, or not intsalled. 
+        ROOT is not in your environement, or not intsalled.
         Please check!
         """)
 try:
@@ -14,7 +14,7 @@ try:
     from   jsmin        import jsmin
     from   progressbar  import ProgressBar, Bar, Percentage, ETA
     from   jsonmerge    import merge
-    
+
 except ImportError:
     raise ImportError(
         """
@@ -23,7 +23,7 @@ except ImportError:
         """)
 import  os, sys, glob, sys, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
-import  settings #as settings 
+import  settings #as settings
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
@@ -43,7 +43,7 @@ treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
 treesUpSys  = []
 treesDwSys  = []
 #treename    = '*_13TeV_VBFDiJet'
-options     = None   
+options     = None
 allnormhist = False
 treeinfo      = {}
 title_on_plot = []
@@ -86,7 +86,7 @@ def read_plotcard(plotcard, cut_card=''):
                     s = variables[varname].get('title','')
                     if '[' and ']' in s:
                         variables[varname].update({'unit':(find_between( s, "[", "]" ))})
-                        
+
         if 'processes' in key:
             logger.info(' ---- book processes ----------')
             for proc in config[key]:
@@ -115,7 +115,7 @@ def read_plotcard(plotcard, cut_card=''):
 
             logger.info(' -- %12s' % ( globalOptions.get("ratio_range",[])) )
     logger.info(' ------------------------------')
-    
+
 # ---- create a cut flow except the considered variables
 def variable_cutflow(variable, select=''):
     cutflow = ''
@@ -123,7 +123,7 @@ def variable_cutflow(variable, select=''):
         if (len(variables[var].get('cut',''))!= 0) and (var!=variable):
             if len(cutflow)==0: cutflow    = '(' + variables[var].get('cut','') + ')'
             else: cutflow = cutflow + '&&' + '(' + variables[var].get('cut','') + ')'
-            
+
     if select != '':
         cutflow = cutflow + '&&' + select
     return cutflow
@@ -132,7 +132,7 @@ def print_cutflow():
     for var in variables:
         if (len(variables[var]['cut'])!=0):
             logger.info('-- %20s: %12s' % (var, variables[var]['cut'] ))
-    
+
     logger.info(' ------------------------------')
 #---------------------------------------------------------
 def find_between( s, first, last ):
@@ -156,10 +156,10 @@ def draw_cut_line(hist, variable=''):
             line = ROOT.TLine()
             line.SetLineColor(settings.cut_line_color)
             line.SetLineStyle(settings.cut_line_style)
-            if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax(): 
+            if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax():
                 line.DrawLine(xcut,ymin,xcut,ymax)
 
-#---------------------------------------------------------                
+#---------------------------------------------------------
 def draw_labels(label):
     t = ROOT.TLatex()
     t.SetTextAlign(12)
@@ -191,7 +191,7 @@ def fformat(num):
         s = ('%g'% (num)).rstrip('0').rstrip('.')
     else:
         s = ''
-    return s#('%1.2f' % float(s) ) 
+    return s#('%1.2f' % float(s) )
 #---------------------------------------------------------
 def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
                        label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
@@ -216,7 +216,7 @@ def makeRatioCanvas(name='_ratio_'):
     padup.SetNumber(1)
     paddw = ROOT.TPad("pad2","pad2",0,0,1,0.3)
     paddw.SetNumber(2)
-    
+
     padup.Draw()
     paddw.Draw()
     Rcanv.cd()
@@ -241,20 +241,20 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
     statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
     statPrecision.SetFillStyle(settings.ratio_error_band_style)
     statPrecision.SetMarkerColorAlpha(0,0)
-    
+
     systPrecision.SetTitle(title + "_Sys_")
     systPrecision.SetFillColorAlpha(settings.ratio_syst_band_color,settings.ratio_error_band_opacity)
     systPrecision.SetFillStyle(settings.ratio_syst_band_style)
     systPrecision.SetMarkerColorAlpha(0,0)
-    
+
     if len(histUpSys)==0 or len(histDwSys)==0 :
         systematic_only = False
     if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-            
-            
+
+
             valup = {}
             valdw = {}
             #vals  = [y]
@@ -269,7 +269,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
                 #vals += [val]
                 valdw[sys] = val
                 #print "--> Dw[",ibin,"]:: ", sys, " (", val ,")"
-                
+
             #largest_val  = max(vals)
             #smallest_val = min(vals)
 
@@ -278,11 +278,11 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
                 dw = up.replace("Up","Down")
                 e = 0.5*(valup[up] - valdw[dw])
                 #print "--> error[",ibin,"]:: ", up, " (", e ,")"
-                systError2 += e*e 
-                            
+                systError2 += e*e
+
             error  = 0
             if combine_with_systematic:
-                #math.sqrt(syst*syst + stat*stat) 
+                #math.sqrt(syst*syst + stat*stat)
                 error = math.sqrt(systError2 + stat*stat)
             else:
                 #error = 0.5*(largest_val - smallest_val)
@@ -293,7 +293,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
             if (y>0):
                 statPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
                 statPrecision.SetBinError  (ibin,   error/y );
-                
+
             else:
                 statPrecision.SetBinContent(ibin,   1);
                 statPrecision.SetBinError  (ibin,   0);
@@ -307,7 +307,7 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
             else:
                 statPrecision.SetBinContent(bin,1);
                 statPrecision.SetBinError  (bin,0);
-                
+
     range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
     statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
     return statPrecision
@@ -326,13 +326,13 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
 
     #print '-->', histUpSys
     #print '-->', histDwSys
-        
+
     if combine_with_systematic : systematic_only = True
     if systematic_only:
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-            
+
             vals = [y]
             for sys in histUpSys:
                 val = histUpSys[sys].GetBinContent(ibin)
@@ -342,23 +342,23 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
                 vals += [val]
             largest_val  = max(vals)
             smallest_val = min(vals)
-            
+
             error  = 0
             if combine_with_systematic:
                 syst  = 0.5*(largest_val - smallest_val)
-                error = math.sqrt(syst*syst + stat*stat) 
+                error = math.sqrt(syst*syst + stat*stat)
             else:
                 error = 0.5*(largest_val - smallest_val)
-                
+
             statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
-            statPrecision.SetBinError  (ibin,   error);      
+            statPrecision.SetBinError  (ibin,   error);
     return statPrecision
 
 #---------------------------------------------------------
 def makeRatioPlotCanvas(name=''):
     """
     returns a divided canvas for ratios
-    
+
     """
     canv  = ROOT.TCanvas("c_" + name, name,settings.canvas_width,settings.canvas_height)
     canv.cd()
@@ -369,8 +369,8 @@ def makeRatioPlotCanvas(name=''):
     paddw = ROOT.TPad("paddw", "paddw", 0, 0.0, 1, 0.3)
     paddw.SetNumber(2)
     padup.Draw()
-    padup.SetTopMargin(0.08) 
-    padup.SetBottomMargin(0.00) 
+    padup.SetTopMargin(0.08)
+    padup.SetBottomMargin(0.00)
     padup.SetLeftMargin(0.14)
     padup.SetRightMargin(0.05)
     padup.SetFrameBorderMode(0)
@@ -426,16 +426,16 @@ def DataMCratio(histMC,histData,
                 #ratioMax=1.7):
     """Takes two histograms as inputs and returns a canvas with a ratio plot of the two.
     The two optional arguments are for the x Axis and y Axis titles"""
-    
+
     c = makeRatioPlotCanvas()#makeDivCan()
     pad1 = c.cd(1)
     pad2 = c.cd(2)
     c.cd(1)
-    
+
     if log: pad1.SetLogy()
     yMax = max(histData.GetMaximum(),histMC.GetMaximum())
     yMin = 0
-    
+
     if log: yMin = min(histData.GetMinimum(),histMC.GetMinimum())
     else  : yMin = 0
     if log: yMax = 100*yMax
@@ -452,17 +452,17 @@ def DataMCratio(histMC,histData,
     else:
         histMC   = histMC.DrawNormalized(drawMCOpt)
         histData = histData.DrawNormalized("same"+ drawDataOpt)
-                
+
     histData.GetYaxis().SetRangeUser(yMin,yMax)
     c.cd()
     c.cd(2)
-    
+
     errorHist = MakeStatProgression(histMC,title="")
     ROOT.SetOwnership(errorHist,0)
     errorHist.GetXaxis().SetTitle(xTitle)
     errorHist.GetYaxis().SetTitle(yTitle)
     errorHist.Draw('E2')
-    
+
     ratioHist = makeRatio(histData,histMC,ymax= ratioMax,ymin=ratioMin,norm=norm)
     ROOT.SetOwnership(ratioHist,0)
     ratioHist.GetXaxis().SetTitle(xTitle)
@@ -482,7 +482,7 @@ def customizeHisto(hist):
     hist.GetYaxis().SetTitleOffset(2.1)
     hist.GetYaxis().SetLabelFont  (43)
     hist.GetYaxis().SetLabelSize  (18)
-    
+
     hist.GetXaxis().SetTitleSize  (23)
     hist.GetXaxis().SetTitleFont  (43)
     hist.GetXaxis().SetTitleOffset( 4)
@@ -494,7 +494,7 @@ def book_trees(select = ''):
 
     sig_chain  = ROOT.TChain('sig_data')
     bkg_chain  = ROOT.TChain('bkg_data')
-    
+
     for proc in ordsam:
         chainName = treename.replace('*',proc)
         if ordsam[proc].get("tree","") != "":
@@ -502,62 +502,82 @@ def book_trees(select = ''):
         chain      = ROOT.TChain(chainName)
         chainSysUp = []
         chainSysDw = []
+        print '-----proc-----', proc
         if type(samples[proc].get('name')) == type([]):
             for sam in samples[proc].get('name',[]):
-                for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                    chain.Add(f)
-                    
-                    if 'signal' in str(samples[proc].get('label','')).lower():
-                        print 'sig -->', f+'/'+treename.replace('*',proc)
-                        sig_chain.Add(f+'/'+treename.replace('*',proc))
-                    elif 'data' not in str(samples[proc].get('label','')).lower():
-                        print 'bkg -->', f+'/'+treename.replace('*',proc)
-                        bkg_chain.Add(f+'/'+treename.replace('*',proc))
-            if proc != 'Data':
-                for sys in treesUpSys:
-                    print "debug::(",proc,")", sys, " == ", samples[proc].get('label')
-                    chainUp = ROOT.TChain(sys.replace('*',proc))
-                    for sam in samples[proc].get('name',[]):
-                        for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                            chainUp.Add(f)
-                        chainSysUp.append(chainUp)
-                for sys in treesDwSys:
-                    chainDw = ROOT.TChain(sys.replace('*',proc))
-                    for sam in samples[proc].get('name',[]):
-                        for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                            chainDw.Add(f)
-                        chainSysDw.append(chainDw)
+                _sam_ = sam
+                _tre_ = chainName
+                if ':' in sam:
+                    _sam_ = sam.split(':')[0]
+                    _tre_ = sam.split(':')[1]
+                print "[sam,tree] == ",  _sam_, '  ', _tre_
+                for f in glob.glob( sampledir + '/*'+ _sam_ +'*.root'):
+                    chain.Add(f + '/' + _tre_ )
+                    print f
+                    # if 'signal' in str(samples[proc].get('label','')).lower():
+                    #     print 'sig -->', f+'/'+treename.replace('*',proc)
+                    #     sig_chain.Add(f+'/'+treename.replace('*',proc))
+                    # elif 'data' not in str(samples[proc].get('label','')).lower():
+                    #     print 'bkg -->', f+'/'+treename.replace('*',proc)
+                    #     bkg_chain.Add(f+'/'+treename.replace('*',proc))
+            # if proc != 'Data':
+            #     for sys in treesUpSys:
+            #         print "debug::(",proc,")", sys, " == ", samples[proc].get('label')
+            #         chainUp = ROOT.TChain(sys.replace('*',proc))
+            #         for sam in samples[proc].get('name',[]):
+            #             _sam_ = sam
+            #             _tre_ = chainName
+            #             if ':' in sam:
+            #                 _sam_ = sam.split(':')[0]
+            #                 _tre_ = sam.split(':')[1]
+            #             for f in glob.glob( sampledir + '/*'+ _sam_ +'*.root'):
+            #                 chainUp.Add(f+'/'+_tre_)
+            #             chainSysUp.append(chainUp)
+            #     for sys in treesDwSys:
+            #         chainDw = ROOT.TChain(sys.replace('*',proc))
+            #         for sam in samples[proc].get('name',[]):
+            #             for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+            #                 chainDw.Add(f)
+            #             chainSysDw.append(chainDw)
         else:
             sam = samples[proc].get('name')
+            _sam_ = sam
+            _tre_ = chainName
+            if ':' in sam:
+                _sam_ = sam.split(':')[0]
+                _tre_ = sam.split(':')[1]
+            print "[sam,tree] == ",  _sam_, '  ', _tre_
             for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                chain.Add(f)
-                if 'signal' in str(samples[proc].get('label','')).lower():
-                    print 'sig -->', f+'/'+treename.replace('*',proc)
-                    sig_chain.Add(f+'/'+treename.replace('*',proc))
-                elif 'data' not in str(samples[proc].get('label','')).lower():
-                    print 'bkg -->', f+'/'+treename.replace('*',proc)
-                    bkg_chain.Add(f+'/'+treename.replace('*',proc))
-            if samples[proc].get('label') != 'Data':
-                for sys in treesUpSys:
-                    chainUp = ROOT.TChain(sys.replace('*',proc))
-                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                        chainUp.Add(f)
-                    chainSysUp.append(chainUp)
-                for sys in treesDwSys:
-                    chainDw = ROOT.TChain(sys.replace('*',proc))
-                    for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-                        chainDw.Add(f)
-                    chainSysDw.append(chainDw)
+                chain.Add(f + '/' + _tre_)
+                print f
+                #print '++sample ::' + proc +' '+sam + ' '+  f + '/' + _tre_
+                # if 'signal' in str(samples[proc].get('label','')).lower():
+                #     print 'sig -->', f+'/'+treename.replace('*',proc)
+                #     sig_chain.Add(f+'/'+treename.replace('*',proc))
+                # elif 'data' not in str(samples[proc].get('label','')).lower():
+                #     print 'bkg -->', f+'/'+treename.replace('*',proc)
+                #     bkg_chain.Add(f+'/'+treename.replace('*',proc))
+            # if samples[proc].get('label') != 'Data':
+            #     for sys in treesUpSys:
+            #         chainUp = ROOT.TChain(sys.replace('*',proc))
+            #         for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+            #             chainUp.Add(f)
+            #         chainSysUp.append(chainUp)
+            #     for sys in treesDwSys:
+            #         chainDw = ROOT.TChain(sys.replace('*',proc))
+            #         for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
+            #             chainDw.Add(f)
+            #         chainSysDw.append(chainDw)
         # read systematic trees
         samples[proc].update({'_root_tree_'       : chain})
         samples[proc].update({'_root_tree_sysDw_' : chainSysDw})
         samples[proc].update({'_root_tree_sysUp_' : chainSysUp})
-        
+
     logger.info('-- sig_chain.GetEntries() = %i' % sig_chain.GetEntries())
     logger.info('-- bkg_chain.GetEntries() = %i' % bkg_chain.GetEntries())
     return (sig_chain, bkg_chain)
-        
-        
+
+
 
 def test_tree_book():
     for sam in samples:
@@ -574,11 +594,11 @@ def draw_instack(variable, label='VBF', select=''):
     if ':=' in variable:
         varname  = variable.split(':=')[0]
         formula  = variable.split(':=')[1]
-        
+
     histfilename = ('histogram_stack_' +
                     varname + '_' + label+ '_'
                     + selection['name'])
-    
+
     legend  = None
     if settings.two_colomn_legend:
         legend  = ROOT.TLegend(0.45, 0.72,
@@ -596,7 +616,7 @@ def draw_instack(variable, label='VBF', select=''):
         cutflow = variable_cutflow(variable,select)
 
     hstack = ROOT.THStack('hs_' + varname,'')
-    
+
     hstack.SetName('hs_'+ varname)
     hstack.SetTitle(";" + variables[varname]['title']+";entries")
 
@@ -609,7 +629,7 @@ def draw_instack(variable, label='VBF', select=''):
     for sys in treesDwSys:
         sysname   = sys.split('*')[1]
         histDwSys.update({sysname : None })
-    
+
     if len(cutflow)!=0 and options.nocuts==False:
         cutflow = 'weight*(' + cutflow + ')'
     else:
@@ -622,7 +642,7 @@ def draw_instack(variable, label='VBF', select=''):
     ordsam = OrderedDict(sorted(samples.items(), key=lambda x: x[1]['order']))
     for proc in bar(ordsam):
         logger.debug(' -- %17s  %12s ' % (proc,  samples[proc].get('name')))
-        
+
         tree       = samples[proc].get('_root_tree_')
         sample_cut = samples[proc].get('cut','')
         _cutflow_  = cutflow
@@ -631,8 +651,8 @@ def draw_instack(variable, label='VBF', select=''):
             _cutflow_ = cutflow[:-1] + '&&' +  samples[proc].get('cut','') + ')'
         if variables[variable]['blind'] != '' and proc == 'Data':
             _cutflow_ = cutflow[:-1] + '&&' +  variables[variable]['blind']+ ')'
-            
-        if proc != 'Data':        
+
+        if proc != 'Data':
             tree.Project(
                 'h_' + varname + variables[variable]['hist'],
                 formula,
@@ -646,9 +666,9 @@ def draw_instack(variable, label='VBF', select=''):
                 formula,
                 _cutflow_
             )
-        #=== systematics 
+        #=== systematics
         for sys in treesUpSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
+            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
                 sysname = sys.split('*')[1]
                 treeUp  = [x for x in samples[proc].get('_root_tree_sysUp_') if sysname in x.GetName()][0]
                 treeUp.Project(
@@ -665,7 +685,7 @@ def draw_instack(variable, label='VBF', select=''):
                 else:
                     histUpSys[sysname].Add(histUp)
         for sys in treesDwSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
+            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
                 #treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
                 sysname   = sys.split('*')[1]
                 treeDw  = [x for x in samples[proc].get('_root_tree_sysDw_') if sysname in x.GetName()][0]
@@ -682,8 +702,8 @@ def draw_instack(variable, label='VBF', select=''):
                     histDwSys[sysname] = histDw
                 else:
                     histDwSys[sysname].Add(histDw)
-                    
-        # ----------------------------------------------    
+
+        # ----------------------------------------------
         hist = ROOT.gDirectory.Get('h_' + varname )
         hist.SetDirectory(0)
 
@@ -778,7 +798,7 @@ def draw_instack(variable, label='VBF', select=''):
     else:
         draw_labels(plotlabels['name'])
     draw_cms_headlabel(label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % treeinfo.get('lumi',2.63))
-    
+
     c.cd()
     c.cd(2)
     errorHist = MakeStatProgression(hstack.GetStack().Last(),histDwSys, histUpSys)
@@ -825,7 +845,7 @@ def draw_instack(variable, label='VBF', select=''):
                 sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
                 sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
                 sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
-                
+
     for o in sig_and_bkg_ratio:
         o.Draw('same,hist')
     draw_cut_line(errorHist,variable)
@@ -840,9 +860,8 @@ def draw_instack(variable, label='VBF', select=''):
     ratioHist.Draw('same')
 
     c.cd()
-    
+
     if variables[variable]['norm']==True or allnormhist==True:
         histfilename = histfilename + '_norm'
     c.SaveAs( 'plots/' + histfilename + '.png')
     c.SaveAs( 'plots/' + histfilename + '.pdf')
-    
