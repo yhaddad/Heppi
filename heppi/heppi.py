@@ -30,8 +30,8 @@ import  settings
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-#logger.setLevel(level=logging.DEBUG)
-logger.setLevel(level=logging.INFO)
+logger.setLevel(level=logging.DEBUG)
+#logger.setLevel(level=logging.INFO)
 
 class utils:
     @staticmethod
@@ -288,12 +288,18 @@ class instack ():
             #chainSysDw = []
             if type(sample.files) == type([]):
                 for sam in sample.files:
-                    for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                        chain.Add(f)
-                        if 'signal'     in sample.label and make_sig_bkg_trees:
-                            self.sig_root_tree.Add(f+'/'+ chainName)
+                    _sam_ = sam
+                    _tre_ = chainName
+                    if ':' in sam:
+                        _sam_ = sam.split(':')[0]
+                        _tre_ = sam.split(':')[1]
+                    logger.debug("[sam, tree] = [%s,%s]" % ( _sam_,_tre_))
+                    for f in glob.glob( self.sampledir + '/*'+ sam +'*.root' ):
+                        chain.Add(f + '/' + _tre_ )
+                        if 'signal' in sample.label and make_sig_bkg_trees:
+                            self.sig_root_tree.Add( f+'/'+ _tre_ )
                         if 'background' in sample.label and make_sig_bkg_trees:
-                            self.bkg_root_tree.Add(f+'/'+ chainName)
+                            self.bkg_root_tree.Add( f+'/'+ _tre_ )
             #    if proc != 'Data':
             #         for sys in treesUpSys:
             #             print "debug::(",proc,")", sys, " == ", samples[proc].get('label')
@@ -310,12 +316,18 @@ class instack ():
             #                 chainSysDw.append(chainDw)
             else:
                 sam = sample.files
+                _sam_ = sam
+                _tre_ = chainName
+                if ':' in sam:
+                    _sam_ = sam.split(':')[0]
+                    _tre_ = sam.split(':')[1]
+                logger.debug("[sam, tree] = [%s,%s]" % ( _sam_,_tre_))
                 for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                    chain.Add(f)
+                    chain.Add( f + '/' + _tre_ )
                     if 'signal' in sample.label and make_sig_bkg_trees:
-                        self.sig_root_tree.Add(f+'/' + chainName )
+                        self.sig_root_tree.Add( f + '/' + _tre_ )
                     if 'background' in sample.label and make_sig_bkg_trees:
-                        self.bkg_root_tree.Add(f+'/' + chainName )
+                        self.bkg_root_tree.Add( f + '/' + _tre_ )
             #     if samples[proc].get('label') != 'Data':
             #         for sys in treesUpSys:
             #             chainUp = ROOT.TChain(sys.replace('*',proc))
