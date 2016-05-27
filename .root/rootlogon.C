@@ -1,6 +1,6 @@
 /*  rootlogon.C
  *  Autor: Haddad Yacine
- *  Mail : yhaddad@cern.ch  
+ *  Mail : yhaddad@cern.ch
  *  All rights reserved.
  */
 
@@ -34,15 +34,15 @@ void declar_colors(){
 
 void setYacineStyle(){
   YacineStyle = new  TStyle("YacineStyle", "Yacine Style");
-  
+
   gInterpreter->ProcessLine(".! ps | grep root");
-  
+
   // General
   YacineStyle->SetFillColor(10);
   YacineStyle->SetTitleFillColor(10);
   YacineStyle->SetTextFont(18); //@
   //YacineStyle->SetLineWidth(2); //@
-  
+
   YacineStyle->SetPaperSize(20, 43);
   //
   ////  comment me
@@ -51,7 +51,7 @@ void setYacineStyle(){
   //// For Canvas
   ////YacineStyle->SetCanvasPreferGL(true); // as a test
   YacineStyle->SetCanvasBorderMode(0);
-  YacineStyle->SetCanvasColor(0);     // chaned fron kWhite to -1 
+  YacineStyle->SetCanvasColor(0);     // chaned fron kWhite to -1
   YacineStyle->SetCanvasDefH(600);    //Height of canvas
   YacineStyle->SetCanvasDefW(600);    //Width of canvas
   YacineStyle->SetCanvasDefX(900);    //POsition on screen
@@ -59,23 +59,23 @@ void setYacineStyle(){
   //
   //// For Pad
   YacineStyle->SetPadBorderMode(0);
-  YacineStyle->SetPadColor(0);        // chaned fron kWhite to -1 
+  YacineStyle->SetPadColor(0);        // chaned fron kWhite to -1
   YacineStyle->SetPadGridX(false);
   YacineStyle->SetPadGridY(false);
   YacineStyle->SetGridColor(kGray);
   YacineStyle->SetGridStyle(3);
   YacineStyle->SetGridWidth(1);
-  YacineStyle->SetPadTickX(1);  
+  YacineStyle->SetPadTickX(1);
   YacineStyle->SetPadTickY(1);
-  
+
   //// for frame
   YacineStyle->SetFrameBorderMode(0);
   YacineStyle->SetFrameBorderSize(1);
-  YacineStyle->SetFrameFillColor(0);   // chaned fron kWhite to -1  
+  YacineStyle->SetFrameFillColor(0);   // chaned fron kWhite to -1
   YacineStyle->SetFrameFillStyle(0);
   YacineStyle->SetFrameLineColor(1);
   YacineStyle->SetFrameLineStyle(1);
-  YacineStyle->SetFrameLineWidth(1);   // default : 2 
+  YacineStyle->SetFrameLineWidth(1);   // default : 2
   //
   //// For Hito
   YacineStyle->SetHistFillColor(0);    // changed from kWhite to -1
@@ -92,7 +92,7 @@ void setYacineStyle(){
   YacineStyle->SetFuncColor(kOrange-3);
   YacineStyle->SetFuncStyle(1);
   YacineStyle->SetFuncWidth(2);
-  YacineStyle->SetOptFit(01100); 
+  YacineStyle->SetOptFit(01100);
   YacineStyle->SetFitFormat("3.4f"); //gStyle->SetFitFormat("3.1g");
   //
   //
@@ -132,9 +132,9 @@ void setYacineStyle(){
   //// Axis Titles
   YacineStyle->SetTitleColor (1 ,  "xyz");
   YacineStyle->SetTitleFont  (43,  "xyz");
-  YacineStyle->SetTitleSize  (25,  "xyz");                  
-  YacineStyle->SetTitleOffset(3 ,  "yz" );
-  YacineStyle->SetTitleOffset(5 ,  "x"  );
+  YacineStyle->SetTitleSize  (25,  "xyz");
+  //YacineStyle->SetTitleOffset(3 ,  "yz" );
+  //YacineStyle->SetTitleOffset(5 ,  "x"  );
   ////YacineStyle->SetTitleXOffset(1.08);
   ////YacineStyle->SetTitleYOffset(1.2);
   //
@@ -158,7 +158,23 @@ void setYacineStyle(){
   YacineStyle->SetOptLogy(0);
   YacineStyle->SetOptLogz(0);
   //
-  YacineStyle->SetPalette(53,0); 
+  //palette settings - completely independent
+  const Int_t NRGBs = 3;
+  const Int_t NCont = 255;
+
+  Double_t stops[NRGBs] = { 0.0, 0.5, 1.0 };
+
+  //Double_t red[NRGBs]   = { 0.9 , 0.2 , 0.0 };
+  //Double_t green[NRGBs] = { 0.9 , 0.5 , 0.1 };
+  //Double_t blue[NRGBs]  = { 0.9 , 0.8 , 0.5 };
+  Double_t red[NRGBs]   = { 0.9 , 0.1 , 0.1 };
+  Double_t green[NRGBs] = { 0.9 , 0.5 , 0.3 };
+  Double_t blue[NRGBs]  = { 1.0 , 1.0 , 0.9 };
+
+  TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  YacineStyle->SetNumberContours(NCont);
+  YacineStyle->SetOptStat(0);
+  //YacineStyle->SetPalette(56,0);
 
   declar_colors();
   //====> done
@@ -173,7 +189,7 @@ void rootlogon(){
   setYacineStyle();
 }
 
-// on the grid 
+// on the grid
 void onGrid(bool gridOn) {
   YacineStyle->SetPadGridX(gridOn);
   YacineStyle->SetPadGridY(gridOn);
@@ -184,23 +200,19 @@ void onStatOpt(bool onStat)
 {
   if(onStat) YacineStyle->SetOptStat("emr");
   else       YacineStyle->SetOptStat(0);
-} 
+}
 
 void onFitOpt(bool onStat)
 {
   if(onStat) YacineStyle->SetOptStat("emr");
   else       YacineStyle->SetOptStat(0);
-} 
-
-void onTranspacy(bool trans){
-  YacineStyle->SetCanvasColor(-1);     // chaned fron kWhite to -1 
-  YacineStyle->SetPadColor(-1);        // chaned fron kWhite to -1
-  YacineStyle->SetFrameFillColor(-1); 
-  YacineStyle->SetTitleFillColor(-1);
-  YacineStyle->SetHistFillColor(-1);
-  
 }
 
+void onTranspacy(bool trans){
+  YacineStyle->SetCanvasColor(-1);     // chaned fron kWhite to -1
+  YacineStyle->SetPadColor(-1);        // chaned fron kWhite to -1
+  YacineStyle->SetFrameFillColor(-1);
+  YacineStyle->SetTitleFillColor(-1);
+  YacineStyle->SetHistFillColor(-1);
 
-
-
+}

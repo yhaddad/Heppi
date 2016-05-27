@@ -24,21 +24,21 @@ Produce a stacked plots
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * To run ``heepi`` plotmaker you have to run the script ``plot``
-* you can print the options of the script by typing ``.\plot --help``   
+* you can print the options of the script by typing ``.\plot --help``
 * you have to combine the trees using ``rootmerge.py`` script
 * the commend I'm using is the follwing:
 .. code-block::
     ./plot -s /dir/to/merged/trees --load plotcard.json --all
-    
+
 * if you want to print one variable in the plotcard you can replace the option ``--all`` by ``--variable`` or just ``-v`` followed by the name of the variable.
-example : 
-.. code-block:: 
+example :
+.. code-block::
     ./plot -s /dir/to/merged/trees --load plotcard.json -v var1
 
 Write a valid plotcard ?
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Produce the plotcard using a processe.json files and input root file. 
+* Produce the plotcard using a processe.json files and input root file.
 * The tree name must be specified
 
 .. code-block:: bash
@@ -51,9 +51,13 @@ Write a valid plotcard ?
 
 installation
 ------------
+* You can install the lastest stable `Heppi` version via `PyPi`
+.. code-block:: bash
+  pip install heppi --user
+
+The dependencies will be installed automatically.
 * Run the setup script to install the dependencies: ``python setup.py develop --user`` or run : ``pip install --user jsmin termcolor progressbar jsonmerge``, both ways works on lxplus.
 * ROOT env must be set, I recomend to setup CMSSW env before runnning the previous commands
-
 Credits
 -------
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.

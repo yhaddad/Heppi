@@ -30,8 +30,8 @@ import  settings
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-logger.setLevel(level=logging.DEBUG)
-#logger.setLevel(level=logging.INFO)
+#logger.setLevel(level=logging.DEBUG)
+logger.setLevel(level=logging.INFO)
 
 class utils:
     @staticmethod
@@ -57,21 +57,31 @@ class utils:
             s = ''
         return s
     @staticmethod
-    def draw_cut_line(hist, variable):
+    def draw_cut_line(hist, variable, axis='x'):
         if len(variable.cut) != 0:
-            ymin  = hist.GetMinimum()
-            ymax  = hist.GetMaximum()
+            #ymin  = hist.GetMinimum()
+            #ymax  = hist.GetMaximum()
             cuttt = variable.cut.replace('(','').replace(')','')
             for cut in  cuttt.split('&&'):
                 stmp = cut.split('>')
                 if len(stmp) == 1:
                     stmp = cut.split('<')
-                xcut = eval(parser.expr(stmp[1]).compile())
+                cut = eval(parser.expr(stmp[1]).compile())
                 line = ROOT.TLine()
                 line.SetLineColor(settings.cut_line_color)
                 line.SetLineStyle(settings.cut_line_style)
-                if xcut > hist.GetXaxis().GetXmin() or xcut < hist.GetXaxis().GetXmax():
-                    line.DrawLine(xcut,ymin,xcut,ymax)
+                if axis == 'x':
+                    ymin = hist.GetYaxis().GetXmin()
+                    ymax = hist.GetYaxis().GetXmax()
+                    if cut > hist.GetXaxis().GetXmin() or cut < hist.GetXaxis().GetXmax():
+                        line.DrawLine(cut,ymin,cut,ymax)
+                elif axis == 'y':
+                    xmin = hist.GetXaxis().GetXmin()
+                    xmax = hist.GetXaxis().GetXmax()
+                    if cut > hist.GetYaxis().GetXmin() or cut < hist.GetYaxis().GetXmax():
+                        line.DrawLine(xmin,cut,xmax,cut)
+                else:
+                    logger.error('axis not defined or not supported ...')
     @staticmethod
     def draw_labels(label):
         t = ROOT.TLatex()
@@ -105,7 +115,6 @@ class utils:
                                1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
         tex_right.DrawLatexNDC(1-0.05,
                                1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
-
 class variable(object):
     """
     variable class contains all the infmation
@@ -137,7 +146,9 @@ class variable(object):
             "boundaries" : [],
             # internal methods
             "root_legend"  : None,
-            "root_cutflow" : ''
+            "root_cutflow" : '',
+            "root_histos"     : None,
+            "root_stack"      : None,
         }
         self.__dict__ = self.__template__
         self.__dict__.update(options)
@@ -150,10 +161,9 @@ class variable(object):
             self.hist = '(%s)' % (', '.join(map(str, self.hist)))
         if (self.unit == '') and ('[' and ']' in self.title):
                 self.unit = utils.find_between( self.title , "[", "]" )
-        self.histograms = []
+        self.root_histos = []
     def __str__(self):
         return " -- variable :: %18s %12s" % (self.name, self.hist)
-# ------------------------------
 class sample  (object):
     """
     object type for sample and options :
@@ -225,7 +235,29 @@ class options (object):
         for opt in self.__dict__:
              string += "    + %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
         return string
-
+class scatter (object):
+    """
+    object type containing Heppi options:
+    * ratio_range : the range in the ratio plots
+    *
+    """
+    def __init__(self,name, varlist, options = {}):
+        self.__template__ = {
+            "name"    : "" ,
+            "logz"    : False,
+            "norm"    : True ,
+            "variable_x" : None,
+            "variable_y" : None,
+        }
+        self.__dict__  = self.__template__
+        self.__dict__.update(options)
+        self.name     = name
+        try :
+            variables  = name.split(':')
+            self.variable_x = varlist.get(variables[0])
+            self.variable_y = varlist.get(variables[1])
+        except :
+            print "Check the scatter sytax in your plot card"
 class instack ():
     def __init__(self, plotcard, cutcard = '', sampledir = '{PWD}'):
         self.plotcard    = plotcard
@@ -239,7 +271,6 @@ class instack ():
         self.sampledir   = sampledir
         self.sig_root_tree = ROOT.TChain('sig_data')
         self.bkg_root_tree = ROOT.TChain('bkg_data')
-
     def set_samples_directory(self,directory = "{PWD}"):
         self.sampledir = directory
     def read_plotcard(self):
@@ -271,16 +302,15 @@ class instack ():
                 logger.info( self.options )
         logger.info(' ----------------------------- ')
     def get_signal_tree(self):
-        return self.sig_chain
+        return self.sig_root_tree
     def get_background_tree(self):
-        return self.bkg_chain
+        return self.bkg_root_tree
     def book_trees(self, make_sig_bkg_trees = False):
         _samples_ = []
         for proc,sample in self.samples.items():
             chainName = ""
             if sample.tree == "":
                 chainName = str(self.options.treename).format(sampleid = sample.name)
-                print chainName
             else:
                 chainName = str(self.options.treename).format(sampleid = sample.tree)
             chain = ROOT.TChain(chainName)
@@ -293,9 +323,12 @@ class instack ():
                     if ':' in sam:
                         _sam_ = sam.split(':')[0]
                         _tre_ = sam.split(':')[1]
-                    logger.debug("[sam, tree] = [%s,%s]" % ( _sam_,_tre_))
-                    for f in glob.glob( self.sampledir + '/*'+ sam +'*.root' ):
+                    #print "--> sample :: ", _sam_
+                    #print "--> direc  :: ",
+                    #print "--> list of files :: ",  glob.glob( self.sampledir + '/*'+ _sam_ +'*.root' )
+                    for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root' ):
                         chain.Add(f + '/' + _tre_ )
+                        logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
                         if 'signal' in sample.label and make_sig_bkg_trees:
                             self.sig_root_tree.Add( f+'/'+ _tre_ )
                         if 'background' in sample.label and make_sig_bkg_trees:
@@ -321,9 +354,10 @@ class instack ():
                 if ':' in sam:
                     _sam_ = sam.split(':')[0]
                     _tre_ = sam.split(':')[1]
-                logger.debug("[sam, tree] = [%s,%s]" % ( _sam_,_tre_))
+                #print "--> ", _sam_
                 for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
                     chain.Add( f + '/' + _tre_ )
+                    logger.debug("[b][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
                     if 'signal' in sample.label and make_sig_bkg_trees:
                         self.sig_root_tree.Add( f + '/' + _tre_ )
                     if 'background' in sample.label and make_sig_bkg_trees:
@@ -363,6 +397,18 @@ class instack ():
         if select  != '':
             cutflow = cutflow + '&&' + select
         return cutflow
+    def variable_cutflow_2D(self, variable_x, variable_y, select=''):
+        cutflow = ''
+        for key,var in self.variables.items():
+            if (len(var.cut) == 0) or (var.name == variable_x) or (var.name == variable_y): continue
+            if  len(cutflow) == 0 : cutflow = '(' + var.cut + ')'
+            else: cutflow  = cutflow + '&&' + '(' + var.cut + ')'
+        if select  != '':
+            cutflow = cutflow + '&&' + select
+        return cutflow
+
+    def ranking_fom(self, variable, fom = 'distance'):
+
     #---------------------------------------------------------
     def print_cutflow(self, format="psql" ):
         _header_  = ["cutflow"]
@@ -697,7 +743,6 @@ class instack ():
     #---------------------------------------------------------
     def draw(self, varkey, label='VBF', select=''):
         variable = None
-        histos = []
         try:
             variable = self.variables.get(varkey)
         except KeyError:
@@ -719,9 +764,6 @@ class instack ():
                                         (0.96 - ROOT.gStyle.GetPadTopMargin()))
 
         variable.root_cutflow = self.variable_cutflow(variable.name,'')
-        #if len(variable.root_cutflow)!=0:
-        #    variable.root_cutflow = variable_cutflow(variable.name,select)
-
         hstack = ROOT.THStack('hs_' + variable.name,'')
         hstack.SetName('hs_'+ variable.name)
         hstack.SetTitle(";" + variable.title+";entries")
@@ -746,14 +788,11 @@ class instack ():
         bar    = ProgressBar(widgets=[colored('-- variables:: %20s   ' % variable.name, 'green'),
                             Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
-            logger.info(' -- %17s  %12s ' % (proc,  sample.name) )
             _cutflow_ = variable.root_cutflow
             if len(sample.cut) != 0:
                 _cutflow_ = '&&'.join([variable.root_cutflow[:-1],sample.cut+')'])
             if len(variable.blind) != 0 and sample.label == 'data':
                 _cutflow_ = '&&'.join([variable.root_cutflow[:-1],variable.blind+')'])
-
-            print "cutflow--> ",_cutflow_
             if sample.label != 'data':
                 sample.root_tree.Project(
                     'h_' + variable.name + variable.hist,
@@ -765,17 +804,7 @@ class instack ():
                             "%f" % sample.kfactor
                         ]
                     )
-#                    _cutflow_.replace('weight','weight*%f*%f*%f' % ( self.options.kfactor,
-#                                                                     self.options.intlumi,
-#                                                                     sample.kfactor     )
-                    #)
                 )
-                print "cutflow ::",  _cutflow_
-                print   '*'.join([  _cutflow_,
-                                    str(self.options.kfactor),
-                                    str(self.options.intlumi),
-                                    str(sample.kfactor)     ])
-
             elif sample.label == 'data':
                 sample.root_tree.Project(
                     'h_' + variable.name + variable.hist,
@@ -849,7 +878,7 @@ class instack ():
                 hist.SetBinErrorOption(ROOT.TH1.kPoisson)
                 hist.SetName(hist.GetName() + 'data')
                 variable.root_legend.AddEntry( hist, sample.title, "lep" )
-                histos.append(hist)
+                variable.root_histos.append(hist)
             if 'background' in sample.label:
                 hist.SetLineColor(ROOT.kBlack)
                 hist.SetFillColor(sample.color)
@@ -884,7 +913,7 @@ class instack ():
         herrsyst.Draw('E2,same')
         herrstat.Draw('E2,same')
         #
-        #hdata = None
+        hdata = None
         for h in histos:
             if 'data' not in h.GetName():
                 h.Draw('hist,same')
@@ -982,8 +1011,112 @@ class instack ():
         ratioHist.Draw('same')
 
         c.cd()
-        #
         if variable.norm == True:
             histname = histname + '_norm'
         for form in settings.plot_formats :
             c.SaveAs( 'plots/' + histname + '.' + form)
+    def scatter(self, varkey_x,varkey_y, label='VBF', select=''):
+        variable_x = None
+        variable_y = None
+        histos = []
+        try:
+            variable_x = self.variables.get(varkey_x)
+            variable_y = self.variables.get(varkey_y)
+        except KeyError:
+            pass
+
+        histname = ('scatter_histogram_' +
+                    variable_x.name + '_vs_' + variable_y.name
+                    + label + '_'
+                    '')
+
+        variable_x.root_legend  = ROOT.TLegend(0.6, 0.8,
+                                    (1.00 - ROOT.gStyle.GetPadRightMargin()),
+                                    (0.96 - ROOT.gStyle.GetPadTopMargin()))
+
+        variable_x.root_cutflow = self.options.weight_branch
+        variable_y.root_cutflow = self.options.weight_branch
+
+        exec("""scatter_sig = ROOT.TH2F('scatter_sig_' + variable_x.name + '_' + variable_y.name,
+                                ';' + variable_x.title +';'+variable_y.title+';entries',""" +
+                                (variable_x.hist + variable_y.hist).replace(')(',',').replace(')','').replace('(','')+")"
+            )
+        exec("""scatter_bkg = ROOT.TH2F('scatter_bkg_' + variable_x.name + '_' + variable_y.name,
+                                ';' + variable_x.title +';'+variable_y.title+';entries',""" +
+                                (variable_x.hist + variable_y.hist).replace(')(',',').replace(')','').replace('(','')+")"
+            )
+
+        _cutflow_ = self.variable_cutflow_2D(variable_x.name,variable_y,'')
+        print "cut flow :: ",  _cutflow_
+
+        self.get_signal_tree().Project(
+                'hsig_' + variable_x.name +"_"+variable_y.name
+                +(variable_x.hist + variable_y.hist).replace(")(",","),
+                  variable_y.formula +":"+variable_x.formula,
+                  '*'.join(
+                        [   #_cutflow_,
+                            "%f" % self.options.kfactor,
+                            "%f" % self.options.intlumi,
+                            self.options.weight_branch
+                        ]
+                    )
+                )
+
+        self.get_background_tree().Project(
+                'hbkg_' + variable_x.name +"_"+variable_y.name
+                +(variable_x.hist + variable_y.hist).replace(")(",","),
+                  variable_y.formula +":"+variable_x.formula,
+                  '*'.join(
+                        [   #_cutflow_,
+                            "%f" % self.options.kfactor,
+                            "%f" % self.options.intlumi,
+                            self.options.weight_branch
+                        ]
+                    )
+                )
+        scatter_sig = ROOT.gDirectory.Get('hsig_'+variable_x.name +"_"+variable_y.name)
+        scatter_sig.SetDirectory(0)
+        scatter_sig.SetFillColor(0)
+        scatter_sig.SetLineColor(ROOT.kRed+2)
+        scatter_bkg = ROOT.gDirectory.Get('hbkg_'+variable_x.name +"_"+variable_y.name)
+        scatter_bkg.SetDirectory(0)
+        scatter_bkg.SetFillColor(ROOT.kAzure + 1)
+        scatter_bkg.SetTitle(';' + variable_x.title + variable_x.unit +
+                             ';' + variable_y.title + variable_y.unit +
+                             ';entries')
+        scatter_bkg.GetXaxis().SetTitleOffset(0.01)
+        scatter_bkg.GetYaxis().SetTitleOffset(0.01)
+        scatter_sig.GetXaxis().SetTitleOffset(0.01)
+        scatter_sig.GetYaxis().SetTitleOffset(0.01)
+
+        leg_s = variable_x.root_legend.AddEntry( scatter_sig , "signal"    , "f" )
+        leg_b = variable_x.root_legend.AddEntry( scatter_bkg , "background", "f" )
+
+
+
+        c = ROOT.TCanvas("c","c",settings.canvas_width-50,settings.canvas_width-100)
+        c.cd()
+
+        self.customizeHisto(scatter_bkg)
+        self.customizeHisto(scatter_sig)
+
+        c.SetFixedAspectRatio()
+        c.SetRightMargin(0.15)
+        scatter_bkg.DrawNormalized("colz")
+        scatter_sig.DrawNormalized("box,same")
+        utils.draw_labels( self.options.label)
+        utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+
+        utils.draw_cut_line(scatter_sig,variable_x, axis='x')
+        utils.draw_cut_line(scatter_sig,variable_y, axis='y')
+
+        variable_x.root_legend.SetTextAlign( 12 )
+        variable_x.root_legend.SetTextFont ( 43 )
+        variable_x.root_legend.SetTextSize ( 18 )
+        variable_x.root_legend.SetLineColor( 0 )
+        variable_x.root_legend.SetFillColor( 0 )
+        variable_x.root_legend.SetFillStyle( 0 )
+        variable_x.root_legend.SetLineColorAlpha(0,0)
+        variable_x.root_legend.SetShadowColor(0)
+        variable_x.root_legend.Draw()
+        raw_input(' ... ')
