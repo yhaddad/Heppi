@@ -31,8 +31,8 @@ import  settings
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-logger.setLevel(level=logging.DEBUG)
-# logger.setLevel(level=logging.INFO)
+#logger.setLevel(level=logging.DEBUG)
+logger.setLevel(level=logging.INFO)
 
 class utils:
     @staticmethod
@@ -84,23 +84,29 @@ class utils:
                 else:
                     logger.error('axis not defined or not supported ...')
     @staticmethod
-    def draw_labels(label):
+    def draw_labels(label, position='top'):
         t = ROOT.TLatex()
         t.SetTextAlign(12)
         t.SetTextFont (settings.text_font)
         t.SetTextSize (settings.text_size)
         shift = 0
         lines = []
+        ystart = 0.95
+        if position == 'top'    : ystart = 0.95
+        if position == 'bottom' : ystart = 0.6
+
         if type(label) == type(''):
             lines = label.split('\\')
         elif type(label) == type([]):
             lines = label
         else:
             raise ImportError("Label format is not supported: please enter a string or a table of strings!")
+
         for s in lines:
-            t.DrawLatexNDC((0.04 + ROOT.gStyle.GetPadLeftMargin()),
-                           (0.95 - shift - ROOT.gStyle.GetPadTopMargin()),s)
+            t.DrawLatexNDC((0.04   + ROOT.gStyle.GetPadLeftMargin()),
+                           (ystart - shift - ROOT.gStyle.GetPadTopMargin()),s)
             shift = shift + settings.label_shift
+
     @staticmethod
     def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
                            label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
@@ -251,34 +257,33 @@ class options (object):
         for opt in self.__dict__:
              string += "    + %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
         return string
-class scatter (object):
+class scatter_opt(object):
     """
     object type containing Heppi options:
     * ratio_range : the range in the ratio plots
-    *
     """
-    def __init__(self,name, varlist, options = {}):
+    def __init__(self, options = {}):
         self.__template__ = {
-            "name"    : "" ,
+            "xlist"   : [""],
+            "ylist"   : [""],
+            "profile" : True,
+            "scatter" : True,
             "logz"    : False,
-            "norm"    : True ,
-            "variable_x" : None,
-            "variable_y" : None,
+            "normz"   : True
         }
         self.__dict__  = self.__template__
         self.__dict__.update(options)
-        self.name     = name
-        try :
-            variables  = name.split(':')
-            self.variable_x = varlist.get(variables[0])
-            self.variable_y = varlist.get(variables[1])
-        except :
-            print "Check the scatter sytax in your plot card"
+    def __str__(self):
+        string = " -- Heppi scatter plots :\n"
+        for opt in self.__dict__:
+             string += "  -- %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
+        return string
 class instack ():
     def __init__(self, plotcard, cutcard = '', sampledir = '{PWD}'):
         self.plotcard    = plotcard
         self.samples     = collections.OrderedDict()
         self.variables   = {}
+        self.scatter_opt = {}
         self.rootfile    = {}
         self.cutflow     = []
         self.cutcard     = cutcard
@@ -316,6 +321,10 @@ class instack ():
                 logger.info(' ----------------------------- ')
                 self.options = options(_config_[key])
                 logger.info( self.options )
+            if 'scatter' in key.lower():
+                logger.info(' ----------------------------- ')
+                self.scatter_opt = scatter_opt(_config_[key])
+                logger.info( self.scatter_opt )
         logger.info(' ----------------------------- ')
     def get_signal_tree(self):
         return self.sig_root_tree
@@ -1035,7 +1044,67 @@ class instack ():
         for form in settings.plot_formats :
             c.SaveAs( 'plots/' + histname + '.' + form)
 
-    def scatter(self, varkey_x,varkey_y, label='VBF', select='', make_profiles = True):
+    def make_roc(self, varkey, label=''):
+        variable = None
+        try:
+            variable = self.variables.get(varkey)
+        except KeyError:
+            pass
+        histname = ('roc_' +
+                    variable.name
+                    + label + '_'
+                    '')
+        _cutflow_ = self.variable_cutflow(variable.name,'')
+
+        print ','.join( ['(1000', ','.join(variable.hist.split(',')[1:])])
+        self.get_signal_tree().Project(
+            'hsig_' + variable.name + ','.join( ['(1000', ','.join(variable.hist.split(',')[1:])]),
+            variable.formula,
+            '*'.join(
+                [   _cutflow_,
+                    "%f" % self.options.kfactor,
+                    "%f" % self.options.intlumi,
+                    self.options.weight_branch
+                ]
+            )
+        )
+
+        self.get_background_tree().Project(
+            'hbkg_' + variable.name + ','.join( ['(1000', ','.join(variable.hist.split(',')[1:])]),
+            variable.formula,
+            '*'.join(
+                [   _cutflow_,
+                    "%f" % self.options.kfactor,
+                    "%f" % self.options.intlumi,
+                    self.options.weight_branch
+                ]
+            )
+        )
+        histogram_sig = ROOT.gDirectory.Get('hsig_'+variable.name)
+        histogram_bkg = ROOT.gDirectory.Get('hbkg_'+variable.name)
+
+        roc = ROOT.TMVA.ROCCalc(histogram_sig, histogram_bkg)
+
+        c = ROOT.TCanvas("c_" + histname,"c_" + histname,settings.canvas_width-50,settings.canvas_width-100)
+        c.cd()
+        histo = roc.GetROC()
+        histo.SetTitle(variable.formula)
+        histo.SetFillColorAlpha(137,0.2)
+        histo.SetLineColor(137)
+        histo.GetXaxis().SetRangeUser(0,1)
+        histo.GetYaxis().SetRangeUser(0,1)
+        histo.Draw("C")
+        labels = self.options.label
+        labels.append("")
+        labels.append(("AUC = %1.3f" % (roc.GetROCIntegral())))
+        labels.insert(0, "ROC : %s" % variable.title )
+        utils.draw_labels(self.options.label, position='bottom')
+        utils.scatter_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+        hists_copy = histo.Clone("___")
+        hists_copy.Draw("same")
+        c.SaveAs('plots/roc/' + histname+ '.pdf' )
+
+    def scatter(self, varkey_x,varkey_y, label='', select='', make_profiles = True):
         variable_x = None
         variable_y = None
         histos = []
@@ -1070,14 +1139,13 @@ class instack ():
                                 (variable_x.hist + variable_y.hist).replace(')(',',').replace(')','').replace('(','')+")"
             )
         _cutflow_ = self.variable_cutflow_2D(variable_x.name,variable_y,'')
-        print "cut flow :: ",  _cutflow_
 
         self.get_signal_tree().Project(
                 'hsig_' + variable_x.name +"_"+variable_y.name
                 +(variable_x.hist + variable_y.hist).replace(")(",","),
                   variable_y.formula +":"+variable_x.formula,
                   '*'.join(
-                        [   #_cutflow_,
+                        [   _cutflow_,
                             "%f" % self.options.kfactor,
                             "%f" % self.options.intlumi,
                             self.options.weight_branch
@@ -1090,7 +1158,7 @@ class instack ():
                 +(variable_x.hist + variable_y.hist).replace(")(",","),
                   variable_y.formula +":"+variable_x.formula,
                   '*'.join(
-                        [   #_cutflow_,
+                        [   _cutflow_,
                             "%f" % self.options.kfactor,
                             "%f" % self.options.intlumi,
                             self.options.weight_branch
@@ -1104,7 +1172,7 @@ class instack ():
                     +(variable_x.hist + variable_y.hist).replace(")(",","),
                       variable_y.formula +":"+variable_x.formula,
                       '*'.join(
-                            [   #_cutflow_,
+                            [   _cutflow_,
                                 "%f" % self.options.kfactor,
                                 "%f" % self.options.intlumi
                             ]
@@ -1148,7 +1216,6 @@ class instack ():
                 scatter_data = scatter_data.ProfileX(scatter_data.GetName() + '_px', 1,-1,'')
                 scatter_data.SetMaximum(ymax)
                 scatter_data.SetMinimum(ymin)
-                print "make profile data"
             scatter_data.SetLineColor  (ROOT.kBlack)
             scatter_data.SetMarkerColor(ROOT.kBlack)
             scatter_data.SetMarkerStyle(20)

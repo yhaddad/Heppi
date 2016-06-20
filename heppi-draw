@@ -1,17 +1,13 @@
 #!/usr/bin/env python
-#from __future__ import print_function
 
 from optparse   import OptionParser
 from heppi      import heppi
 from termcolor  import colored
 import ROOT, logging, sys, logging, time
 
-#from etaprogress.progress import ProgressBar, ProgressBarBits, ProgressBarBytes, ProgressBarWget, ProgressBarYum
-
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-logger.setLevel(level=logging.DEBUG)
 heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
 
 def get_options():
@@ -49,11 +45,14 @@ def get_options():
     parser.add_option("--nocuts",
                       action="store_true",dest="nocuts",default=False,
                       help="all the histogram will be in log scale")
+    parser.add_option("--scatter",
+                      action="store_true",dest="scatter",default=False,
+                      help="Draw the scatter plot booked in the plotcard")
     parser.add_option("--label", dest="label",default='VBF',
                       help="Label added in the plot file names")
     parser.add_option("--title", dest="title_on_plot",default=[],
                       help="replace labels name from the plot card")
-    parser.add_option('--verbose', dest='verbose', action='count',
+    parser.add_option('--verbose', dest='verbose', default='INFO',
                      help="Increase verbosity (specify multiple times for more)")
     parser.add_option("--cut-card", dest="cut_card",default='',
                       help="Specify all the cut through a cut-card. This might be included also in the plotcard. Check the documentation")
@@ -61,30 +60,27 @@ def get_options():
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    # heppi.options       = opt
-    # heppi.allnormhist   = opt.allnormhist
-    # heppi.allloghist    = opt.allloghist
-    # heppi.sampledir     = opt.sampledir
-    # heppi.cut_card      = opt.cut_card
-    stack = heppi.instack(
-        plotcard  = opt.plotcard,
-        sampledir = opt.sampledir
-    )
+    stack = None
+    try:
+        f = open(opt.plotcard)
+        stack = heppi.instack(
+            plotcard  = opt.plotcard,
+            sampledir = opt.sampledir
+            )
+    except IOError as e:
+        print "I/O error({0}): {1}".format(e.errno, e.strerror)
 
     stack.read_plotcard()
-    stack.book_trees()
+    stack.book_trees(make_sig_bkg_trees=opt.scatter)
 
-    # if len(opt.title_on_plot) != 0:
-    #     heppi.title_on_plot = opt.title_on_plot.split(',')
-    #
-    # log_level = logging.WARNING # default
-    if opt.verbose == 1:
-        log_level = logging.INFO
-    elif opt.verbose >= 2:
-        log_level = logging.DEBUG
+    print dir(heppi)
+    if  opt.verbose == 'INFO':
+        heppi.logger.setLevel(level=heppi.logging.INFO)
+        logger.setLevel(level=logging.INFO)
+    elif opt.verbose == 'DEBUG':
+        heppi.logger.setLevel(level=heppi.logging.DEBUG)
+        logger.setLevel(level=logging.DEBUG)
 
-    #logging.basicConfig(level=log_level)
-    #
 
     if opt.display:
         ROOT.gROOT.SetBatch( ROOT.kFALSE )
@@ -92,13 +88,26 @@ if __name__ == "__main__":
         ROOT.gROOT.SetBatch( ROOT.kTRUE  )
         ROOT.gErrorIgnoreLevel = ROOT.kError
 
-    if opt.draw_all and opt.variable == '':
+    if opt.scatter:
         logger.info(colored(
-            ('(%i) booked variables will be drawn ::\r' % len(stack.variables)),
+            (' -- booked scatter plots :: (%i x %i)' % (len(stack.scatter_opt.xlist),len(stack.scatter_opt.ylist))),
             'red', attrs=['bold']
         ))
-        for var in stack.variables:
-            stack.draw(var,opt.label)
+        for xvar in stack.scatter_opt.xlist :
+            for yvar in stack.scatter_opt.ylist :
+                if xvar != yvar:
+                    logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
+                    if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
+                    if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
+
+
+    if opt.draw_all and opt.variable == '':
+        logger.info(colored(
+            ('(%i) booked variables will be drawn :: ' % len(stack.variables)),
+            'red', attrs=['bold']
+        ))
+        for xvar in stack.variables : stack.draw(xvar,opt.label)
+
     else:
         if opt.variable != '':
             stack.draw(opt.variable,opt.label)
