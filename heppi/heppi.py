@@ -9,6 +9,7 @@ except ImportError:
         ROOT is not in your environement, or not intsalled.
         Please check!
         """)
+
 try:
     from   termcolor    import colored
     from   jsmin        import jsmin
