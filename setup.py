@@ -24,7 +24,7 @@ test_requirements = []
 
 setup(
     name             = 'Heppi',
-    version          = '0.1',
+    version          = '2.0.0',
     description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
