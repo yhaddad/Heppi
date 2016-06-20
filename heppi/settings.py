@@ -6,7 +6,7 @@ cut_line_color             = 134
 cut_line_style             = 7
 
 #== error style
-error_band_color           = 129
+error_band_color           = 135
 error_band_style           = 1001#3004
 error_band_opacity         = 0.5
 
@@ -16,9 +16,9 @@ syst_error_band_opacity    = 0.5
 
 #== ratio plot style
 ratio_error_same           = False
-ratio_syst_band_color      = 135
+ratio_syst_band_color      = 132
 ratio_syst_band_style      = 1001
-ratio_error_band_color     = 129
+ratio_error_band_color     = 135
 ratio_error_band_style     = 1001
 ratio_error_band_opacity   = 0.5
 ratio_draw_signal          = False
@@ -33,4 +33,4 @@ canvas_height              = 700+150
 two_colomn_legend          = True
 
 #=== output files
-plot_formats              = ["pdf", "png"] # ["pdf","png", "root", "eps"]
+plot_formats              = ["pdf"] # ["pdf","png", "root", "eps"]

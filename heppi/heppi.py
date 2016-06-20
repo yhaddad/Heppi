@@ -30,8 +30,8 @@ import  settings
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-#logger.setLevel(level=logging.DEBUG)
-logger.setLevel(level=logging.INFO)
+logger.setLevel(level=logging.DEBUG)
+# logger.setLevel(level=logging.INFO)
 
 class utils:
     @staticmethod
@@ -114,6 +114,21 @@ class utils:
         tex_left.DrawLatexNDC (0.14,
                                1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
         tex_right.DrawLatexNDC(1-0.05,
+                               1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
+    @staticmethod
+    def scatter_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
+                              label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
+        tex_left  = ROOT.TLatex()
+        tex_left.SetTextAlign (11);
+        tex_left.SetTextFont  (42);
+        tex_left.SetTextSize  (0.036);
+        tex_right = ROOT.TLatex()
+        tex_right.SetTextAlign(31);
+        tex_right.SetTextFont (42);
+        tex_right.SetTextSize (0.036);
+        tex_left.DrawLatexNDC (0.15,
+                               1.01 - ROOT.gStyle.GetPadTopMargin(),label_left)
+        tex_right.DrawLatexNDC(1-0.11,
                                1.01 - ROOT.gStyle.GetPadTopMargin(),label_right)
 class variable(object):
     """
@@ -269,14 +284,14 @@ class instack ():
         self.selection   = {}
         self.options     = None
         self.sampledir   = sampledir
-        self.sig_root_tree = ROOT.TChain('sig_data')
-        self.bkg_root_tree = ROOT.TChain('bkg_data')
+        self.sig_root_tree  = ROOT.TChain('sig_data')
+        self.bkg_root_tree  = ROOT.TChain('bkg_data')
     def set_samples_directory(self,directory = "{PWD}"):
         self.sampledir = directory
     def read_plotcard(self):
         _config_ = None
         with open(self.plotcard) as f:
-            _config_ = json.loads(jsmin(f.read()))
+            _config_ = json.loads(jsmin(f.read()),object_pairs_hook=OrderedDict)
         if self.cutcard != '':
             logger.info(' ---- cut card is specified ----')
             logger.info(' -- %20s ' % ( self.cutcard )    )
@@ -305,6 +320,9 @@ class instack ():
         return self.sig_root_tree
     def get_background_tree(self):
         return self.bkg_root_tree
+    def get_data_tree(self):
+        if 'data' in self.samples:
+            return self.samples['data'].root_tree
     def book_trees(self, make_sig_bkg_trees = False):
         _samples_ = []
         for proc,sample in self.samples.items():
@@ -323,9 +341,7 @@ class instack ():
                     if ':' in sam:
                         _sam_ = sam.split(':')[0]
                         _tre_ = sam.split(':')[1]
-                    #print "--> sample :: ", _sam_
-                    #print "--> direc  :: ",
-                    #print "--> list of files :: ",  glob.glob( self.sampledir + '/*'+ _sam_ +'*.root' )
+                    print "--> list of files :: ",  glob.glob( self.sampledir + '/*'+ _sam_ +'*.root' )
                     for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root' ):
                         chain.Add(f + '/' + _tre_ )
                         logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
@@ -354,7 +370,7 @@ class instack ():
                 if ':' in sam:
                     _sam_ = sam.split(':')[0]
                     _tre_ = sam.split(':')[1]
-                #print "--> ", _sam_
+                print "--> ", _sam_
                 for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
                     chain.Add( f + '/' + _tre_ )
                     logger.debug("[b][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
@@ -407,7 +423,7 @@ class instack ():
             cutflow = cutflow + '&&' + select
         return cutflow
 
-    def ranking_fom(self, variable, fom = 'distance'):
+    #def ranking_fom(self, variable, fom = 'distance'):
 
     #---------------------------------------------------------
     def print_cutflow(self, format="psql" ):
@@ -477,12 +493,12 @@ class instack ():
         """This function returns a function with the statistical precision in each bin"""
         statPrecision = myHisto.Clone('_ratioErrors_')
         systPrecision = myHisto.Clone('_ratioSysErrors_')
-        statPrecision.SetTitle(title)
+        # statPrecision.Set(title)
         statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
         statPrecision.SetFillStyle(settings.ratio_error_band_style)
         statPrecision.SetMarkerColorAlpha(0,0)
 
-        systPrecision.SetTitle(title + "_Sys_")
+        # systPrecision.SetTitle(title + "_Sys_")
         systPrecision.SetFillColorAlpha(settings.ratio_syst_band_color,settings.ratio_error_band_opacity)
         systPrecision.SetFillStyle(settings.ratio_syst_band_style)
         systPrecision.SetMarkerColorAlpha(0,0)
@@ -726,12 +742,13 @@ class instack ():
     def customizeHisto(self, hist):
         hist.GetYaxis().SetTitleSize  (21)
         hist.GetYaxis().SetTitleFont  (43)
-        hist.GetYaxis().SetTitleOffset(2.1)
+        hist.GetYaxis().SetTitleOffset(1.8)
         hist.GetYaxis().SetLabelFont  (43)
         hist.GetYaxis().SetLabelSize  (18)
-        hist.GetXaxis().SetTitleSize  (23)
+        hist.GetXaxis().SetTitleSize  (21)
         hist.GetXaxis().SetTitleFont  (43)
-        hist.GetXaxis().SetTitleOffset( 4)
+        hist.GetXaxis().SetTitleOffset(3.5)
+        hist.GetXaxis().SetLabelOffset(0.02)
         hist.GetXaxis().SetLabelFont  (43)
         hist.GetXaxis().SetLabelSize  (18)
     #---------------------------------------------------------
@@ -753,7 +770,8 @@ class instack ():
                     '')
         variable.root_legend = None
         if settings.two_colomn_legend:
-            variable.root_legend  = ROOT.TLegend(0.45, 0.72,
+            _size_ = (len(self.samples) / 2) * 0.08
+            variable.root_legend  = ROOT.TLegend(0.45, (0.96 - ROOT.gStyle.GetPadTopMargin()) - _size_,
                                         (1.00 - ROOT.gStyle.GetPadRightMargin()),
                                         (0.96 - ROOT.gStyle.GetPadTopMargin()))
             variable.root_legend.SetNColumns(2)
@@ -785,8 +803,8 @@ class instack ():
             variable.root_cutflow = '*'.join(_cutflow_)
         else:
             variable.root_cutflow = self.options.weight_branch
-        bar    = ProgressBar(widgets=[colored('-- variables:: %20s   ' % variable.name, 'green'),
-                            Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
+        bar = ProgressBar(widgets=[colored(' -- variables:: %20s   ' % variable.name, 'green'),
+                          Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
             _cutflow_ = variable.root_cutflow
             if len(sample.cut) != 0:
@@ -861,7 +879,7 @@ class instack ():
                 hist.SetLineStyle(1)
                 hist.SetLineWidth(2)
                 hist.SetFillStyle(0)
-                histos.append(hist)
+                variable.root_histos.append(hist)
                 if sample.kfactor != 1:
                     variable.root_legend.AddEntry(hist,
                                     sample.title + ("#times%i" % sample.kfactor ),
@@ -889,7 +907,7 @@ class instack ():
         #c = ROOT.TCanvas("c","c",500,500)
         c = self.makeRatioPlotCanvas(name = variable.name)
         c.cd(1)
-        _htmp_ = histos[0].Clone('__htmp__')
+        _htmp_ = variable.root_histos[0].Clone('__htmp__')
         ROOT.SetOwnership(_htmp_,0)
         bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variable.hist )]
         _htmp_.SetTitle(';' + variable.title
@@ -911,10 +929,10 @@ class instack ():
         hstack.Draw('hist,same')
         (herrstat, herrsyst) = self.drawStatErrorBand(hstack.GetStack().Last(), histDwSys, histUpSys)
         herrsyst.Draw('E2,same')
-        herrstat.Draw('E2,same')
+        #herrstat.Draw('E2,same')
         #
         hdata = None
-        for h in histos:
+        for h in variable.root_histos:
             if 'data' not in h.GetName():
                 h.Draw('hist,same')
             else:
@@ -956,10 +974,10 @@ class instack ():
         systHist.GetYaxis().SetTitle('Data/MC')
         systHist.GetYaxis().CenterTitle(True)
         self.customizeHisto(errorHist)
-        systHist.Draw('E2')
+        # systHist.Draw('E2')
         errorHist.Draw('E2')
         systHist.Draw('E2,same')
-        errorHist.Draw('E2,same')
+        #errorHist.Draw('E2,same')
         ratioHist = None
         sig_and_bkg_ratio = []
         #
@@ -972,7 +990,7 @@ class instack ():
             ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
             ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
             if settings.ratio_draw_signal:
-                for sig in histos:
+                for sig in variable.root_histos:
                     sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
                     sig_and_bkg.Add(sig)
                     sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
@@ -988,7 +1006,7 @@ class instack ():
             ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
             ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
             if settings.ratio_draw_signal:
-                for sig in histos:
+                for sig in variable.root_histos:
                     sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
                     sig_and_bkg.Add(sig)
                     sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
@@ -1015,7 +1033,8 @@ class instack ():
             histname = histname + '_norm'
         for form in settings.plot_formats :
             c.SaveAs( 'plots/' + histname + '.' + form)
-    def scatter(self, varkey_x,varkey_y, label='VBF', select=''):
+
+    def scatter(self, varkey_x,varkey_y, label='VBF', select='', make_profiles = True):
         variable_x = None
         variable_y = None
         histos = []
@@ -1030,7 +1049,7 @@ class instack ():
                     + label + '_'
                     '')
 
-        variable_x.root_legend  = ROOT.TLegend(0.6, 0.8,
+        variable_x.root_legend  = ROOT.TLegend(0.6, 0.75,
                                     (1.00 - ROOT.gStyle.GetPadRightMargin()),
                                     (0.96 - ROOT.gStyle.GetPadTopMargin()))
 
@@ -1045,7 +1064,10 @@ class instack ():
                                 ';' + variable_x.title +';'+variable_y.title+';entries',""" +
                                 (variable_x.hist + variable_y.hist).replace(')(',',').replace(')','').replace('(','')+")"
             )
-
+        exec("""scatter_data = ROOT.TH2F('scatter_data_' + variable_x.name + '_' + variable_y.name,
+                                ';' + variable_x.title +';'+variable_y.title+';entries',""" +
+                                (variable_x.hist + variable_y.hist).replace(')(',',').replace(')','').replace('(','')+")"
+            )
         _cutflow_ = self.variable_cutflow_2D(variable_x.name,variable_y,'')
         print "cut flow :: ",  _cutflow_
 
@@ -1074,38 +1096,113 @@ class instack ():
                         ]
                     )
                 )
+        scatter_sig = None
+        if self.get_data_tree() != None :
+            self.get_data_tree().Project(
+                    'hdata_' + variable_x.name +"_"+variable_y.name
+                    +(variable_x.hist + variable_y.hist).replace(")(",","),
+                      variable_y.formula +":"+variable_x.formula,
+                      '*'.join(
+                            [   #_cutflow_,
+                                "%f" % self.options.kfactor,
+                                "%f" % self.options.intlumi
+                            ]
+                        )
+                    )
         scatter_sig = ROOT.gDirectory.Get('hsig_'+variable_x.name +"_"+variable_y.name)
+        if make_profiles:
+            ymin = scatter_sig.GetYaxis().GetXmin()
+            ymax = scatter_sig.GetYaxis().GetXmax()
+            scatter_sig = scatter_sig.ProfileX(scatter_sig.GetName() + '_px', 1,-1,'')
+            scatter_sig.SetMarkerColor(132)
+            scatter_sig.SetMarkerStyle(20)
+            scatter_sig.SetMarkerSize (0.8)
+            scatter_sig.SetMaximum(ymax)
+            scatter_sig.SetMinimum(ymin)
+
         scatter_sig.SetDirectory(0)
         scatter_sig.SetFillColor(0)
         scatter_sig.SetLineColor(ROOT.kRed+2)
+
         scatter_bkg = ROOT.gDirectory.Get('hbkg_'+variable_x.name +"_"+variable_y.name)
+        if make_profiles:
+            ymin = scatter_bkg.GetYaxis().GetXmin()
+            ymax = scatter_bkg.GetYaxis().GetXmax()
+            scatter_bkg = scatter_bkg.ProfileX(scatter_bkg.GetName() + '_px', 1,-1,'')
+            scatter_bkg.SetLineColor  (ROOT.kAzure + 1)
+            scatter_bkg.SetMarkerColor(ROOT.kAzure + 1)
+            scatter_bkg.SetMarkerStyle(20)
+            scatter_bkg.SetMarkerSize (0.8)
+            scatter_bkg.SetMaximum(ymax)
+            scatter_bkg.SetMinimum(ymin)
         scatter_bkg.SetDirectory(0)
         scatter_bkg.SetFillColor(ROOT.kAzure + 1)
-        scatter_bkg.SetTitle(';' + variable_x.title + variable_x.unit +
-                             ';' + variable_y.title + variable_y.unit +
-                             ';entries')
+
+        scatter_data = ROOT.gDirectory.Get('hdata_'+variable_x.name +"_"+variable_y.name)
+        if scatter_data!=None:
+            scatter_data.SetDirectory(0)
+            ymin = scatter_data.GetYaxis().GetXmin()
+            ymax = scatter_data.GetYaxis().GetXmax()
+            if make_profiles :
+                scatter_data = scatter_data.ProfileX(scatter_data.GetName() + '_px', 1,-1,'')
+                scatter_data.SetMaximum(ymax)
+                scatter_data.SetMinimum(ymin)
+                print "make profile data"
+            scatter_data.SetLineColor  (ROOT.kBlack)
+            scatter_data.SetMarkerColor(ROOT.kBlack)
+            scatter_data.SetMarkerStyle(20)
+            scatter_data.SetMarkerSize (0.8)
+        scatter_bkg.SetDirectory(0)
+        scatter_bkg.SetFillColor(ROOT.kAzure + 1)
+        xunit = variable_x.unit
+        yunit = variable_y.unit
+        if variable_x.unit != "" : xunit = "("+xunit+")"
+        if variable_y.unit != "" : yunit = "("+yunit+")"
+        _yaxistitle_ = variable_y.title
+
+        if make_profiles:
+            _yaxistitle_ = '#LT' + variable_y.title + '#GT'
+        scatter_bkg.SetTitle(';%s %s;%s %s' % (variable_x.title, xunit, _yaxistitle_, yunit) )
         scatter_bkg.GetXaxis().SetTitleOffset(0.01)
         scatter_bkg.GetYaxis().SetTitleOffset(0.01)
         scatter_sig.GetXaxis().SetTitleOffset(0.01)
         scatter_sig.GetYaxis().SetTitleOffset(0.01)
+        if make_profiles:
+            leg_s = variable_x.root_legend.AddEntry( scatter_sig , "signal"    , "lep" )
+            leg_b = variable_x.root_legend.AddEntry( scatter_bkg , "background", "lep" )
+        else:
+            leg_s = variable_x.root_legend.AddEntry( scatter_sig , "signal"    , "f" )
+            leg_b = variable_x.root_legend.AddEntry( scatter_bkg , "background", "f" )
 
-        leg_s = variable_x.root_legend.AddEntry( scatter_sig , "signal"    , "f" )
-        leg_b = variable_x.root_legend.AddEntry( scatter_bkg , "background", "f" )
+        if scatter_data!=None:
+            leg_b = variable_x.root_legend.AddEntry( scatter_data , "data", "lep" if make_profiles else "f" )
 
 
-
-        c = ROOT.TCanvas("c","c",settings.canvas_width-50,settings.canvas_width-100)
+        c = ROOT.TCanvas("c_" + histname,"c_" + histname,settings.canvas_width-50,settings.canvas_width-100)
         c.cd()
 
         self.customizeHisto(scatter_bkg)
         self.customizeHisto(scatter_sig)
+        scatter_sig.GetXaxis().SetTitleOffset(1.4)
+        scatter_bkg.GetXaxis().SetTitleOffset(1.4)
 
         c.SetFixedAspectRatio()
         c.SetRightMargin(0.15)
-        scatter_bkg.DrawNormalized("colz")
-        scatter_sig.DrawNormalized("box,same")
+        if make_profiles:
+            scatter_bkg.Draw("")
+            scatter_sig.Draw("same")
+            if scatter_data: scatter_data.Draw("same")
+        else:
+            scatter_bkg.DrawNormalized("colz")
+            scatter_sig.DrawNormalized("box,same")
+            if scatter_data:
+                scatter_data.SetMarkerSize(0.5)
+                scatter_data.SetMarkerColorAlpha(1,0.5)
+                scatter_data.DrawNormalized("box,same")
+
+
         utils.draw_labels( self.options.label)
-        utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+        utils.scatter_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
 
         utils.draw_cut_line(scatter_sig,variable_x, axis='x')
         utils.draw_cut_line(scatter_sig,variable_y, axis='y')
@@ -1119,4 +1216,9 @@ class instack ():
         variable_x.root_legend.SetLineColorAlpha(0,0)
         variable_x.root_legend.SetShadowColor(0)
         variable_x.root_legend.Draw()
-        raw_input(' ... ')
+        if make_profiles:
+            c.SaveAs('plots/scatter/' + histname+ '_profile.pdf' )
+            # c.SaveAs('plots/scatter/' + histname+ '_profile.root' )
+        else:
+            c.SaveAs('plots/scatter/' + histname+ '.pdf' )
+            # c.SaveAs('plots/scatter/' + histname+ '.root' )

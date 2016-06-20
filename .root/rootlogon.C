@@ -34,9 +34,7 @@ void declar_colors(){
 
 void setYacineStyle(){
   YacineStyle = new  TStyle("YacineStyle", "Yacine Style");
-
-  gInterpreter->ProcessLine(".! ps | grep root");
-
+  //gInterpreter->ProcessLine(".! ps | grep root");
   // General
   YacineStyle->SetFillColor(10);
   YacineStyle->SetTitleFillColor(10);
@@ -158,23 +156,20 @@ void setYacineStyle(){
   YacineStyle->SetOptLogy(0);
   YacineStyle->SetOptLogz(0);
   //
+  YacineStyle->SetOptStat(0);
+  //YacineStyle->SetPalette(56,0);
+
   //palette settings - completely independent
-  const Int_t NRGBs = 3;
+  const Int_t NRGBs = 3  ;
   const Int_t NCont = 255;
 
-  Double_t stops[NRGBs] = { 0.0, 0.5, 1.0 };
-
-  //Double_t red[NRGBs]   = { 0.9 , 0.2 , 0.0 };
-  //Double_t green[NRGBs] = { 0.9 , 0.5 , 0.1 };
-  //Double_t blue[NRGBs]  = { 0.9 , 0.8 , 0.5 };
+  Double_t stops[NRGBs] = { 0.0 , 0.5 , 1.0 };
   Double_t red[NRGBs]   = { 0.9 , 0.1 , 0.1 };
   Double_t green[NRGBs] = { 0.9 , 0.5 , 0.3 };
   Double_t blue[NRGBs]  = { 1.0 , 1.0 , 0.9 };
 
   TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
   YacineStyle->SetNumberContours(NCont);
-  YacineStyle->SetOptStat(0);
-  //YacineStyle->SetPalette(56,0);
 
   declar_colors();
   //====> done
@@ -187,6 +182,21 @@ void setYacineStyle(){
 
 void rootlogon(){
   setYacineStyle();
+}
+
+void custom_palette()
+{
+  //palette settings - completely independent
+  const Int_t NRGBs = 3  ;
+  const Int_t NCont = 255;
+
+  Double_t stops[NRGBs] = { 0.0 , 0.5 , 1.0 };
+  Double_t red[NRGBs]   = { 0.9 , 0.1 , 0.1 };
+  Double_t green[NRGBs] = { 0.9 , 0.5 , 0.3 };
+  Double_t blue[NRGBs]  = { 1.0 , 1.0 , 0.9 };
+
+  TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  //YacineStyle->SetNumberContours(NCont);
 }
 
 // on the grid
