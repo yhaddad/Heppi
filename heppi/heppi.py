@@ -253,60 +253,28 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-            
-            
-            valup = {}
-            valdw = {}
-            #vals  = [y]
-            #print "--> Nm[",ibin,"]::  (", y ,")"
-            for sys in histUpSys:
-                val   = histUpSys[sys].GetBinContent(ibin)
-                #vals += [val]
-                valup[sys] = val
-                #print "--> Up[",ibin,"]:: ", sys, " (", val ,")"
-            for sys in histDwSys:
-                val   = histDwSys[sys].GetBinContent(ibin)
-                #vals += [val]
-                valdw[sys] = val
-                #print "--> Dw[",ibin,"]:: ", sys, " (", val ,")"
-                
-            #largest_val  = max(vals)
-            #smallest_val = min(vals)
 
-            systError2   = 0
-            for up in valup:
-                dw = up.replace("Up","Down")
-                e = 0.5*(valup[up] - valdw[dw])
-                #print "--> error[",ibin,"]:: ", up, " (", e ,")"
-                systError2 += e*e 
-                            
-            error  = 0
-            if combine_with_systematic:
-                #math.sqrt(syst*syst + stat*stat) 
-                error = math.sqrt(systError2 + stat*stat)
-            else:
-                #error = 0.5*(largest_val - smallest_val)
-                error = math.sqrt(systError2)
-            #print "--> stat error[",ibin,"]:: (", stat ,")"
-            #print "--> syst error[",ibin,"]:: (", math.sqrt(systError2) ,")"
-            #print "--> combined error[",ibin,"]:: (", error ,")"
-            if (y>0):
-                statPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
-                statPrecision.SetBinError  (ibin,   error/y );
+            up_errsum2   = 0
+            down_errsum2 = 0
+            if( y > 0 ):
+                up_errsum2   = (stat/y)*(stat/y) 
+                down_errsum2 = (stat/y)*(stat/y) 
+            for sys in histUpSys:
+                up_diff   = (histUpSys[sys].GetBinContent(ibin) - y) / y 
+                if( up_diff > 0 ):
+                    up_errsum2   += up_diff*up_diff 
+            for sys in histDwSys:
+                down_diff = (histDwSys[sys].GetBinContent(ibin) - y) / y 
+                if( down_diff < 0 ):
+                    down_errsum2 += down_diff*down_diff 
+            
+            up_error   = math.sqrt(up_errsum2)  
+            down_error = math.sqrt(down_errsum2)  
+            band_max   = 1 + up_error 
+            band_min   = 1 - down_error 
                 
-            else:
-                statPrecision.SetBinContent(ibin,   1);
-                statPrecision.SetBinError  (ibin,   0);
-    else:
-        for bin in range(myHisto.GetNbinsX()+1):
-            y   = statPrecision.GetBinContent(bin);
-            err = statPrecision.GetBinError  (bin);
-            if (y>0):
-                statPrecision.SetBinContent(bin,1);
-                statPrecision.SetBinError  (bin,err/y);
-            else:
-                statPrecision.SetBinContent(bin,1);
-                statPrecision.SetBinError  (bin,0);
+            statPrecision.SetBinContent(ibin, (band_max + band_min)/2.0); 
+            statPrecision.SetBinError  (ibin, (band_max - band_min)/2.0); 
                 
     range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
     statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
@@ -332,26 +300,26 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-            
-            vals = [y]
+
+            up_errsum2   = stat*stat 
+            down_errsum2 = stat*stat 
             for sys in histUpSys:
-                val = histUpSys[sys].GetBinContent(ibin)
-                vals += [val]
+                up_diff   = histUpSys[sys].GetBinContent(ibin) - y 
+                if( up_diff > 0   ):
+                    up_errsum2   += up_diff*up_diff 
             for sys in histDwSys:
-                val= histDwSys[sys].GetBinContent(ibin)
-                vals += [val]
-            largest_val  = max(vals)
-            smallest_val = min(vals)
+                down_diff = histDwSys[sys].GetBinContent(ibin) - y 
+                if( down_diff < 0 ):
+                    down_errsum2 += down_diff*down_diff 
             
-            error  = 0
-            if combine_with_systematic:
-                syst  = 0.5*(largest_val - smallest_val)
-                error = math.sqrt(syst*syst + stat*stat) 
-            else:
-                error = 0.5*(largest_val - smallest_val)
+            up_error   = math.sqrt(up_errsum2)  
+            down_error = math.sqrt(down_errsum2)  
+            band_max   = y + up_error 
+            band_min   = y - down_error 
                 
-            statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
-            statPrecision.SetBinError  (ibin,   error);      
+            statPrecision.SetBinContent(ibin, (band_max + band_min)/2.0); 
+            statPrecision.SetBinError  (ibin, (band_max - band_min)/2.0); 
+            
     return statPrecision
 
 #---------------------------------------------------------
@@ -846,3 +814,10 @@ def draw_instack(variable, label='VBF', select=''):
     c.SaveAs( 'plots/' + histfilename + '.png')
     c.SaveAs( 'plots/' + histfilename + '.pdf')
     
+#// Local Variables:
+#// mode:python
+#// indent-tabs-mode:nil
+#// tab-width:4
+#// c-basic-offset:4
+#// End:
+#// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
