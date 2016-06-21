@@ -48,8 +48,12 @@ def get_options():
     parser.add_option("--scatter",
                       action="store_true",dest="scatter",default=False,
                       help="Draw the scatter plot booked in the plotcard")
+    parser.add_option("--cutflow",
+                      action="store_true",dest="print_cutflow",default=False,
+                      help="Print cutflow: efficiency and pobulation of each cut and sample")
     parser.add_option("--label", dest="label",default='VBF',
                       help="Label added in the plot file names")
+
     parser.add_option("--title", dest="title_on_plot",default=[],
                       help="replace labels name from the plot card")
     parser.add_option('--verbose', dest='verbose', default='INFO',
@@ -72,7 +76,7 @@ if __name__ == "__main__":
 
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
-
+    if opt.print_cutflow : stack.print_cutflow()
     print dir(heppi)
     if  opt.verbose == 'INFO':
         heppi.logger.setLevel(level=heppi.logging.INFO)
