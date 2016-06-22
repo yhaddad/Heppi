@@ -61,7 +61,7 @@ def read_plotcard(plotcard, cut_card=''):
     global globalOptions
     config = None
     with open(plotcard) as f:
-        config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
+        config = json.loads(jsmin(f.read()))
     if cut_card != '':
         logger.info(' ---- cut card is specified ----')
         logger.info(' -- %20s ' % ( cut_card )        )
@@ -604,7 +604,7 @@ def draw_instack(variable, label='VBF', select=''):
             tree.Project(
                 'h_' + varname + variables[variable]['hist'],
                 formula,
-                _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
+                _cutflow_.replace('weight','1*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
                                                                  treeinfo.get('lumi'   ,1.0),
                                                                  samples[proc].get('kfactor',1.0)))
                 )
@@ -622,7 +622,7 @@ def draw_instack(variable, label='VBF', select=''):
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
+                    _cutflow_.replace('weight','1*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
                                                                      treeinfo.get('lumi'   ,1.0),
                                                                      samples[proc].get('kfactor',1.0)))
                 )
@@ -640,7 +640,7 @@ def draw_instack(variable, label='VBF', select=''):
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
-                    _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
+                    _cutflow_.replace('weight','1*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
                                                                      treeinfo.get('lumi'   ,1.0),
                                                                      samples[proc].get('kfactor',1.0)))
                 )
