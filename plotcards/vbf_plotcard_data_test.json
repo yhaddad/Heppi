@@ -18,7 +18,7 @@
     },*/
     "dijet_LeadJPt": {
       "hist": "(60,15,265)",
-      "cut": "",
+      "cut": "dijet_LeadJPt>30",
       "blind": "",
       "log": false,
       "norm": false,
@@ -27,7 +27,7 @@
     },
     "dijet_SubJPt": {
       "hist": "(60,15,265)",
-      "cut": "",
+      "cut": "dijet_SubJPt>20",
       "blind": "",
       "log": false,
       "norm": false,
@@ -92,7 +92,7 @@
     },*/
     "dijet_Mjj": {
       "hist": "(40,0,800)",
-      //"cut": "dijet_Mjj>250",
+      "cut": "dijet_Mjj>400",
       "blind": "",
       "log": true,
       "norm": false,
@@ -173,6 +173,24 @@
       "unit" : "",
       "title": "BDT_{jj}"
     },
+    "dipho_dijet_MVA": {
+      "hist" : "(50,-1,1)",
+      "cut"  : "dipho_dijet_MVA<0.92 && dipho_dijet_MVA>0.632",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "",
+      "title": "BDT_{jj,#gamma#gamma}"
+    },
+    "dipho_mva": {
+      "hist" : "(50,-1,1)",
+      "cut"  : "",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "",
+      "title": "BDT_{#gamma#gamma}"
+    },
     "nvtx": {
       "hist"  : "(40,0,40)",
       "cut"   : "",
@@ -200,20 +218,13 @@
     }*/
   },
   "scatter" :{
-      "xlist"   : ["dipho_mass"],
+      "xlist"   : [
+        "dijet_mva",
+        "dipho_mva"
+      ],
       "ylist"   : [
-        "dijet_Mjj",
-        "dipho_mass",
-        "dijet_abs_dEta",
-        "nvtx",
-        "dijet_Zep",
-        "dijet_dipho_dphi_trunc",
-        "dipho_PToM",
-        "dipho_lead_ptoM",
-        "dijet_LeadJPt",
-        "dijet_SubJPt",
-        "dipho_lead_ptoM",
-        "dipho_sublead_ptoM"
+        "dijet_mva",
+        "dipho_mva"
       ],
       "profile" : true,
       "scatter" : true,
@@ -279,7 +290,7 @@
         "title": "jet-jet",
         "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
         "label": "background"
-    },
+    }/*,
     "data":{
         "color": 1,
         "order": 6,
@@ -291,7 +302,7 @@
         "tree" : "Data",
         "cut"  : "",
         "label": "data"
-    }
+    }*/
   },
   "selection": {
     "name": "zee_76x",
@@ -316,7 +327,10 @@
   },
   "options": {
     "label": [
-      "VBF preselection"],
+      "VBF preselection",
+      "",
+      "VBF-1"
+    ],
       /*"JER Only",
       "70 < m_{ee} < 110 GeV"
       ],*/
@@ -327,6 +341,7 @@
   "labels": {
     "name": [
       "VBF preselection",
+
       "70 < m_{ee} < 110 GeV",
       ""
     ]

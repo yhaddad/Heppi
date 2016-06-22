@@ -34,8 +34,6 @@ void declar_colors(){
 
 void setYacineStyle(){
   YacineStyle = new  TStyle("YacineStyle", "Yacine Style");
-  //gInterpreter->ProcessLine(".! ps | grep root");
-  // General
   YacineStyle->SetFillColor(10);
   YacineStyle->SetTitleFillColor(10);
   YacineStyle->SetTextFont(18); //@
@@ -131,20 +129,8 @@ void setYacineStyle(){
   YacineStyle->SetTitleColor (1 ,  "xyz");
   YacineStyle->SetTitleFont  (43,  "xyz");
   YacineStyle->SetTitleSize  (25,  "xyz");
-  //YacineStyle->SetTitleOffset(3 ,  "yz" );
-  //YacineStyle->SetTitleOffset(5 ,  "x"  );
-  ////YacineStyle->SetTitleXOffset(1.08);
-  ////YacineStyle->SetTitleYOffset(1.2);
-  //
-  //// Axis Labels
-  ////YacineStyle->SetLabelColor (kBlack,"xyz");
-  ////YacineStyle->SetLabelFont  (43,    "xyz");
-  ////YacineStyle->SetLabelOffset(25,    "xyz");
-  ////YacineStyle->SetLabelSize  (0.05,  "xyz");
-  //
   //// Legend
   YacineStyle->SetLegendBorderSize(0);
-  //
   //// Axis
   YacineStyle->SetAxisColor  (1    , "XYZ");
   YacineStyle->SetTickLength (0.03 , "XYZ");
@@ -196,7 +182,6 @@ void custom_palette()
   Double_t blue[NRGBs]  = { 1.0 , 1.0 , 0.9 };
 
   TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-  //YacineStyle->SetNumberContours(NCont);
 }
 
 // on the grid

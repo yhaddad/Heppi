@@ -7,7 +7,7 @@ import ROOT, logging, sys, logging, time
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
-logger = logging.getLogger('heppi')
+logger = logging.getLogger('heppi-draw')
 heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
 
 def get_options():

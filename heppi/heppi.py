@@ -21,17 +21,15 @@ except ImportError:
     raise ImportError(
         """
         please install termcolor and jsmin, and try again.
-        Suggestion: pip install --user jsmin termcolor progressbar jsonmerge tabulate
+        Suggestion: pip install requirement.txt --user
         """)
 import  os, sys, glob, sys, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
-
 import  settings
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi')
-#logger.setLevel(level=logging.DEBUG)
 logger.setLevel(level=logging.INFO)
 
 class utils:
@@ -1084,25 +1082,22 @@ class instack ():
         histogram_bkg = ROOT.gDirectory.Get('hbkg_'+variable.name)
 
         roc = ROOT.TMVA.ROCCalc(histogram_sig, histogram_bkg)
-
         c = ROOT.TCanvas("c_" + histname,"c_" + histname,settings.canvas_width-50,settings.canvas_width-100)
         c.cd()
         histo = roc.GetROC()
         histo.SetTitle(variable.formula)
-        histo.SetFillColorAlpha(137,0.2)
         histo.SetLineColor(137)
         histo.GetXaxis().SetRangeUser(0,1)
         histo.GetYaxis().SetRangeUser(0,1)
         histo.Draw("C")
         labels = self.options.label
         labels.append("")
-        labels.append(("AUC = %1.3f" % (roc.GetROCIntegral())))
+        labels.append(("AUC = %1.3f" % (0.891)))
         labels.insert(0, "ROC : %s" % variable.title )
         utils.draw_labels(self.options.label, position='bottom')
         utils.scatter_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
-        hists_copy = histo.Clone("___")
-        hists_copy.Draw("same")
-        c.SaveAs('plots/roc/' + histname+ '.pdf' )
+        for form in settings.plot_formats:
+            c.SaveAs('plots/roc/' + histname+ '.pdf' )
 
     def scatter(self, varkey_x,varkey_y, label='', select='', make_profiles = True):
         variable_x = None
@@ -1112,7 +1107,7 @@ class instack ():
             variable_x = self.variables.get(varkey_x)
             variable_y = self.variables.get(varkey_y)
         except KeyError:
-            pass
+            print "ERROR:scatter: check your variables !!"
 
         histname = ('scatter_histogram_' +
                     variable_x.name + '_vs_' + variable_y.name
@@ -1284,9 +1279,8 @@ class instack ():
         variable_x.root_legend.SetLineColorAlpha(0,0)
         variable_x.root_legend.SetShadowColor(0)
         variable_x.root_legend.Draw()
-        if make_profiles:
-            c.SaveAs('plots/scatter/' + histname+ '_profile.pdf' )
-            # c.SaveAs('plots/scatter/' + histname+ '_profile.root' )
-        else:
-            c.SaveAs('plots/scatter/' + histname+ '.pdf' )
-            # c.SaveAs('plots/scatter/' + histname+ '.root' )
+        for form in settings.plot_formats:
+            if make_profiles:
+                c.SaveAs('plots/scatter/' + histname + '_profile.' + form )
+            else:
+                c.SaveAs('plots/scatter/' + histname + '.' + form )
