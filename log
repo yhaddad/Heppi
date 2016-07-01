@@ -1,0 +1,12 @@
+hadd -f output_DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa.root                                ../output_DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_*.root                                
+
+hadd -f output_GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8.root  ../output_GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8_*.root   
+hadd -f output_GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8.root ../output_GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8_*.root   
+
+hadd -f output_GluGluHToGG_M-125_13TeV_powheg_pythia8.root				    ../output_GluGluHToGG_M-125_13TeV_powheg_pythia8_*.root				    
+hadd -f output_VBFHToGG_M-125_13TeV_powheg_pythia8.root                                     ../output_VBFHToGG_M-125_13TeV_powheg_pythia8_*.root
+
+
+hadd -f output_QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8.root   ../output_QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8_*.root
+hadd -f output_QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8.root   ../output_QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8_*.root
+hadd -f output_QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8.root  ../output_QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8_*.root    

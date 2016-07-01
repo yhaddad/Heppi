@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import ROOT  # needed
 from   heppi import heppi
 from   collections        import OrderedDict
@@ -593,6 +592,7 @@ def print_categories(var, categories = [], select=''):
                                                          100*float(hbkg_sel.Integral())/float(hbkg_all.Integral())))
         logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % ('SIG',
                                                          hsig_all.Integral(),
+
                                                          hsig_sel.Integral(),
                                                          100*float(hsig_sel.Integral())/float(hsig_all.Integral())))
         logger.info('\hline')
@@ -741,12 +741,13 @@ if __name__ == "__main__":
     legend.SetFillStyle( 0 )
     legend.SetLineColorAlpha(0,0)
     legend.SetShadowColor(0)
+
     """
     dijet_roc_dijet = draw_ROC(var       =  'dijet_mva'     ,
-                               label     =  'combined_with_cat' ,
-                               axistitle =  ';#varepsilon_{ggH};#varepsilon_{VBF}',
-                               bkg       = ['ggh_125'],
-                               categories= [])
+    label     =  'combined_with_cat' ,
+    axistitle =  ';#varepsilon_{ggH};#varepsilon_{VBF}',
+    bkg       = ['ggh_125'],
+    categories= [])
     dijet_roc_comb  = draw_ROC(var       =  'dipho_dijet_MVA'     ,
                                label     =  'combined_with_cat' ,
                                axistitle =  ';#varepsilon_{ggH};#varepsilon_{VBF}',
@@ -767,13 +768,14 @@ if __name__ == "__main__":
     dijet_roc_dijet = draw_ROC(var       =  'dijet_mva'     ,
                                label     =  'combined_with_cat' ,
                                axistitle =  ';#varepsilon_{Data};#varepsilon_{VBF}',
-                               bkg       = ['Data'],
+                               bkg       = ['dipho','ggh_125','jetjet','gjet'],
                                categories= [])
-    dijet_roc_comb  = draw_ROC(var       =  'dipho_dijet_MVA'     ,
-                               label     =  'combined_with_cat' ,
-                               axistitle =  ';#varepsilon_{Data};#varepsilon_{VBF}',
-                               bkg       = ['Data'],
-                               categories= [])
+    #dijet_roc_comb  = draw_ROC(var       =  'dipho_dijet_MVA'     ,
+    #                           label     =  'combined_with_cat' ,
+    #                           axistitle =  ';#varepsilon_{Data};#varepsilon_{VBF}',
+    #                           bkg       = ['Data'],
+    #                           categories= [])
+    #
     
     #categories=[0.9449,0.5819])
 

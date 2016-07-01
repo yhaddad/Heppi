@@ -1,0 +1,351 @@
+{
+    "variables": {
+	"Rpt:=(dipho_leadPt*dipho_subleadPt)/(dijet_LeadJPt*dijet_SubJPt)": {
+            "hist" : "(100,0,10)",
+            "cut" : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "R_{p_{T}}"
+	},
+	"mu:=0.5*(dijet_LeadJPt*exp(-abs(dijet_leadEta-(dipho_leadEta+dipho_subleadEta)/2))+dijet_SubJPt*exp(-abs(dijet_subleadEta-(dipho_leadEta+dipho_subleadEta)/2)))": {
+            "hist" : "(80,0,800)",
+            "cut" : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "P_{T}^{D}"
+	},
+	"C:=exp(-4*dijet_Zep*dijet_Zep/(dijet_abs_dEta*dijet_abs_dEta))": {
+            "hist" : "(20,0,1)",
+            "cut" : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "C_{jj,#gamma#gamma}"
+	},
+	"QGL:=dijet_jet1_QGL + dijet_jet2_QGL - (dijet_jet1_QGL*dijet_jet2_QGL)": {
+            "hist" : "(20,0,1)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "QGL_{j_{1}}#timesQGL_{j_{2}}"
+	},
+	"dijet_jet2_QGL": {
+            "hist" : "(20,0,1)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "QGL_{j_{2}}"
+	},
+    	"isGold": {
+	    "hist"  : "(2,-0.5,1.5)",
+	    "cut"   : "isGold>0.5",
+	    "blind" : "",
+	    "log"   :  true,
+	    "norm"  :  false,
+	    "title" : "isGold"
+	},
+	"dijet_LeadJPt": {
+	    "hist" : "(60,15,265)",
+	    "cut"  : "dijet_LeadJPt>30",
+	    //"cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "unit" : "GeV",
+	    "title": "p_{t}(jet_{1})"
+	},
+	"dijet_SubJPt": {
+	    "hist" : "(60,15,265)",
+	    "cut"  : "dijet_SubJPt>20",
+	    //"cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "unit" : "GeV",
+	    "title": "p_{t}(jet_{2})"
+	},
+	"dijet_leadEta": {
+	    "hist" : "(50,-5,5)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#eta(jet_{1})"
+	},
+	"dijet_subleadEta": {
+	    "hist" : "(50,-5,5)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#eta(jet_{2})"
+	},
+	"normalisation:=1": {
+	    "hist" : "(1,1,2)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : false,
+	    "norm" : false,
+	    "title": "for normalisation"
+	},
+	"dijet_Mjj": {
+	    "hist" : "(40,0,800)",
+	    "cut"  : "dijet_Mjj>250",
+	    //"cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "unit" : "GeV",
+	    "title": "m_{jj}"
+	},
+	"dijet_Zep": {
+	    "hist" : "(50,0,10)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#eta^{*}"
+	},
+	"dijet_abs_dEta": {
+	    "hist" : "(20,0,10)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "|#Delta#eta_{jj}|"
+	},
+	"dijet_dipho_dphi_trunc": {
+	    "hist" : "(30,0,3)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
+	},
+	"dijet_minDRJetPho": {
+	    "hist" : "(23,0.4,5)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#DeltaR_{min}(#gamma,j)"
+	},
+	"leadPho_PToM": {
+	    "hist" : "(25,0,2)",
+	    "cut"  : "leadPho_PToM>(1/3.)",
+	    //"cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
+	},
+	"sublPho_PToM": {
+	    "hist" : "(25,0,2)",
+	    "cut"  : "sublPho_PToM>(1/4.)",
+	    //"cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
+	},
+	"dipho_PToM": {
+	    "hist" : "(50,0,5)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
+	},
+	"dijet_dipho_pt": {
+	    "hist" : "(50,0,200)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "p_{t}(#gamma#gamma,jj)"
+	},
+	"dijet_Zep": {
+	    "hist" : "(50,0,10)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "#eta^{*}"
+	},
+	"dipho_mass": {
+	    "hist" : "(80,100,180)",
+	    "cut"  : "(dipho_mass>100 && dipho_mass<180)",
+	    "blind": "(dipho_mass<115 || dipho_mass>135)",
+	    "log"  : false,
+	    "norm" : false,
+	    "unit" : "GeV",
+	    "title": "m_{#gamma#gamma}"
+	},
+	"dijet_mva": {
+	    "hist": "(25,-1,1)",
+	    "cut": "",
+	    "blind": "",
+	    "log": true,
+	    "norm": false,
+	    "title": "BDT_{jj}"
+	},
+	"dipho_mva": {
+	    "hist" : "(25,-1,1)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "BDT_{#gamma#gamma}"
+	},
+	"dipho_dijet_MVA": {
+	    "hist" : "(25,-1,1)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "BDT_{combined}"
+	},
+	"nvtx": {
+	    "hist" : "(40,0,40)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : true,
+	    "norm" : false,
+	    "title": "N_{vtx}"
+	},
+	"dipho_lead_elveto": {
+	    "hist" : "(2,0,2)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : false,
+	    "norm" : false,
+	    "title": "electron veto (#gamma_{1})"
+	},
+	"dipho_sublead_elveto": {
+	    "hist" : "(2,0,2)",
+	    "cut"  : "",
+	    "blind": "",
+	    "log"  : false,
+	    "norm" : false,
+	    "title": "electron veto (#gamma_{2})"
+	}
+
+
+    },
+    "processes": {
+	"vbf_125" : {
+	    "color": 2,
+	    "order": 0,
+	    "name" : ["VBFHToGG"],
+	    "title": "VBF(m_{h}=125)",
+	    "cut"  : "",
+	    "kfactor" : 90,
+	    "label": "signal"
+	},
+	"ghh_125" : {
+	    "color": 135,
+	    "order": 1,
+	    "name" : ["GluGluHToGG"],
+	    "title": "ggf(m_{h}=125)",
+	    "cut"  : "",
+	    //"kfactor" : 50,
+	    "label": "spectator"
+	},
+	"dipho": {
+	    "color": 122,
+	    "order": 2,
+	    "name" : [
+		"DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa:vbfTagDumper/trees/dipho_13TeV_VBFDiJet"
+	    ],
+	    "title": "#gamma-#gamma",
+	    "cut"  : "",
+	    "label": "background"
+	},
+	"gjet": {
+	    "color": 127,
+	    "order": 3,
+	    "name" : [
+		//"GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+		//"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+		//"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		//"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		//"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+		"QCD_Pt-30to40_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		"QCD_Pt-30toInf_Param_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		"QCD_Pt-40toInf_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+	    ],
+	    "title": "jet-#gamma",
+	    "kfactor" : 0.01,
+	    //"cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
+	    "label": "background"
+	},
+	"jetjet":{
+	    "color": 130,
+	    "order": 5,
+	    "name" : [
+		"GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+		"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+		"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+		//"QCD_Pt-30to40_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		//"QCD_Pt-30toInf_Param_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		//"QCD_Pt-40toInf_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+	    ],
+	    "title": "jet-jet",
+	    "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
+	    "label": "background"
+	},
+	"Data":{
+	    "color": 1,
+	    "order": 6,
+	    "name" : [
+		"DoubleEG"
+	    ],
+	    "cut"  : "",
+	    "title": "data",
+	    "label": "data"
+	}
+    },
+
+    "selection" : {
+	"name"  : "VBF-Preselection",
+	"title" : ""
+    },
+
+    "tree": {
+	//"name": "VBFTagDumper/trees/*_13TeV_VBF",
+	"name": "vbfTagDumper/trees/*_13TeV_VBFDiJet",
+	//"kfactor": 0.34,
+	"kfactor": 0.7,
+	"lumi"   : 2.6
+    },
+
+    "systematics": {
+	"UpTrees" : [
+	    //"VBFTagDumper/trees/*_13TeV_VBF_JERUp01sigma",
+	    //"VBFTagDumper/trees/*_13TeV_VBF_JECUp01sigma",
+	    //"VBFTagDumper/trees/*_13TeV_VBF_RMSShiftUp01sigma"
+	],
+	"DwTrees" : [
+	    //"VBFTagDumper/trees/*_13TeV_VBF_JERDown01sigma",
+	    //"VBFTagDumper/trees/*_13TeV_VBF_JECDown01sigma",
+	    //"VBFTagDumper/trees/*_13TeV_VBF_RMSShiftDown01sigma"
+	]
+
+    },
+
+    "labels":{
+	"name" : [
+	    "CMSSW-80x",
+	    "VBF preselection"//,
+	    //"Category : VBF-0"
+	]
+    }
+
+
+}
