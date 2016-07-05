@@ -233,12 +233,12 @@
             "label": "background"
         },
         "Zee_fake_jet2": {
-            "color": 121,
-            "order": 4,
-            "files": "DY",
-            "title": "jet_{2} fake",
-            "tree": "Zee",
-            "cut": "(dijet_jet1_match==1 && dijet_jet2_match==0)",
+            "color" : 121,
+            "order" : 4,
+            "files" : "DY",
+            "title" : "jet_{2} fake",
+            "tree"  : "Zee",
+            "cut"   : "(dijet_jet1_match==1 && dijet_jet2_match==0)",
             "label": "background"
         },
         "Data": {
@@ -248,19 +248,10 @@
             "name": [
                 "DoubleEG"
             ],
-            "cut": "",
-            "title": "data",
-            "label": "data"
+            "cut"   : "",
+            "title" : "data",
+            "label" : "data"
         }
-    },
-    "selection": {
-        "name": "zee_76x",
-        "title": ""
-    },
-    "tree": {
-        "name": "VBFTagDumper/trees/*_13TeV_VBFDiJet",
-        "kfactor": 0.89,
-        "lumi": 2.3
     },
     "systematics": {
         "UpTrees": [
@@ -278,10 +269,10 @@
         "label": [
             "CMSSW-80x"
         ],
-        "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
-        "intlumi": 2.6,
-        "kfactor": 0.74,
-        "ratio_range": [0,2.1]
+        "treename"    : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
+        "intlumi"     : 2.6,
+        "kfactor"     : 0.74,
+        "ratio_range" : [0,2.1]
     },
     "labels": {
         "name": [

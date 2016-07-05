@@ -1,0 +1,1220 @@
+{
+"variables": {
+      "chargeEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "chargeEle_1",
+        "hist": "(4,-2.000,2.000)",
+        "norm": false
+      },
+      "classificationEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "classificationEle_1",
+        "hist": "(5,0.000,5.000)",
+        "norm": false
+      },
+      "etaEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaEle_2",
+        "hist": "(100,-10.300,17.300)",
+        "norm": false
+      },
+      "rawEnergySCEle_must[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_must_1",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "energySigmaSCEle_pho_regrCorr[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_pho_regrCorr_1",
+        "hist": "(100,-1150.000,2950.000)",
+        "norm": false
+      },
+      "R9Ele[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "R9Ele_2",
+        "hist": "(100,0.000,75.200)",
+        "norm": false
+      },
+      "phiSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiSCEle_0",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "energySCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_2",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "gainEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "gainEle_0",
+        "hist": "(3,0.000,3.000)",
+        "norm": false
+      },
+      "etaMCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaMCEle_2",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "mcGenWeight": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "mcGenWeight",
+        "hist": "(100,-2.200,0.000)",
+        "norm": false
+      },
+      "runNumber": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "runNumber",
+        "hist": "(190,274241.000,275761.000)",
+        "norm": false
+      },
+      "rawEnergySCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_0",
+        "hist": "(100,0.000,4050.000)",
+        "norm": false
+      },
+      "phiEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiEle_0",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "seedYSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedYSCEle_2",
+        "hist": "(100,0.000,395.000)",
+        "norm": false
+      },
+      "pModeGsfEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pModeGsfEle_2",
+        "hist": "(100,0.000,163200000.000)",
+        "norm": false
+      },
+      "phiMCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiMCEle_0",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "energyEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyEle_0",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "energySCEle_must_regrCorr_ele[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_regrCorr_ele_1",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "energySigmaSCEle_must_regrCorr_ele[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_must_regrCorr_ele_2",
+        "hist": "(100,-2.200,0.000)",
+        "norm": false
+      },
+      "invMass_SC": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_SC",
+        "hist": "(100,0.000,6400.000)",
+        "norm": false
+      },
+      "esEnergyPlane1SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane1SCEle_0",
+        "hist": "(100,0.000,184.000)",
+        "norm": false
+      },
+      "energySCEle_must_regrCorr_ele[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_regrCorr_ele_2",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "R9Ele[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "R9Ele_1",
+        "hist": "(100,0.000,75.200)",
+        "norm": false
+      },
+      "seedYSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedYSCEle_0",
+        "hist": "(100,0.000,395.000)",
+        "norm": false
+      },
+      "esEnergyPlane2SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane2SCEle_2",
+        "hist": "(100,0.000,148.000)",
+        "norm": false
+      },
+      "nHitsSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "nHitsSCEle_0",
+        "hist": "(4,-3.000,1.000)",
+        "norm": false
+      },
+      "eleID[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "eleID_1",
+        "hist": "(101,0.000,1030200.000)",
+        "norm": false
+      },
+      "HLTfire": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "HLTfire",
+        "hist": "(4,-2.000,2.000)",
+        "norm": false
+      },
+      "esEnergyPlane2SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane2SCEle_1",
+        "hist": "(100,0.000,148.000)",
+        "norm": false
+      },
+      "eventNumber": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "eventNumber",
+        "hist": "(2,0.000,4294967296.000)",
+        "norm": false
+      },
+      "rawESEnergyPlane2SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane2SCEle_0",
+        "hist": "(100,0.000,496.000)",
+        "norm": false
+      },
+      "rawEnergySCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_1",
+        "hist": "(100,0.000,4050.000)",
+        "norm": false
+      },
+      "avgLCSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "avgLCSCEle_0",
+        "hist": "(100,0.000,9.600)",
+        "norm": false
+      },
+      "pNormalizedChi2Ele[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pNormalizedChi2Ele_2",
+        "hist": "(100,0.000,91200.000)",
+        "norm": false
+      },
+      "energyEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyEle_1",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "PtEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "PtEle_2",
+        "hist": "(100,0.000,1900.000)",
+        "norm": false
+      },
+      "etaEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaEle_1",
+        "hist": "(100,-10.300,17.300)",
+        "norm": false
+      },
+      "phiSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiSCEle_2",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "pModeGsfEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pModeGsfEle_0",
+        "hist": "(100,0.000,163200000.000)",
+        "norm": false
+      },
+      "recoFlagsEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "recoFlagsEle_1",
+        "hist": "(3,1.000,4.000)",
+        "norm": false
+      },
+      "esEnergySCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergySCEle_2",
+        "hist": "(100,0.000,300.000)",
+        "norm": false
+      },
+      "energySCEle_corr[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_corr_0",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "phiMCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiMCEle_2",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "seedLCSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedLCSCEle_1",
+        "hist": "(100,0.000,6.800)",
+        "norm": false
+      },
+      "energySCEle_corr[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_corr_2",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "e_full5x5SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e_full5x5SCEle_1",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "energyEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyEle_2",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "rawEnergySCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_2",
+        "hist": "(100,0.000,4050.000)",
+        "norm": false
+      },
+      "energySCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_0",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "energyMCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyMCEle_0",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "energySCEle_pho_regrCorr[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_pho_regrCorr_1",
+        "hist": "(100,-1400.000,4200.000)",
+        "norm": false
+      },
+      "fbremEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "fbremEle_1",
+        "hist": "(100,-2310.000,50.000)",
+        "norm": false
+      },
+      "energySCEle_must[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_2",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "invMass_mumu": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_mumu",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "chargeEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "chargeEle_0",
+        "hist": "(4,-2.000,2.000)",
+        "norm": false
+      },
+      "energySCEle_must_regrCorr_ele[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_regrCorr_ele_0",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "classificationEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "classificationEle_0",
+        "hist": "(5,0.000,5.000)",
+        "norm": false
+      },
+      "rawEnergySCEle_must[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_must_0",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "avgLCSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "avgLCSCEle_1",
+        "hist": "(100,0.000,9.600)",
+        "norm": false
+      },
+      "energySigmaSCEle_pho_regrCorr[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_pho_regrCorr_0",
+        "hist": "(100,-1150.000,2950.000)",
+        "norm": false
+      },
+      "recoFlagsEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "recoFlagsEle_0",
+        "hist": "(3,1.000,4.000)",
+        "norm": false
+      },
+      "seedLCSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedLCSCEle_2",
+        "hist": "(100,0.000,6.800)",
+        "norm": false
+      },
+      "esEnergyPlane2SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane2SCEle_0",
+        "hist": "(100,0.000,148.000)",
+        "norm": false
+      },
+      "phiSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiSCEle_1",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "e_full5x5SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e_full5x5SCEle_0",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "energySCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_1",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "phiMCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiMCEle_1",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "invMass_rawSC": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_rawSC",
+        "hist": "(100,0.000,6200.000)",
+        "norm": false
+      },
+      "esEnergyPlane1SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane1SCEle_2",
+        "hist": "(100,0.000,184.000)",
+        "norm": false
+      },
+      "rawESEnergyPlane2SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane2SCEle_2",
+        "hist": "(100,0.000,496.000)",
+        "norm": false
+      },
+      "gainEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "gainEle_1",
+        "hist": "(3,0.000,3.000)",
+        "norm": false
+      },
+      "energyMCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyMCEle_1",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "e5x5SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e5x5SCEle_2",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "energySCEle_pho_regrCorr[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_pho_regrCorr_0",
+        "hist": "(100,-1400.000,4200.000)",
+        "norm": false
+      },
+      "seedYSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedYSCEle_1",
+        "hist": "(100,0.000,395.000)",
+        "norm": false
+      },
+      "phiEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiEle_1",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "esEnergySCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergySCEle_0",
+        "hist": "(100,0.000,300.000)",
+        "norm": false
+      },
+      "rho": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rho",
+        "hist": "(100,0.000,46.500)",
+        "norm": false
+      },
+      "etaSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaSCEle_2",
+        "hist": "(100,-3.100,3.100)",
+        "norm": false
+      },
+      "seedXSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedXSCEle_0",
+        "hist": "(100,-100.000,115.000)",
+        "norm": false
+      },
+      "energySigmaSCEle_must_regrCorr_ele[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_must_regrCorr_ele_1",
+        "hist": "(100,-2.200,0.000)",
+        "norm": false
+      },
+      "invMass_SC_corr": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_SC_corr",
+        "hist": "(100,0.000,6700.000)",
+        "norm": false
+      },
+      "pAtVtxGsfEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pAtVtxGsfEle_0",
+        "hist": "(100,0.000,217600000.000)",
+        "norm": false
+      },
+      "nPV": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "nPV",
+        "hist": "(53,0.000,106.000)",
+        "norm": false
+      },
+      "invMass_e5x5": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_e5x5",
+        "hist": "(100,0.000,6000.000)",
+        "norm": false
+      },
+      "rawESEnergyPlane1SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane1SCEle_0",
+        "hist": "(100,0.000,410.000)",
+        "norm": false
+      },
+      "energySCEle_must[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_0",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "PtEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "PtEle_1",
+        "hist": "(100,0.000,1900.000)",
+        "norm": false
+      },
+      "e5x5SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e5x5SCEle_1",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "eleID[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "eleID_2",
+        "hist": "(101,0.000,1030200.000)",
+        "norm": false
+      },
+      "pAtVtxGsfEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pAtVtxGsfEle_1",
+        "hist": "(100,0.000,217600000.000)",
+        "norm": false
+      },
+      "trackMomentumErrorEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "trackMomentumErrorEle_1",
+        "hist": "(100,0.000,7520000000000.000)",
+        "norm": false
+      },
+      "rawEnergySCEle_must[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawEnergySCEle_must_2",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "lumiBlock": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "lumiBlock",
+        "hist": "(101,0.000,2323.000)",
+        "norm": false
+      },
+      "pModeGsfEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pModeGsfEle_1",
+        "hist": "(100,0.000,163200000.000)",
+        "norm": false
+      },
+      "esEnergySCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergySCEle_1",
+        "hist": "(100,0.000,300.000)",
+        "norm": false
+      },
+      "chargeEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "chargeEle_2",
+        "hist": "(4,-2.000,2.000)",
+        "norm": false
+      },
+      "invMass_SC_must": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_SC_must",
+        "hist": "(100,0.000,215.000)",
+        "norm": false
+      },
+      "seedEnergySCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedEnergySCEle_2",
+        "hist": "(100,0.000,2800.000)",
+        "norm": false
+      },
+      "pNormalizedChi2Ele[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pNormalizedChi2Ele_0",
+        "hist": "(100,0.000,91200.000)",
+        "norm": false
+      },
+      "energySCEle_corr[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_corr_1",
+        "hist": "(100,0.000,4100.000)",
+        "norm": false
+      },
+      "e_full5x5SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e_full5x5SCEle_2",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "runTime": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "runTime",
+        "hist": "(102,1464655100.000,1466654300.000)",
+        "norm": false
+      },
+      "classificationEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "classificationEle_2",
+        "hist": "(5,0.000,5.000)",
+        "norm": false
+      },
+      "seedLCSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedLCSCEle_0",
+        "hist": "(100,0.000,6.800)",
+        "norm": false
+      },
+      "energySCEle_must[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_must_1",
+        "hist": "(100,-100.200,-97.800)",
+        "norm": false
+      },
+      "fbremEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "fbremEle_0",
+        "hist": "(100,-2310.000,50.000)",
+        "norm": false
+      },
+      "invMass_SC_pho_regrCorr": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_SC_pho_regrCorr",
+        "hist": "(100,0.000,3300.000)",
+        "norm": false
+      },
+      "e5x5SCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "e5x5SCEle_0",
+        "hist": "(100,0.000,4000.000)",
+        "norm": false
+      },
+      "energySCEle_pho_regrCorr[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySCEle_pho_regrCorr_2",
+        "hist": "(100,-1400.000,4200.000)",
+        "norm": false
+      },
+      "trackMomentumErrorEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "trackMomentumErrorEle_0",
+        "hist": "(100,0.000,7520000000000.000)",
+        "norm": false
+      },
+      "esEnergyPlane1SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "esEnergyPlane1SCEle_1",
+        "hist": "(100,0.000,184.000)",
+        "norm": false
+      },
+      "etaEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaEle_0",
+        "hist": "(100,-10.300,17.300)",
+        "norm": false
+      },
+      "seedEnergySCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedEnergySCEle_1",
+        "hist": "(100,0.000,2800.000)",
+        "norm": false
+      },
+      "invMass_SC_must_regrCorr_ele": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_SC_must_regrCorr_ele",
+        "hist": "(100,0.000,3200.000)",
+        "norm": false
+      },
+      "nPU[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "nPU_0",
+        "hist": "(4,-3.000,1.000)",
+        "norm": false
+      },
+      "R9Ele[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "R9Ele_0",
+        "hist": "(100,0.000,75.200)",
+        "norm": false
+      },
+      "seedXSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedXSCEle_2",
+        "hist": "(100,-100.000,115.000)",
+        "norm": false
+      },
+      "invMass_rawSC_must": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_rawSC_must",
+        "hist": "(100,0.000,215.000)",
+        "norm": false
+      },
+      "nHitsSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "nHitsSCEle_1",
+        "hist": "(4,-3.000,1.000)",
+        "norm": false
+      },
+      "rawESEnergyPlane2SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane2SCEle_1",
+        "hist": "(100,0.000,496.000)",
+        "norm": false
+      },
+      "etaMCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaMCEle_0",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "eleID[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "eleID_0",
+        "hist": "(101,0.000,1030200.000)",
+        "norm": false
+      },
+      "recoFlagsEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "recoFlagsEle_2",
+        "hist": "(3,1.000,4.000)",
+        "norm": false
+      },
+      "pAtVtxGsfEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pAtVtxGsfEle_2",
+        "hist": "(100,0.000,217600000.000)",
+        "norm": false
+      },
+      "energySigmaSCEle_pho_regrCorr[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_pho_regrCorr_2",
+        "hist": "(100,-1150.000,2950.000)",
+        "norm": false
+      },
+      "etaSCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaSCEle_0",
+        "hist": "(100,-3.100,3.100)",
+        "norm": false
+      },
+      "phiEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "phiEle_2",
+        "hist": "(100,-3.700,3.700)",
+        "norm": false
+      },
+      "rawESEnergyPlane1SCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane1SCEle_2",
+        "hist": "(100,0.000,410.000)",
+        "norm": false
+      },
+      "energySigmaSCEle_must_regrCorr_ele[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energySigmaSCEle_must_regrCorr_ele_0",
+        "hist": "(100,-2.200,0.000)",
+        "norm": false
+      },
+      "invMass_rawSC_esSC": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_rawSC_esSC",
+        "hist": "(100,0.000,6400.000)",
+        "norm": false
+      },
+      "seedEnergySCEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedEnergySCEle_0",
+        "hist": "(100,0.000,2800.000)",
+        "norm": false
+      },
+      "seedXSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "seedXSCEle_1",
+        "hist": "(100,-100.000,115.000)",
+        "norm": false
+      },
+      "energyMCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "energyMCEle_2",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "nHitsSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "nHitsSCEle_2",
+        "hist": "(4,-3.000,1.000)",
+        "norm": false
+      },
+      "invMass_fulle5x5": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_fulle5x5",
+        "hist": "(100,0.000,6000.000)",
+        "norm": false
+      },
+      "invMass_MC": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass_MC",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "trackMomentumErrorEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "trackMomentumErrorEle_2",
+        "hist": "(100,0.000,7520000000000.000)",
+        "norm": false
+      },
+      "etaMCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaMCEle_1",
+        "hist": "(100,-1.200,1.200)",
+        "norm": false
+      },
+      "avgLCSCEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "avgLCSCEle_2",
+        "hist": "(100,0.000,9.600)",
+        "norm": false
+      },
+      "gainEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "gainEle_2",
+        "hist": "(3,0.000,3.000)",
+        "norm": false
+      },
+      "rawESEnergyPlane1SCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "rawESEnergyPlane1SCEle_1",
+        "hist": "(100,0.000,410.000)",
+        "norm": false
+      },
+      "etaSCEle[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "etaSCEle_1",
+        "hist": "(100,-3.100,3.100)",
+        "norm": false
+      },
+      "PtEle[0]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "PtEle_0",
+        "hist": "(100,0.000,1900.000)",
+        "norm": false
+      },
+      "invMass": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "invMass",
+        "hist": "(100,0.000,6700.000)",
+        "norm": false
+      },
+      "pNormalizedChi2Ele[1]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "pNormalizedChi2Ele_1",
+        "hist": "(100,0.000,91200.000)",
+        "norm": false
+      },
+      "fbremEle[2]": {
+        "blind": "",
+        "cut": "",
+        "log": true,
+        "title": "fbremEle_2",
+        "hist": "(100,-2310.000,50.000)",
+        "norm": false
+      }
+    },
+    "processes": {
+        "mc": {
+            "color": 130,
+            "order": 2,
+            "files": ["DY"],
+            "title": "data",
+            "cut": "",
+            "tree": "selected",
+            "label": "background"
+        },
+        "data": {
+            "color": 1,
+            "order": 2,
+            "files": ["unmerged-allRange"],
+            "title": "data",
+            "cut": "",
+            "tree": "selected",
+            "label": "data"
+        }
+    },
+    "options": {
+        "label": [
+            "ECALELF-80X",
+            "",
+            ""
+        ],
+        "treename": "{sampleid}",
+        "weight_branch": "1",
+        "intlumi": 1.0,
+        "kfactor": 1.0,
+        "ratio_range": [0, 1.9]
+    }
+}

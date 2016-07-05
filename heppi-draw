@@ -76,6 +76,8 @@ if __name__ == "__main__":
 
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
+    stack.print_cuts()
+
     if opt.print_cutflow : stack.print_cutflow()
     print dir(heppi)
     if  opt.verbose == 'INFO':

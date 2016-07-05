@@ -279,7 +279,7 @@
 	    "title": "jet-#gamma",
 	    "cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
 	    "label": "background"
-	},
+	}/*,
 	"jetjet":{
 	    "color": 130,
 	    "order": 5,
@@ -293,7 +293,7 @@
 	    "title": "jet-jet",
 	    "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
 	    "label": "background"
-	}
+	}*/
 	//,
 	//"Data":{
 	//    "color": 1,

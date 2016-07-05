@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import ROOT
-import sys, os, glob, json
+import sys, os, glob, json, re
 #import colors
 
 version=0.1
@@ -28,37 +28,59 @@ def create_json(rootfile='file.root', treename='', jout=''):
     #         treenm = a.GetName()
     tree = ROOT.gDirectory.Get(dumper+treerf)
     print dumper+treerf
-    #if tree.GetEntries()==0:
-    #    print 'ERROR: the tree is empty ...'
+    if tree.GetEntries()==0:
+        print 'ERROR: the tree is empty ...'
     # create list of variables
     varlist={}
     for var in tree.GetListOfLeaves():
+        # print var.GetName()
         L    = tree.GetBranch(str(var))
-        xmin = L.GetMaximum()
-        print xmin
-        print ('variable: %25s' % var.GetTitle())
-        varlist[var.GetTitle()]={
-            'cut'  :'',
-            "hist" : "(100,0,10)",
-            "cut"  : "",
-            "blind": "",
-            "log"  : True ,
-            "norm" : False,
-            "title": ""
-        }
+
+
+        if '[' in var.GetTitle() and ']' in var.GetTitle():
+            dim = [int(s) for s in re.findall('[-+]?\d*\.\d+|\d+', var.GetTitle().split('[')[1])]
+
+            for idim in range(0, dim[0]):
+                _var_ = var.GetTitle().replace('[%i]'%dim[0], '[%i]'%idim)
+                tree.Project("_h_"+_var_.split('[')[0],_var_)
+                _h_  = ROOT.gDirectory.Get('_h_' + _var_.split('[')[0])
+                nbin = _h_.GetNbinsX()
+                xmin = _h_.GetXaxis().GetXmin()
+                xmax = _h_.GetXaxis().GetXmax()
+                hist = "(%i,%1.3f,%1.3f)" % (nbin,xmin,xmax)
+                varlist[_var_]={
+                    'cut'  :'',
+                    "hist" : hist,
+                    "cut"  : "",
+                    "blind": "",
+                    "log"  : True ,
+                    "norm" : False,
+                    "title": var.GetTitle().replace('[%i]'%dim[0], '_%i'%idim)
+                }
+                print ('variable: %25s' % var.GetTitle().replace('[%i]'%dim[0], '[%i]'%idim))
+        else:
+
+            tree.Project("_h_"+var.GetTitle(),var.GetTitle())
+            _h_ = ROOT.gDirectory.Get('_h_'+var.GetTitle())
+            nbin = _h_.GetNbinsX()
+            xmin = _h_.GetXaxis().GetXmin()
+            xmax = _h_.GetXaxis().GetXmax()
+            hist = "(%i,%1.3f,%1.3f)" % (nbin,xmin,xmax)
+            varlist[var.GetTitle()]={
+                'cut'  :'',
+                "hist" : hist,
+                "cut"  : "",
+                "blind": "",
+                "log"  : True ,
+                "norm" : False,
+                "title": var.GetTitle()
+            }
+            print ('variable: %25s' % var.GetTitle())
         # create a json file
     # samples     = json.loads(open('samples.json').read())
     samples_new = {}
     sample_tree = {'name':treename}
     selection   = {'cutflow':''}
-    # count       = 0
-    # for sam in samples:
-    #     if 'processes' in sam:
-    #         for proc in samples[sam]:
-    #             samples_name = samples[sam][proc][0]
-    #             samples_new[proc] = {'name': samples_name, 'color':count, 'title':proc, 'label':'', 'order':count}
-    #             count = count + 1
-
     with open(jout, "w") as file:
         json.dump({'variables':varlist, 'processes':{}, 'option':{}}, file, indent=2)
         file.close()

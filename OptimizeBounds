@@ -1,31 +1,242 @@
-#!/user/bin/python
+#!/usr/bin/env python
 
-import ROOT  # needed
-from   heppi import heppi
-import os, sys, glob, sys, json, re, logging, collections, math, numpy 
-from   termcolor    import colored
-from   progressbar  import ProgressBar, Bar, Percentage, ETA
-from   collections  import OrderedDict
+from optparse   import OptionParser
+# from heppi      import heppi
+import ROOT
+# include the plotting tools from matplotlib
+# and the optimisation tools from scipy
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import math
 
 
 
-def optimise(trees):
-    (sig_tree, bkg_tree) = trees
-    
-    init_bouds = [0.0, 0.5]
+def get_options():
+    parser = OptionParser()
+    parser.add_option("-r", "--load", dest="plotcard",default='plotcard.json',
+                      help="""
+                      Load the plot card in json format,
+                      please use ./makeplotcard.py to create one
+                      """,
+                      metavar="FILE")
+    parser.add_option("-s", "--sampledir", dest="sampledir",default='./data/',
+                      help="""
+                      Specify the detrectory where the trees are.
+                      example: --filedir /data/trees
+                      """)
+    parser.add_option("-v", "--variable",
+                      dest="variable",default="",
+                      help="name of the variable you want to draw")
+    parser.add_option('--verbose', dest='verbose', default='INFO',
+                     help="Increase verbosity (specify multiple times for more)")
+    return parser.parse_args()
+def fom(s,b):
+    if (s+b) !=0 :
+        return (s/math.sqrt(s+b))
+    else:
+        return 0.0
 
-    
-    
+
 if __name__ == "__main__":
-    i = 3
-    heppi.sampledir   = '../data/training/rms003/merged'
-    ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
-    ROOT.gROOT.ProcessLine(".L  macros/kernelH1.cc+")
-    
-    heppi.read_plotcard('config/plotcard_data_vbf.json')
-    heppi.print_cutflow()
-    (tsig, tbkg) = heppi.book_trees('')
-    heppi.test_tree_book()
-    
-    trees = (tsig.GetTree(), tbkg.GetTree())
-    ws    = optimise(trees)
+    (opt, args) = get_options()
+    # heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+
+    # stack = heppi.instack(
+        # plotcard  = opt.plotcard ,
+        # sampledir = opt.sampledir
+    # )
+
+    # stack.read_plotcard()
+    # stack.book_trees(True)
+    roof = ROOT.TFile.Open(opt.plotcard)
+    h2_sig = roof.Get('scatter_sig_dipho_dijet_MVA_dipho_mass')
+    h2_bkg = roof.Get('scatter_bkg_dipho_dijet_MVA_dipho_mass')
+
+    print "Nx ==", h2_sig.GetNbinsX()
+    print "Ny ==", h2_sig.GetNbinsY()
+
+
+    fexp = ROOT.TF1('_fexp_','[0]*[1]*TMath::Exp(-x*[1])',100,180)
+    def get_projection(imin=0,imax=1):
+        # imin=1800
+        # imax=2000
+        hmgg_sig = h2_sig.ProjectionY ('_ps',imin, imax)
+        hmgg_bkg = h2_bkg.ProjectionY ('_pb',imin, imax)
+        hstd     = ROOT.TH1F('hstd','',1000,-50,50)
+        fexp.SetParameter(0,hmgg_bkg.Integral())
+        fexp.SetParameter(1,0.01)
+        fexp.SetParLimits (1,0.5e-05,1)
+
+        # r = hmgg_bkg.Fit(fexp,"SWL","",100,140)
+        for ibin in range(1,hmgg_bkg.GetNbinsX()-1):
+            dx1 = (hmgg_bkg.GetBinContent(ibin+1) + hmgg_bkg.GetBinContent(ibin-1))/2.0
+            dx2 = (hmgg_bkg.GetBinContent(ibin)   + hmgg_bkg.GetBinContent(ibin-1))/2.0
+            dx  = (dx1 - dx2)
+            hstd.Fill(dx)
+            if abs(dx) > hstd.GetRMS():
+                hmgg_bkg.SetBinError  (ibin,0)
+                hmgg_bkg.SetBinContent(ibin,0)
+        r = hmgg_bkg.Fit(fexp,"SWL","",100,180)
+        print 'number of fitted events ::', fexp.GetParameter(0)
+        print 'number of real   events ::', hmgg_bkg.Integral()
+        return (hmgg_sig,hmgg_bkg,fexp,hstd)
+
+
+    hmgg_bkg_tot = h2_bkg.ProjectionY ('_pb_tot',0, 2000)
+    fexp.SetParameter(0,hmgg_bkg_tot.Integral())
+    fexp.SetParameter(1,0.03)
+    hmgg_bkg_tot.Fit(fexp, "Q")
+    nb_tot = fexp.GetParameter(0)
+
+    @np.vectorize
+    def bkg_cdf(x):
+        hmgg_bkg = h2_bkg.ProjectionY ('_pb',int(x), 2000)
+        hmgg_sig = h2_sig.ProjectionY ('_pb',int(x), 2000)
+        hstd     = ROOT.TH1F('hstd','',1000,-50,50)
+        # fexp.SetParameter(0,hmgg_bkg.Integral())
+        # fexp.SetParameter(1,0.03)
+        for ibin in range(1,hmgg_bkg.GetNbinsX()-1):
+            dx1 = (hmgg_bkg.GetBinContent(ibin+1) + hmgg_bkg.GetBinContent(ibin-1))/2.0
+            dx2 = (hmgg_bkg.GetBinContent(ibin)   + hmgg_bkg.GetBinContent(ibin-1))/2.0
+            dx  = (dx1 - dx2)
+            hstd.Fill(dx)
+            if abs(dx) > hstd.GetRMS():
+                hmgg_bkg.SetBinError  (ibin,0)
+                hmgg_bkg.SetBinContent(ibin,0)
+        # r = hmgg_bkg.Fit(fexp, "QWLS")
+        b = hmgg_bkg.Integral()
+        s = hmgg_sig.Integral()
+        # print '-->  ', x, ' ', b, ' chi2', r.Chi2()/float(r.Ndf())
+        return s*s/(b+s)
+        # s = fexp.GetParameter(0)
+
+
+    # _c_= ROOT.TCanvas('_c_','',500,500)
+    # _c_.cd()
+    # (hs,hb,fexp,hstd) = get_projection(imin=1500,imax=2000)
+    # hb.SetMinimum(0.000001)
+    # ROOT.gPad.SetLogy()
+    # hb.Draw('')
+    # hs.SetLineColor(2)
+    # hs.Draw('hist,same')
+    # fexp.Draw('same')
+    # _c_.SaveAs('test.pdf')
+    # raw_input('...')
+    # hstd.Draw()
+    # _c_.SaveAs('hstd.pdf')
+    xnp  = np.linspace(0, 2000, 2000+1)
+    ynp  = bkg_cdf(xnp)
+    x    = np.arange(-1,1,2.0/float(2000+1))
+    plt.plot(x,ynp)
+    plt.show()
+
+    raw_input('..')
+    # var_fit  = stack.variables['dipho_mass']
+    # cut      = "(dipho_dijet_MVA > %f) && (dipho_dijet_MVA < %f)" % (xmin, xmax)
+    # hs = stack.histogram(variable= var_fit,type = "signal"    ,label='sig',cut=cut)
+    # hb = stack.histogram(variable= var_fit,type = "background",label='bkg',cut=cut)
+
+    # stack.scatter('dipho_mass','dipho_dijet_MVA')
+
+
+
+    """
+    hb.Add(hs)
+
+    w = ROOT.RooWorkspace()
+    w.factory('Gaussian::g(m[100,180],mh[125],sigma[0.5,2,1])')
+    # w.factory('Gaussian::g2(m[100,180],mh[120,130],sigma[1,5,3])')
+    w.factory('Exponential::e(m,tau[-0.001,-0.1])')
+    w.factory('SUM::model(s[1,0,200]*g,f[100,0,10000]*e)')
+    w.Print()
+
+    m = w.var('m')
+    rs  = ROOT.RooArgList( m )
+    data  = ROOT.RooDataHist("dh","dh",rs,ROOT.RooFit.Import(hb))
+
+
+    pdf = w.pdf('model')
+    fitResult = pdf.fitTo(data,ROOT.RooFit.Save())
+
+    _c_= ROOT.TCanvas()
+    _c_.cd()
+    ROOT.gPad.SetLogy()
+    frame1 = m.frame(ROOT.RooFit.Bins(80),ROOT.RooFit.Title("Signal Model"))
+    data.plotOn(frame1)
+
+    frame1.Draw()
+    pdf.plotOn(frame1)
+    _c_.SaveAs('test.pdf')
+    """
+    # sig_model = "[0]*(TMath::Gaus(x,[1],[2])+[3]*TMath::Gaus(x,[4],[5]))"
+    # fs = ROOT.TF1("fs",sig_model,100,180)
+    # param = [100,125,1,1,123,4]
+    # for p in param:  fs.SetParameter(param.index(p),p)
+
+    # _c_ = heppi.ROOT.TCanvas('c','c',500,500)
+    # _c_.cd()
+    # hs.Draw()
+    # hs.Fit(fs)
+    # hs.Draw()
+    # fs.Draw("same")
+    # param_res = [float(fs.GetParameter(i)) for i in range(0,len(param))]
+    # print param_res
+    # print hs.Integral()
+    # raw_input()
+    # _c_.SaveAs('test.pdf')
+
+    # return (hs, hb, s**2/(s+b))
+    #
+    # (hs,hb,si) = get_significance()
+    # x_ = np.linspace(0, nbin, nbin+1)
+    # y_ = np.linspace(0, nbin, nbin+1)
+    #
+    # x  = np.arange(-1,1,2.0/float(nbin+1))
+    # y  = np.arange(-1,1,2.0/float(nbin+1))
+    #
+    # X_, Y_ = np.meshgrid(x_, y_)
+    # X , Y  = np.meshgrid(x , y )
+    #
+    # @np.vectorize
+    # def two_bounds_sig(x,y):
+    #     cat0 = 0
+    #     cat1 = 0
+    #     if (x < y) : return 0.0
+    #     s0 = hs.Integral(int(x),nbin)
+    #     b0 = hb.Integral(int(x),nbin)
+    #     s1 = hs.Integral(int(y),int(x))
+    #     b1 = hb.Integral(int(y),int(x))
+    #
+    #     if (s0+b0) > 2 and (s1+b1) > 2 :
+    #         return (s0 / math.sqrt(b0+s1)) + (s1 / math.sqrt(b1+s1))
+    #     else:
+    #         return 0.0
+    # @np.vectorize
+    # def two_bounds_purity(x,y):
+    #     effx = hs.Integral(int(x),nbin)/hs.Integral(0,nbin)
+    #     effy = hb.Integral(int(x),nbin)/hb.Integral(0,nbin)
+    #     return effx*(1-effy)
+    #
+    # Z = two_bounds_sig(X_, Y_)
+    # levels = np.arange(0.12,0.3,0.005)
+    #
+    # cmap = cm.jet
+    # ce = plt.contourf(X,Y,Z,levels=levels, cmap=cmap)
+    #
+    # plt.xticks()
+    # plt.yticks()
+    # plt.xlabel("VBF-0")
+    # plt.ylabel("VBF-1")
+    # plt.xlim((0.83,0.93))
+    # plt.ylim((0.55,0.70))
+    #
+    # cbar = plt.colorbar(ce)
+    # cbar.set_label('significance')
+    #
+    # plt.scatter([0.921], [0.632])
+    #
+    # # plt.show()
+    #
+
+    # raw_input()
