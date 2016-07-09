@@ -79,7 +79,6 @@ if __name__ == "__main__":
     stack.print_cuts()
 
     if opt.print_cutflow : stack.print_cutflow()
-    print dir(heppi)
     if  opt.verbose == 'INFO':
         heppi.logger.setLevel(level=heppi.logging.INFO)
         logger.setLevel(level=logging.INFO)
@@ -94,6 +93,7 @@ if __name__ == "__main__":
         ROOT.gROOT.SetBatch( ROOT.kTRUE  )
         ROOT.gErrorIgnoreLevel = ROOT.kError
 
+    # hadeling categories
     if opt.scatter:
         logger.info(colored(
             (' -- booked scatter plots :: (%i x %i)' % (len(stack.scatter_opt.xlist),len(stack.scatter_opt.ylist))),
@@ -102,21 +102,48 @@ if __name__ == "__main__":
         for xvar in stack.scatter_opt.xlist :
             for yvar in stack.scatter_opt.ylist :
                 if xvar != yvar:
-                    logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
-                    if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
-                    if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
 
+                    if len(stack.options.categories) > 0 :
+                        print 'ici'
+                        for cat in stack.options.categories:
+                            logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', attrs=["on_red"])
+                            logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
+                            if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
+                            if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
+                    else:
+                        print 'ailleurs'
+                        logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
+                        if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
+                        if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
 
     if opt.draw_all and opt.variable == '':
-        logger.info(colored(
-            ('(%i) booked variables will be drawn :: ' % len(stack.variables)),
-            'red', attrs=['bold']
-        ))
-        for xvar in stack.variables : stack.draw(xvar,opt.label)
+        print 'len(stack.options.categories) == ',len(stack.options.categories)
+        if len(stack.options.categories) > 0 :
+            logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
+            logger.info(colored(
+                ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
+            ))
+            for xvar in stack.variables :
+                if opt.allnormhist : stack.variables[xvar].norm = True
+                stack.draw(xvar,opt.label)
+        else:
+            if len(stack.options.categories) > 0 :
+                logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
+                logger.info(colored(
+                    ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
+                ))
+                for xvar in stack.variables :
+                    if opt.allnormhist : stack.variables[xvar].norm = True
+                    stack.draw(xvar,opt.label)
 
     else:
         if opt.variable != '':
-            stack.draw(opt.variable,opt.label)
+            if len(stack.options.categories) > 0 :
+                for cat in stack.options.categories:
+                    logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
+                    stack.draw(opt.variable,opt.label)
+            else:
+                stack.draw(opt.variable,opt.label)
             if opt.display:
                 raw_input('... press any key to exit ...')
         else:

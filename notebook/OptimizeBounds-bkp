@@ -1,0 +1,160 @@
+#!/usr/bin/env python
+
+from optparse   import OptionParser
+from heppi      import heppi
+import ROOT
+# include the plotting tools from matplotlib
+# and the optimisation tools from scipy
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import math
+
+
+
+def get_options():
+    parser = OptionParser()
+    parser.add_option("-r", "--load", dest="plotcard",default='plotcard.json',
+                      help="""
+                      Load the plot card in json format,
+                      please use ./makeplotcard.py to create one
+                      """,
+                      metavar="FILE")
+    parser.add_option("-s", "--sampledir", dest="sampledir",default='./data/',
+                      help="""
+                      Specify the detrectory where the trees are.
+                      example: --filedir /data/trees
+                      """)
+    parser.add_option("-v", "--variable",
+                      dest="variable",default="",
+                      help="name of the variable you want to draw")
+    parser.add_option('--verbose', dest='verbose', default='INFO',
+                     help="Increase verbosity (specify multiple times for more)")
+    return parser.parse_args()
+def fom(s,b):
+    if (s+b) !=0 :
+        return (s/math.sqrt(s+b))
+    else:
+        return 0.0
+
+
+if __name__ == "__main__":
+    (opt, args) = get_options()
+    # heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+
+    stack = heppi.instack(
+        plotcard  = opt.plotcard ,
+        sampledir = opt.sampledir
+    )
+
+    stack.read_plotcard()
+    stack.book_trees(True)
+
+    nbin = 200
+    #   self, variable, type='signal', cut="", label=""):
+
+    # def get_significance(
+    xmin=-1
+    xmax=+1
+
+    var_fit  = stack.variables['dipho_mass']
+    cut      = "(dipho_dijet_MVA > %f) && (dipho_dijet_MVA < %f)" % (xmin, xmax)
+    hs = stack.histogram(variable= var_fit,type = "signal"    ,label='sig',cut=cut)
+    hb = stack.histogram(variable= var_fit,type = "background",label='bkg',cut=cut)
+
+    hb.Add(hs)
+
+    w = ROOT.RooWorkspace()
+    w.factory('Gaussian::g(m[100,180],mh[125],sigma[0.5,2,1])')
+    # w.factory('Gaussian::g2(m[100,180],mh[120,130],sigma[1,5,3])')
+    w.factory('Exponential::e(m,tau[-0.001,-0.1])')
+    w.factory('SUM::model(s[1,0,200]*g,f[100,0,10000]*e)')
+    w.Print()
+
+    m = w.var('m')
+    rs  = ROOT.RooArgList( m )
+    ds  = ROOT.RooDataHist("dh","dh",rs,ROOT.RooFit.Import(hb))
+
+
+    pdf = w.pdf('model')
+    fitResult = pdf.fitTo(ds,ROOT.RooFit.Save())
+
+    _c_= ROOT.TCanvas()
+    _c_.cd()
+    frame1 = m.frame(ROOT.RooFit.Title("Signal Model"))
+    data.plotOn(frame1)
+
+    frame1.Draw()
+    pdf.plotOn(frame1)
+    _c_.SaveAs('test.pdf')
+    # sig_model = "[0]*(TMath::Gaus(x,[1],[2])+[3]*TMath::Gaus(x,[4],[5]))"
+    # fs = ROOT.TF1("fs",sig_model,100,180)
+    # param = [100,125,1,1,123,4]
+    # for p in param:  fs.SetParameter(param.index(p),p)
+
+    # _c_ = heppi.ROOT.TCanvas('c','c',500,500)
+    # _c_.cd()
+    # hs.Draw()
+    # hs.Fit(fs)
+    # hs.Draw()
+    # fs.Draw("same")
+    # param_res = [float(fs.GetParameter(i)) for i in range(0,len(param))]
+    # print param_res
+    # print hs.Integral()
+    # raw_input()
+    # _c_.SaveAs('test.pdf')
+
+    # return (hs, hb, s**2/(s+b))
+    #
+    # (hs,hb,si) = get_significance()
+    # x_ = np.linspace(0, nbin, nbin+1)
+    # y_ = np.linspace(0, nbin, nbin+1)
+    #
+    # x  = np.arange(-1,1,2.0/float(nbin+1))
+    # y  = np.arange(-1,1,2.0/float(nbin+1))
+    #
+    # X_, Y_ = np.meshgrid(x_, y_)
+    # X , Y  = np.meshgrid(x , y )
+    #
+    # @np.vectorize
+    # def two_bounds_sig(x,y):
+    #     cat0 = 0
+    #     cat1 = 0
+    #     if (x < y) : return 0.0
+    #     s0 = hs.Integral(int(x),nbin)
+    #     b0 = hb.Integral(int(x),nbin)
+    #     s1 = hs.Integral(int(y),int(x))
+    #     b1 = hb.Integral(int(y),int(x))
+    #
+    #     if (s0+b0) > 2 and (s1+b1) > 2 :
+    #         return (s0 / math.sqrt(b0+s1)) + (s1 / math.sqrt(b1+s1))
+    #     else:
+    #         return 0.0
+    # @np.vectorize
+    # def two_bounds_purity(x,y):
+    #     effx = hs.Integral(int(x),nbin)/hs.Integral(0,nbin)
+    #     effy = hb.Integral(int(x),nbin)/hb.Integral(0,nbin)
+    #     return effx*(1-effy)
+    #
+    # Z = two_bounds_sig(X_, Y_)
+    # levels = np.arange(0.12,0.3,0.005)
+    #
+    # cmap = cm.jet
+    # ce = plt.contourf(X,Y,Z,levels=levels, cmap=cmap)
+    #
+    # plt.xticks()
+    # plt.yticks()
+    # plt.xlabel("VBF-0")
+    # plt.ylabel("VBF-1")
+    # plt.xlim((0.83,0.93))
+    # plt.ylim((0.55,0.70))
+    #
+    # cbar = plt.colorbar(ce)
+    # cbar.set_label('significance')
+    #
+    # plt.scatter([0.921], [0.632])
+    #
+    # # plt.show()
+    #
+
+    # raw_input()

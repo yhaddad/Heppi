@@ -23,7 +23,7 @@ except ImportError:
         please install termcolor and jsmin, and try again.
         Suggestion: pip install requirement.txt --user
         """)
-import  os, sys, glob, sys, json, re, logging, collections, math, parser
+import  os, sys, glob, sys, json, re, logging, collections, math, parser, pprint
 from    collections        import OrderedDict
 import  settings
 
@@ -143,13 +143,13 @@ class variable(object):
     * hist : definition of the histogram
         * Example:
             ```"hist" :[100,0,100]```
-    * cut :
-    * blind :
+    * cut     :
+    * blind   :
     * formula :
-    * log :
-    * norm :
-    * title :
-    * unit :
+    * log     :
+    * norm    :
+    * title   :
+    * unit    :
     * boundaries :
     """
     def __init__(self, name="", options = {}):
@@ -243,7 +243,9 @@ class options (object):
     """
     object type containing Heppi options:
     * ratio_range : the range in the ratio plots
-    *
+    * ratio_plot  : make the ratio plot
+    * legend      : list of lignes that you want to be displayed as legend on your plot
+    * treename    :  Gloabl tree name :
     """
     def __init__(self,options = {}):
         self.__template__ = {
@@ -255,7 +257,8 @@ class options (object):
             "kfactor"       :  1.0,
             "intlumi"       :  1.0,
             "cutflow"       : [ "" ],
-            "weight_branch" : "weight"
+            "weight_branch" : "weight",
+            "categories"    : []
         }
         self.__dict__  = self.__template__
         self.__dict__.update(options)
@@ -285,6 +288,18 @@ class scatter_opt(object):
         for opt in self.__dict__:
              string += "  -- %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
         return string
+class systematics(object):
+    """
+    object type containing Heppi options:
+    * ratio_range : the range in the ratio plots
+    """
+    def __init__(self, options = {}):
+        self.__template__ = {
+            "up_tree_name"  : [],
+            "down_tree_name": []
+        }
+        self.__dict__  = self.__template__
+        self.__dict__.update(options)
 class instack ():
     def __init__(self, plotcard, cutcard = '', sampledir = '{PWD}'):
         self.plotcard    = plotcard
@@ -298,6 +313,7 @@ class instack ():
         self.cutcard     = cutcard
         self.selection   = {}
         self.options     = None
+        self.systematics = {}
         self.sampledir   = sampledir
         self.sig_root_tree  = ROOT.TChain('sig_data')
         self.bkg_root_tree  = ROOT.TChain('bkg_data')
@@ -334,6 +350,10 @@ class instack ():
                 logger.info(' ----------------------------- ')
                 self.scatter_opt = scatter_opt(_config_[key])
                 logger.info( self.scatter_opt )
+            if 'systematics' in key.lower():
+                logger.info(' ----------------------------- ')
+                self.systematics = systematics(_config_[key])
+                logger.info( pprint.pprint(self.systematics.__dict__) )
         logger.info(' ----------------------------- ')
     def get_signal_tree(self):
         return self.sig_root_tree
@@ -351,10 +371,9 @@ class instack ():
             else:
                 chainName = str(self.options.treename).format(sampleid = sample.tree)
             chain = ROOT.TChain(chainName)
-            _chain_up = []
-            _chain_dw = []
+            _chain_up_list_ = []
+            _chain_dw_list_ = []
             if type(sample.files) == type([]):
-                print "we are here ::" , proc
                 for sam in sample.files:
                     _sam_ = sam
                     _tre_ = chainName
@@ -365,50 +384,58 @@ class instack ():
                     for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                         chain.Add( f + '/' + _tre_ )
                         logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
-            #    if proc != 'Data':
-            #         for sys in treesUpSys:
-            #             print "debug::(",proc,")", sys, " == ", samples[proc].get('label')
-            #             chainUp = ROOT.TChain(sys.replace('*',proc))
-            #             for sam in samples[proc].get('name',[]):
-            #                 for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-            #                     chainUp.Add(f)
-            #                 chainSysUp.append(chainUp)
-            #         for sys in treesDwSys:
-            #             chainDw = ROOT.TChain(sys.replace('*',proc))
-            #             for sam in samples[proc].get('name',[]):
-            #                 for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-            #                     chainDw.Add(f)
-            #                 chainSysDw.append(chainDw)
+                # preliminary systematics handling
+                if 'background' in sample.label.lower() :
+                    for sys in self.systematics.up_tree_name:
+                        _chain_up = ROOT.TChain(sys.format(sampleid = sample.tree))
+                        for sam in sample.files:
+                            _sam_ = sam
+                            _tre_ = _chain_up
+                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
+                                _chain_up.Add(f)
+                                _chain_up_list_.append(_chain_up)
+                    for sys in self.systematics.down_tree_name:
+                        _chain_dw = ROOT.TChain(sys.format(sampleid = sample.tree))
+                        for sam in sample.files:
+                            _sam_ = sam
+                            _tre_ = _chain_dw
+                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
+                                _chain_dw.Add(f)
+                                _chain_dw_list_.append(_chain_dw)
             else:
-                sam = sample.files
-                _sam_ = sam
+                _sam_ = sample.files
                 _tre_ = chainName
                 if ':' in sam:
                     _sam_ = sam.split(':')[0]
                     _tre_ = sam.split(':')[1]
-                print "--> ", _sam_
-                for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
+                for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                     chain.Add( f + '/' + _tre_ )
                     logger.debug("[b][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
-            #     if samples[proc].get('label') != 'Data':
-            #         for sys in treesUpSys:
-            #             chainUp = ROOT.TChain(sys.replace('*',proc))
-            #             for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-            #                 chainUp.Add(f)
-            #             chainSysUp.append(chainUp)
-            #         for sys in treesDwSys:
-            #             chainDw = ROOT.TChain(sys.replace('*',proc))
-            #             for f in glob.glob( sampledir + '/*'+ sam +'*.root'):
-            #                 chainDw.Add(f)
-            #             chainSysDw.append(chainDw)
-            # read systematic trees
+                if 'background' in sample.label.lower() :
+                    for sys in self.systematics.up_tree_name:
+                        _chain_up = ROOT.TChain(sys.format(sampleid = sample.tree))
+                        for sam in sample.files:
+                            _sam_ = sam
+                            _tre_ = _chain_up
+                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
+                                _chain_up.Add(f)
+                                _chain_up_list_.append(_chain_up)
+                    for sys in self.systematics.down_tree_name:
+                        _chain_dw = ROOT.TChain(sys.format(sampleid = sample.tree))
+                        for sam in sample.files:
+                            _sam_ = sam
+                            _tre_ = _chain_dw
+                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
+                                _chain_dw.Add(f)
+                                _chain_dw_list_.append(_chain_dw)
+
             self.samples[proc].set_root_tree(chain)
             if 'signal'     in sample.label and make_sig_bkg_trees:
                 self.sig_root_tree.AddFriend(chain)
             if 'background' in sample.label and make_sig_bkg_trees:
                 self.bkg_root_tree.AddFriend(chain)
-            # self.samples[proc].update({'root_tree_sys_up'  : _chain_up})
-            # self.samples[proc].update({'root_tree_sys_dw'  : _chain_dw})
+            self.samples[proc].set_root_tree_syst_up(_chain_up)
+            self.samples[proc].set_root_tree_syst_dw(_chain_dw)
             _samples_.append([  self.samples[proc].order   ,
                                 self.samples[proc].name    ,
                                 self.samples[proc].tree    ,
@@ -685,15 +712,10 @@ class instack ():
             for ibin in range(hist2.GetNbinsX()+1):
                 ymc  = hist2.GetBinContent(ibin);
                 stat = hist1.GetBinError  (ibin);
-                #print "ibin ", ibin , " :: ymc ", ymc, " :: data error ", stat, " :: err/ymc ", stat/ymc
                 if (ymc>0):
                     retH.SetBinError  (ibin,stat/ymc);
                 else:
                     retH.SetBinError  (ibin,0);
-        #if ymax or ymin:
-        #    retH.GetYaxis().SetRangeUser(ymin,ymax)
-        #    retH.SetLineColor(hist1.GetLineColor())
-        #    retH.SetMarkerColor(hist1.GetMarkerColor())
         ROOT.SetOwnership(retH,0)
         return retH
     #---------------------------------------------------------
@@ -706,12 +728,10 @@ class instack ():
                     norm=False,
                     ratioMin=0.7,
                     ratioMax=1.3):
-        #ratioMin=0.3,
-        #ratioMax=1.7):
         """Takes two histograms as inputs and returns a canvas with a ratio plot of the two.
         The two optional arguments are for the x Axis and y Axis titles"""
 
-        c = makeRatioPlotCanvas()#makeDivCan()
+        c = makeRatioPlotCanvas()
         pad1 = c.cd(1)
         pad2 = c.cd(2)
         c.cd(1)
@@ -775,7 +795,6 @@ class instack ():
         hist.GetXaxis().SetLabelFont  (43)
         hist.GetXaxis().SetLabelSize  (18)
     #---------------------------------------------------------
-    #---------------------------------------------------------
     def test_tree_book():
         for sam in samples:
             logger.info('nominal::'+ sam +' tree: '+ samples[sam].get('_root_tree_',ROOT.TChain()).GetName()
@@ -826,7 +845,7 @@ class instack ():
             variable.root_cutflow = '*'.join(_cutflow_)
         else:
             variable.root_cutflow = self.options.weight_branch
-        bar = ProgressBar(widgets=[colored(' -- variable :: %20s   ' % variable.name, 'green'),
+        bar = ProgressBar(widgets=[colored(' -- variable :: %20s   ' % ((variable.name[:18] + '..') if len(variable.name)>20 else variable.name), 'green'),
                           Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
             _cutflow_ = variable.root_cutflow
@@ -895,6 +914,9 @@ class instack ():
             # ----------------------------------------------
             hist = ROOT.gDirectory.Get('h_' + variable.name )
             hist.SetDirectory(0)
+            if variable.norm :
+                hist.Sumw2()
+                hist.Scale(1.0/hist.Integral())
 
             hist.SetTitle(";" + variable.title + ";entries")
             if ('signal'==sample.label) or ('spectator'==sample.label):
@@ -925,6 +947,7 @@ class instack ():
                 hist.SetFillColor(sample.color)
                 hist.SetLineWidth(2)
                 hstack.Add(hist)
+                variable.root_histos.append(hist)
                 variable.root_legend.AddEntry( hist, sample.title, "f" )
         # drawing
         #c = ROOT.TCanvas("c","c",500,500)
@@ -937,15 +960,23 @@ class instack ():
                        + (';events / %s %s '% (utils.fformat((bounds[2]-bounds[1])/bounds[0], variable.unit != ""),
                                                variable.unit) ))
         _htmp_.Reset()
+        _ymax_ = max([x.GetMaximum() for x in variable.root_histos])
+        _ymin_ = min([x.GetMinimum() for x in variable.root_histos])
+
         if variable.log:
-            ymin = 0.01 - 0.003
-            ymax = hstack.GetMaximum()*1000
-            _htmp_.GetYaxis().SetRangeUser(ymin,ymax)
+            if variable.norm :
+                _ymin_ = 1e-4 if _ymin_ <= 0 else _ymin_
+                _ymax_ = 1.0 #hstack.GetMaximum()
+            else:
+                _ymin_ = (0.01 - 0.003) if _ymin_ <= 0 else _ymin_
+                _ymax_ = hstack.GetMaximum()*1000
+
+            _htmp_.GetYaxis().SetRangeUser(_ymin_,_ymax_)
             ROOT.gPad.SetLogy()
         else:
-            ymin = 0
-            ymax = hstack.GetMaximum() + hstack.GetMaximum()*0.5
-            _htmp_.GetYaxis().SetRangeUser(ymin,ymax)
+            _ymin_ = 0
+            _ymax_ = _ymax_ + _ymax_ * 0.5
+            _htmp_.GetYaxis().SetRangeUser(_ymin_,_ymax_)
 
         self.customizeHisto(_htmp_)
         _htmp_.Draw('hist')
