@@ -6,6 +6,12 @@ try:
 except ImportError:
     from distutils.core import setup
 
+try:
+    import sphinx_rtd_theme
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+except ImportError:
+    pass
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -38,10 +44,7 @@ setup(
     include_package_data = True,
     entry_points = {
         'console_scripts': [
-            'plot = plot',
-            #        'rootplotmpl = rootplot.core:cli_rootplotmpl',
-            #        'tree2hists = rootplot.tree2hists:main',
-            #        'rootinfo = rootplot.rootinfo:main'
+            'heppi-draw = heppi-draw',
         ]
     },
     install_requires    = requirements,
@@ -57,11 +60,7 @@ setup(
         'Natural Language :: English',
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Utilities',
-        'Programming Language :: Python :: 2.7',
-#        'Programming Language :: Python :: 3',
-#        'Programming Language :: Python :: 3.3',
-#        'Programming Language :: Python :: 3.4',
-#        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 2.7'
     ],
     test_suite    = 'tests',
     tests_require = test_requirements

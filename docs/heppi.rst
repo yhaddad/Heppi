@@ -28,6 +28,14 @@ heppi.performance module
     :undoc-members:
     :show-inheritance:
 
+heppi.rootnotes module
+----------------------
+
+.. automodule:: heppi.rootnotes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 heppi.settings module
 ---------------------
 

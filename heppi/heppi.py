@@ -104,7 +104,6 @@ class utils:
             t.DrawLatexNDC((0.04   + ROOT.gStyle.GetPadLeftMargin()),
                            (ystart - shift - ROOT.gStyle.GetPadTopMargin()),s)
             shift = shift + settings.label_shift
-
     @staticmethod
     def draw_cms_headlabel(label_left  ='#scale[1.2]{#bf{CMS}} #it{Preliminary}',
                            label_right ='#sqrt{s} = 13 TeV, L = 2.56 fb^{-1}'):
@@ -191,8 +190,60 @@ class variable(object):
                 self.unit = utils.find_between( self.title , "[", "]" )
 
         self.root_histos = []
+    def clear(self):
+        self.root_histos  = []
+        self.root_stack   = None
+        self.root_cutflow = ''
     def __str__(self):
         return " -- variable :: %20s %18s %12s" % (self.name, self.hist, self.unit)
+class systematic(object):
+    """
+    object type containing Heppi options:
+    * ratio_range : the range in the ratio plots
+    """
+    def __init__(self, options = {}):
+        self.__template__ = {
+            "up_tree"      : [],
+            "down_tree"    : [],
+            "up_root_tree"  : None,
+            "down_root_tree": None,
+            "up_histo"  : None,
+            "down_histo": None
+        }
+        self.__dict__  = self.__template__
+        self.__dict__.update(options)
+    def append_tree(self, tree=None, level='up'):
+        if tree  == None: return
+        if level == 'up':
+            if self.up_root_tree == None :
+                self.up_root_tree = tree
+            else:
+                self.up_root_tree.Add(tree)
+        elif level == 'down':
+            if self.down_root_tree == None :
+                self.down_root_tree = tree
+            else:
+                self.down_root_tree.Add(tree)
+        else:
+            logger.error('systematic level does not exist, please use up or down')
+    def append_hist(self, histo=None, level='down'):
+        if histo  == None: return
+        if level == 'up':
+            if self.up_histo == None :
+                self.up_histo = histo
+            else:
+                self.up_histo.Add(histo)
+        elif level == 'down':
+            if self.down_histo == None :
+                self.down_histo = histo
+            else:
+                self.down_histo.Add(histo)
+        else:
+            logger.error('systematic level does not exist, please use up or down')
+    def clear_histograms(self):
+        self.up_histo       = None
+        self.down_histo     = None
+
 class sample  (object):
     """
     object type for sample and options :
@@ -219,7 +270,8 @@ class sample  (object):
             "cut"    : "",
             "tree"   : "",
             "label"  : "",
-            "kfactor": 1.0
+            "kfactor": 1.0,
+            "systematics"   : {}
         }
         self.__dict__  = self.__template__
         self.__dict__.update(options)
@@ -231,12 +283,20 @@ class sample  (object):
         return: ROOT tree
         """
         self.root_tree = tree
-    def set_root_tree_syst_up(self,tree):
-        """return: systematic ROOT tree up"""
-        self.root_tree_syst_up = tree
-    def set_root_tree_syst_dw(self,tree):
-        """return: systematic ROOT tree down"""
-        self.root_tree_syst_dw = tree
+    def set_syst_tree(self, syst ,tree_up, tree_dw):
+        print ' medium fill::', tree_up
+        print ' medium fill::', tree_dw
+        if self.systematics.get(syst,None) == None:
+            _syst_ = {
+                "up_root_tree"   : tree_up,
+                "down_root_tree" : tree_dw
+            }
+            self.systematics[syst] = systematic(_syst_)
+            print ' fill ::', self.systematics[syst].up_root_tree
+            print ' fill ::', self.systematics[syst].down_root_tree
+        else:
+            self.systematics[syst].up_root_tree   = tree_up
+            self.systematics[syst].down_root_tree = tree_dw
     def __str__(self):
         return " -- sample :: %20s %12i" % (self.name, self.root_tree.GetEntries())
 class options (object):
@@ -288,18 +348,7 @@ class scatter_opt(object):
         for opt in self.__dict__:
              string += "  -- %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
         return string
-class systematics(object):
-    """
-    object type containing Heppi options:
-    * ratio_range : the range in the ratio plots
-    """
-    def __init__(self, options = {}):
-        self.__template__ = {
-            "up_tree_name"  : [],
-            "down_tree_name": []
-        }
-        self.__dict__  = self.__template__
-        self.__dict__.update(options)
+
 class instack ():
     def __init__(self, plotcard, cutcard = '', sampledir = '{PWD}'):
         self.plotcard    = plotcard
@@ -352,8 +401,8 @@ class instack ():
                 logger.info( self.scatter_opt )
             if 'systematics' in key.lower():
                 logger.info(' ----------------------------- ')
-                self.systematics = systematics(_config_[key])
-                logger.info( pprint.pprint(self.systematics.__dict__) )
+                for syst in _config_[key]:
+                    self.systematics[syst] = systematic(_config_[key][syst])
         logger.info(' ----------------------------- ')
     def get_signal_tree(self):
         return self.sig_root_tree
@@ -385,57 +434,50 @@ class instack ():
                         chain.Add( f + '/' + _tre_ )
                         logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
                 # preliminary systematics handling
-                if 'background' in sample.label.lower() :
-                    for sys in self.systematics.up_tree_name:
-                        _chain_up = ROOT.TChain(sys.format(sampleid = sample.tree))
-                        for sam in sample.files:
-                            _sam_ = sam
-                            _tre_ = _chain_up
-                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                                _chain_up.Add(f)
-                                _chain_up_list_.append(_chain_up)
-                    for sys in self.systematics.down_tree_name:
-                        _chain_dw = ROOT.TChain(sys.format(sampleid = sample.tree))
-                        for sam in sample.files:
-                            _sam_ = sam
-                            _tre_ = _chain_dw
-                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                                _chain_dw.Add(f)
-                                _chain_dw_list_.append(_chain_dw)
+                if 'background' in sample.label.lower()  :
+                    for systkey, syst in self.systematics.items() :
+                        _ch_ = {}
+                        for level in ['up','down']:
+                            _syst_chain_ = ROOT.TChain(syst.__dict__[level+'_tree'].format(sampleid = sample.tree))
+                            for sam in sample.files:
+                                _sam_ = sam
+                                for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
+                                    _syst_chain_.Add(f)
+                            self.systematics[systkey].append_tree(_syst_chain_, level)
+                            _ch_[level] = _syst_chain_
+                        print ' before fill ::', _ch_['up']
+                        print ' before fill ::', _ch_['down']
+                        self.samples[proc].set_syst_tree(systkey,
+                                                         _ch_['up'],
+                                                         _ch_['down'])
             else:
                 _sam_ = sample.files
                 _tre_ = chainName
-                if ':' in sam:
+                if ':' in _sam_:
                     _sam_ = sam.split(':')[0]
                     _tre_ = sam.split(':')[1]
                 for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                     chain.Add( f + '/' + _tre_ )
                     logger.debug("[b][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
-                if 'background' in sample.label.lower() :
-                    for sys in self.systematics.up_tree_name:
-                        _chain_up = ROOT.TChain(sys.format(sampleid = sample.tree))
-                        for sam in sample.files:
-                            _sam_ = sam
-                            _tre_ = _chain_up
-                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                                _chain_up.Add(f)
-                                _chain_up_list_.append(_chain_up)
-                    for sys in self.systematics.down_tree_name:
-                        _chain_dw = ROOT.TChain(sys.format(sampleid = sample.tree))
-                        for sam in sample.files:
-                            _sam_ = sam
-                            _tre_ = _chain_dw
-                            for f in glob.glob( self.sampledir + '/*'+ sam +'*.root'):
-                                _chain_dw.Add(f)
-                                _chain_dw_list_.append(_chain_dw)
-
+                if 'background' in sample.label.lower()  :
+                    for systkey, syst in self.systematics.items() :
+                        _ch_ = {}
+                        for level in ['up','down']:
+                            _syst_chain_ = ROOT.TChain(syst.__dict__[level+'_tree'].format(sampleid = sample.tree))
+                            for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
+                                _syst_chain_.Add(f)
+                            self.systematics[systkey].append_tree(_syst_chain_, level)
+                            _ch_[level] = _syst_chain_
+                        print ' before fill ::', _ch_['up']
+                        print ' before fill ::', _ch_['down']
+                        self.samples[proc].set_syst_tree(systkey,
+                                                         _ch_['up'],
+                                                         _ch_['down'])
             self.samples[proc].set_root_tree(chain)
             if 'signal'     in sample.label and make_sig_bkg_trees:
                 self.sig_root_tree.AddFriend(chain)
             if 'background' in sample.label and make_sig_bkg_trees:
                 self.bkg_root_tree.AddFriend(chain)
-            self.samples[proc].set_root_tree_syst_up(_chain_up)
-            self.samples[proc].set_root_tree_syst_dw(_chain_dw)
             _samples_.append([  self.samples[proc].order   ,
                                 self.samples[proc].name    ,
                                 self.samples[proc].tree    ,
@@ -475,6 +517,29 @@ class instack ():
         logger.info("\n" + tabulate(_tab_cuts_,
                     ["variable","cuts"],
                     tablefmt="psql"))
+    #---------------------------------------------------------
+    def print_systematics(self):
+
+
+        for key,sample in self.samples.items():
+            if len(sample.systematics)==0: continue
+            _tab_cuts_ = []
+            for sys in sample.systematics:
+                up = 0
+                dw = 0
+                print 'print ::', sample.systematics[sys].down_root_tree
+                if sample.systematics[sys].up_root_tree   != None:
+                    up = sample.systematics[sys].up_root_tree.GetEntries()
+                if sample.systematics[sys].down_root_tree != None:
+                    dw = sample.systematics[sys].down_root_tree.GetEntries()
+                _tab_cuts_.append([ sys,
+                                    key,
+                                    up ,
+                                    dw
+                                   ])
+            logger.info("\n" + tabulate(_tab_cuts_,
+                        ["sys: ", "sample","Nevt up", "Nevt down"],
+                        tablefmt="psql"))
     #---------------------------------------------------------
     def print_cutflow(self, format="psql" ):
         _header_  = ["cutflow"]
@@ -540,79 +605,61 @@ class instack ():
     #---------------------------------------------------------
     def MakeStatProgression(self,myHisto,histDwSys={},histUpSys={},
                             title="", systematic_only=True, combine_with_systematic=True):
-        """This function returns a function with the statistical precision in each bin"""
+        """
+        This function returns a function with
+        the statistical precision in each bin
+        """
+
         statPrecision = myHisto.Clone('_ratioErrors_')
         systPrecision = myHisto.Clone('_ratioSysErrors_')
-        # statPrecision.Set(title)
         statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
         statPrecision.SetFillStyle(settings.ratio_error_band_style)
         statPrecision.SetMarkerColorAlpha(0,0)
 
-        # systPrecision.SetTitle(title + "_Sys_")
         systPrecision.SetFillColorAlpha(settings.ratio_syst_band_color,settings.ratio_error_band_opacity)
         systPrecision.SetFillStyle(settings.ratio_syst_band_style)
         systPrecision.SetMarkerColorAlpha(0,0)
 
-        if len(histUpSys)==0 or len(histDwSys)==0 :
-            systematic_only = False
+        if len(self.systematics)==0 : systematic_only = False
         if systematic_only:
             for ibin in range(myHisto.GetNbinsX()+1):
                 y    = statPrecision.GetBinContent(ibin)
                 stat = statPrecision.GetBinError  (ibin)
-                valup = {}
-                valdw = {}
-            for sys in histUpSys:
-                val   = histUpSys[sys].GetBinContent(ibin)
-                valup[sys] = val
-            for sys in histDwSys:
-                val   = histDwSys[sys].GetBinContent(ibin)
-                valdw[sys] = val
+                up_err_sum2 = 0
+                dw_err_sum2 = 0
+                if( y > 0 ):
+                    up_err_sum2 = (stat/y)*(stat/y)
+                    dw_err_sum2 = (stat/y)*(stat/y)
+                    for key,syst in self.systematics.items():
+                        up_diff   = (syst.up_histo.GetBinContent  (ibin)- y)/y
+                        dw_diff   = (syst.down_histo.GetBinContent(ibin)- y)/y
+                        if( up_diff > 0 ):
+                            up_err_sum2  += up_diff*up_diff
+                        if( dw_diff < 0 ):
+                            dw_err_sum2  += dw_diff*dw_diff
+                up_error = math.sqrt(up_err_sum2)
+                dw_error = math.sqrt(dw_err_sum2)
+                band_max   = 1 + up_error
+                band_min   = 1 - dw_error
 
-            systError2   = 0
-            for up in valup:
-                dw = up.replace("Up","Down")
-                e = 0.5*(valup[up] - valdw[dw])
-                systError2 += e*e
-
-            error  = 0
-            if combine_with_systematic:
-                error = math.sqrt(systError2 + stat*stat)
-            else:
-                error = math.sqrt(systError2)
-
-            if (y>0):
-                systPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
-                systPrecision.SetBinError  (ibin,   error/y );
-                statPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
-                statPrecision.SetBinError  (ibin,   stat/y );
-            else:
-                statPrecision.SetBinContent(ibin,   1);
-                statPrecision.SetBinError  (ibin,   0);
-                systPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
-                systPrecision.SetBinError  (ibin,   0);
-        else:
-            for bin in range(myHisto.GetNbinsX()+1):
-                y   = statPrecision.GetBinContent(bin);
-                err = statPrecision.GetBinError  (bin);
-                if (y>0):
-                    statPrecision.SetBinContent(bin,1);
-                    statPrecision.SetBinError  (bin,err/y);
-                    systPrecision.SetBinContent(bin,1);
-                    systPrecision.SetBinError  (bin,err/y);
+                systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
+                systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
+                if( y > 0 ):
+                    statPrecision.SetBinContent(ibin,   1)
+                    statPrecision.SetBinError  (ibin,   stat/y )
                 else:
-                    statPrecision.SetBinContent(bin,1);
-                    statPrecision.SetBinError  (bin,0);
-                    systPrecision.SetBinContent(bin,1);
-                    systPrecision.SetBinError  (bin,0);
+                    statPrecision.SetBinContent(ibin,   1)
+                    statPrecision.SetBinError  (ibin,   0)
         statPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         systPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         return (statPrecision, systPrecision)
     #---------------------------------------------------------
-    def drawStatErrorBand(self,myHisto,histDwSys={},histUpSys={},systematic_only=True, combine_with_systematic=True):
+    def draw_error_band(self,myHisto,systematics={},systematic_only=True, combine_with_systematic=True):
         """
         Draw this histogram with the statistical
         precision error in each bin
         """
+
         statPrecision = myHisto.Clone('_statErrors_')
         ROOT.SetOwnership(statPrecision,0)
         statPrecision.SetFillColorAlpha(settings.error_band_color,settings.error_band_opacity)
@@ -631,38 +678,27 @@ class instack ():
             for ibin in range(myHisto.GetNbinsX()+1):
                 y    = statPrecision.GetBinContent(ibin);
                 stat = statPrecision.GetBinError  (ibin);
-                valup = {}
-                valdw = {}
-                for sys in histUpSys:
-                    val   = histUpSys[sys].GetBinContent(ibin)
-                    valup[sys] = val
-                for sys in histDwSys:
-                    val   = histDwSys[sys].GetBinContent(ibin)
-                    valdw[sys] = val
 
-                systError2   = 0
-                for up in valup:
-                    dw = up.replace("Up","Down")
-                    e = 0.5*(valup[up] - valdw[dw])
-                    systError2 += e*e
+                up_err_sum2 = stat**2
+                dw_err_sum2 = stat**2
+                for key, syst in systematics.items():
+                    up_diff   = syst.up_histo.GetBinContent(ibin)   - y
+                    dw_diff   = syst.down_histo.GetBinContent(ibin) - y
+                    if up_diff > 0 :
+                        up_err_sum2 += up_diff*up_diff
+                    if dw_diff < 0 :
+                        dw_err_sum2 += dw_diff*dw_diff
+                up_error = math.sqrt(up_err_sum2)
+                dw_error = math.sqrt(dw_err_sum2)
 
-                error  = 0
-                if combine_with_systematic:
-                    error = math.sqrt(systError2 + stat*stat)
-                else:
-                    error = math.sqrt(systError2)
+                band_max   = y + up_error
+                band_min   = y - dw_error
 
-                if (y>0):
-                    systPrecision.SetBinContent(ibin,   y)#0.5*(largest_val + smallest_val)/y);
-                    systPrecision.SetBinError  (ibin,   error );
-                    statPrecision.SetBinContent(ibin,   y)#0.5*(largest_val + smallest_val)/y);
-                    statPrecision.SetBinError  (ibin,   stat );
-                else:
-                    statPrecision.SetBinContent(ibin,   0);
-                    statPrecision.SetBinError  (ibin,   0);
-                    systPrecision.SetBinContent(ibin,   0)#0.5*(largest_val + smallest_val)/y);
-                    systPrecision.SetBinError  (ibin,   0);
+                systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
+                systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
 
+                statPrecision.SetBinContent(ibin,   y    )
+                statPrecision.SetBinError  (ibin,   stat )
                 # ------
         return (statPrecision, systPrecision)
     #---------------------------------------------------------
@@ -811,6 +847,13 @@ class instack ():
                     variable.name + '_' + label + '_'
                     '')
         variable.root_legend = None
+
+        for proc in self.samples:
+            for sys in self.samples[proc].systematics:
+                self.samples[proc].systematics[sys].clear_histograms()
+        for sys in self.systematics:
+            self.systematics[sys].clear_histograms()
+
         if settings.two_colomn_legend:
             _size_ = (len(self.samples) / 2) * 0.08
             variable.root_legend  = ROOT.TLegend(0.45, (0.96 - ROOT.gStyle.GetPadTopMargin()) - _size_,
@@ -828,23 +871,18 @@ class instack ():
         hstack.SetName('hs_'+ variable.name)
         hstack.SetTitle(";" + variable.title+";entries")
 
-        histUpSys = {}
-        histDwSys = {}
+        _hist_syst_ = {}
 
-        # for sys in treesUpSys:
-        #     sysname   = sys.split('*')[1]
-        #     histUpSys.update({sysname : None })
-        # for sys in treesDwSys:
-        #     sysname   = sys.split('*')[1]
-        #     histDwSys.update({sysname : None })
-
-        #if len(variable.root_cutflow)!=0 and options.nocuts == False:
         if len(variable.root_cutflow)!=0:
             _cutflow_ = [self.options.weight_branch]
-            _cutflow_.append('('+variable.root_cutflow+')')
+            if len(select) > 0:
+                _cutflow_.append('('+'&&'.join([variable.root_cutflow,select])+')')
+            else:
+                _cutflow_.append('('+ variable.root_cutflow +')')
             variable.root_cutflow = '*'.join(_cutflow_)
         else:
             variable.root_cutflow = self.options.weight_branch
+
         bar = ProgressBar(widgets=[colored(' -- variable :: %20s   ' % ((variable.name[:18] + '..') if len(variable.name)>20 else variable.name), 'green'),
                           Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
@@ -874,49 +912,35 @@ class instack ():
 
             else:
                 logger.error(' -- the label of the sample "%s" is not recognised by Heepi' % sample.name )
-            #=== systematics
-            # for sys in treesUpSys:
-            #     if proc != 'Data' and 'signal' != samples[proc].get('label',''):
-            #         sysname = sys.split('*')[1]
-            #         treeUp  = [x for x in samples[proc].get('_root_tree_sysUp_') if sysname in x.GetName()][0]
-            #         treeUp.Project(
-            #             'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
-            #             formula,
-            #             _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
-            #                                                              treeinfo.get('lumi'   ,1.0),
-            #                                                              samples[proc].get('kfactor',1.0)))
-            #         )
-            #         histUp = ROOT.gDirectory.Get('h_UpSys_' + sysname +'_'+ varname )
-            #         histUp.SetDirectory(0)
-            #         if histUpSys[sysname] == None:
-            #             histUpSys[sysname] = histUp
-            #         else:
-            #             histUpSys[sysname].Add(histUp)
-            # for sys in treesDwSys:
-            #     if proc != 'Data' and 'signal' != samples[proc].get('label',''):
-            #         #treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
-            #         sysname   = sys.split('*')[1]
-            #         treeDw  = [x for x in samples[proc].get('_root_tree_sysDw_') if sysname in x.GetName()][0]
-            #         treeDw.Project(
-            #             'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
-            #             formula,
-            #             _cutflow_.replace('weight','weight*%f*%f*%f' % ( treeinfo.get('kfactor',1.0),
-            #                                                              treeinfo.get('lumi'   ,1.0),
-            #                                                              samples[proc].get('kfactor',1.0)))
-            #         )
-            #         histDw = ROOT.gDirectory.Get('h_DwSys_' + sysname +'_'+ varname )
-            #         histDw.SetDirectory(0)
-            #         if histDwSys[sysname] == None:
-            #             histDwSys[sysname] = histDw
-            #         else:
-            #             histDwSys[sysname].Add(histDw)
+                return
 
-            # ----------------------------------------------
             hist = ROOT.gDirectory.Get('h_' + variable.name )
             hist.SetDirectory(0)
-            if variable.norm :
+
+            if variable.norm and hist.Integral()!=0:
                 hist.Sumw2()
                 hist.Scale(1.0/hist.Integral())
+            if hist.Integral() == 0 : logger.warning(' The Integral of the histogram is null, please check this variable: %s' % varkey)
+            if 'background' in sample.label.lower():
+                for key,syst in sample.systematics.items() :
+                    for _sys_flip_ in ['up','down']:
+                        syst.__dict__[_sys_flip_ + '_root_tree'].Project(
+                            '_'.join(['h',key, _sys_flip_, variable.name]) + variable.hist,
+                            variable.formula,
+                            '*'.join(
+                                [   _cutflow_,
+                                    "%f" % self.options.kfactor,
+                                    "%f" % self.options.intlumi,
+                                    "%f" % sample.kfactor
+                                ]
+                            )
+                        )
+                        _h_syst = ROOT.gDirectory.Get('_'.join(['h',key, _sys_flip_, variable.name]))
+                        _h_syst.SetDirectory(0)
+                        if variable.norm and _h_syst.Integral()!=0:
+                            _h_syst.Sumw2()
+                            _h_syst.Scale(1.0/_h_syst.Integral())
+                        self.systematics[key].append_hist(_h_syst,_sys_flip_)
 
             hist.SetTitle(";" + variable.title + ";entries")
             if ('signal'==sample.label) or ('spectator'==sample.label):
@@ -949,8 +973,7 @@ class instack ():
                 hstack.Add(hist)
                 variable.root_histos.append(hist)
                 variable.root_legend.AddEntry( hist, sample.title, "f" )
-        # drawing
-        #c = ROOT.TCanvas("c","c",500,500)
+                # drawing
         c = self.makeRatioPlotCanvas(name = variable.name)
         c.cd(1)
         _htmp_ = variable.root_histos[0].Clone('__htmp__')
@@ -981,23 +1004,28 @@ class instack ():
         self.customizeHisto(_htmp_)
         _htmp_.Draw('hist')
         hstack.Draw('hist,same')
-        (herrstat, herrsyst) = self.drawStatErrorBand(hstack.GetStack().Last(), histDwSys, histUpSys)
+        (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
         herrsyst.Draw('E2,same')
-        #herrstat.Draw('E2,same')
-        #
+        herrstat.Draw('E2,same')
+        # for key in self.systematics:
+        #     self.systematics[key].up_histo.SetLineColor(132)
+        #     self.systematics[key].down_histo.SetLineColor(122)
+        #     self.systematics[key].up_histo.Draw('hist,same')
+        #     self.systematics[key].down_histo.Draw('hist,same')
+
         hdata = None
         for h in variable.root_histos:
             if 'data' not in h.GetName():
+                h.SetFillStyle(0)
                 h.Draw('hist,same')
             else:
                 h.Draw('E,same')
                 hdata = h
-        # # if len(histUpSys)>0 and len(histDwSys)>0:
-        # #     variable.root_legend.AddEntry(herrstat, "Stat", "f" )
-        # #     variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
-        # # else:
-        # #     variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
-        #
+        if len(self.systematics)>0:
+            variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
+        else:
+            variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
+
         # cosmetics
         utils.draw_cut_line(_htmp_,variable)
         self.draw_categories(variable.boundaries, miny=_htmp_.GetMinimum(),maxy=_htmp_.GetMaximum())
@@ -1013,12 +1041,14 @@ class instack ():
         variable.root_legend.SetShadowColor(0)
         variable.root_legend.Draw()
         # draw labels
+        if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
         utils.draw_labels(self.options.label)
+        if (self.systematics.keys())>0 : self.options.label.pop()
         utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
         #
         c.cd()
         c.cd(2)
-        (errorHist,systHist) = self.MakeStatProgression(hstack.GetStack().Last(),histDwSys, histUpSys)
+        (errorHist,systHist) = self.MakeStatProgression(hstack.GetStack().Last(),self.systematics)
         ROOT.SetOwnership(errorHist,0)
         ROOT.SetOwnership(systHist ,0)
         errorHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
@@ -1088,6 +1118,8 @@ class instack ():
         for form in settings.plot_formats :
             c.SaveAs( 'plots/' + histname + '.' + form)
 
+        variable.clear()
+        if len(self.systematics.keys())>0: self.options.label.pop()
     def histogram(self, variable, type='signal', cut="", label=""):
         _cutflow_ = self.variable_cutflow(variable.name,'')
         _hist_ = ROOT.TH1F( 'htot_tree_' + type + '_' + variable.name +'_'+ label,

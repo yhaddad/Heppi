@@ -77,6 +77,7 @@ if __name__ == "__main__":
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
     stack.print_cuts()
+    stack.print_systematics()
 
     if opt.print_cutflow : stack.print_cutflow()
     if  opt.verbose == 'INFO':
@@ -94,55 +95,74 @@ if __name__ == "__main__":
         ROOT.gErrorIgnoreLevel = ROOT.kError
 
     # hadeling categories
-    if opt.scatter:
-        logger.info(colored(
-            (' -- booked scatter plots :: (%i x %i)' % (len(stack.scatter_opt.xlist),len(stack.scatter_opt.ylist))),
-            'red', attrs=['bold']
-        ))
-        for xvar in stack.scatter_opt.xlist :
-            for yvar in stack.scatter_opt.ylist :
-                if xvar != yvar:
+    # if opt.scatter:
+    #     logger.info(colored(
+    #         (' -- booked scatter plots :: (%i x %i)' % (len(stack.scatter_opt.xlist),len(stack.scatter_opt.ylist))),
+    #         'red', attrs=['bold']
+    #     ))
+    #     for xvar in stack.scatter_opt.xlist :
+    #         for yvar in stack.scatter_opt.ylist :
+    #             if xvar != yvar:
+    #
+    #                 if len(stack.options.categories) > 0 :
+    #                     for cat in stack.options.categories:
+    #                         logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', attrs=["on_red"])
+    #                         logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
+    #                         if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
+    #                         if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
+    #                 else:
+    #                     logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
+    #                     if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
+    #                     if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
+    #
 
-                    if len(stack.options.categories) > 0 :
-                        print 'ici'
-                        for cat in stack.options.categories:
-                            logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', attrs=["on_red"])
-                            logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
-                            if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
-                            if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
-                    else:
-                        print 'ailleurs'
-                        logger.info(colored(' -- (%s x %s)' % (xvar, yvar),'green'))
-                        if stack.scatter_opt.profile:stack.scatter(xvar,yvar,opt.label,make_profiles=True)
-                        if stack.scatter_opt.scatter:stack.scatter(xvar,yvar,opt.label,make_profiles=False)
-
+    # Part drawing 1D variables:
     if opt.draw_all and opt.variable == '':
-        print 'len(stack.options.categories) == ',len(stack.options.categories)
         if len(stack.options.categories) > 0 :
-            logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
+            for cat in stack.options.categories:
+                logger.info(colored(" --- Drawing category : %10s " % cat.get('name'), 'yellow', 'on_red'))
+                logger.info(colored(
+                    ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
+                ))
+                stack.options.label.append(cat.get('label'))
+                for xvar in stack.variables :
+                    if opt.allnormhist : stack.variables[xvar].norm = True
+                    print 'before ::', stack.options.label
+                    _cuts_ = cat.get('operator','&&').join(cat.get('cut')) if type(cat.get('cut')) == type([]) else cat.get('cut')
+                    stack.draw( varkey = xvar,
+                                label  = opt.label+'_'+cat.get('name'),
+                                select = _cuts_)
+                    'middle ::', stack.options.label
+
+                stack.options.label.pop() # remove the last label after drawing
+                print 'after ::', stack.options.label
+        else:
             logger.info(colored(
                 ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
             ))
             for xvar in stack.variables :
-                if opt.allnormhist : stack.variables[xvar].norm = True
-                stack.draw(xvar,opt.label)
-        else:
-            if len(stack.options.categories) > 0 :
-                logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
-                logger.info(colored(
-                    ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
-                ))
-                for xvar in stack.variables :
-                    if opt.allnormhist : stack.variables[xvar].norm = True
-                    stack.draw(xvar,opt.label)
+                if opt.allnormhist : stack.variables[opt.variable].norm = True
+                stack.options.label.append(cat.get('label'))
+                _cuts_ = cat.get('operator','&&').join(cat.get('cut')) if type(cat.get('cut')) == type([]) else cat.get('cut')
+                stack.draw( varkey = opt.variable,
+                            label  = opt.label+'_'+cat.get('name'),
+                            select = _cuts_ )
+                stack.options.label.pop() # remove the last label after drawing
 
     else:
         if opt.variable != '':
             if len(stack.options.categories) > 0 :
                 for cat in stack.options.categories:
-                    logger.info(colored(" --- Drawing category : %10s " % cat["name"]), 'yellow', 'on_red')
-                    stack.draw(opt.variable,opt.label)
+                    logger.info(colored(" --- Drawing category : %10s " % cat.get('name'), 'yellow', 'on_red'))
+                    if opt.allnormhist : stack.variables[opt.variable].norm = True
+                    stack.options.label.append(cat.get('label'))
+                    _cuts_ = cat.get('operator','&&').join(cat.get('cut')) if type(cat.get('cut')) == type([]) else cat.get('cut')
+                    stack.draw( varkey = opt.variable,
+                                label  = opt.label+'_'+cat.get('name'),
+                                select = _cuts_ )
+                    stack.options.label.pop() # remove the last label after drawing
             else:
+                if opt.allnormhist : stack.variables[opt.variable].norm = True
                 stack.draw(opt.variable,opt.label)
             if opt.display:
                 raw_input('... press any key to exit ...')

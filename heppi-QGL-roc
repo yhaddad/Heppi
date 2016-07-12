@@ -94,7 +94,7 @@ for pt_bin in cats_pt :
         legend_cut.append([eta_bin[1], pt_bin[1]])
 
 print cats
-for cat in cats :
+for cat in cats_eta :
     _sig_ = 'quark'
     _bkg_ = 'pileup'
     print 'cat ::', cat, ' -- '
@@ -102,8 +102,8 @@ for cat in cats :
     v1 = 'jet_QGL'
     points = []
 
-    h1_sig =  stack.histogram(variable = stack.variables[v1], type='signal'     , cut=cat, label='_%i'%cats.index(cat))
-    h1_bkg =  stack.histogram(variable = stack.variables[v1], type='gluon' , cut=cat, label='_%i'%cats.index(cat))
+    h1_sig =  stack.histogram(variable = stack.variables[v1], type='signal', cut=cat[0], label='_%i'%cats_eta.index(cat))
+    h1_bkg =  stack.histogram(variable = stack.variables[v1], type='gluon' , cut=cat[0], label='_%i'%cats_eta.index(cat))
 
     print "--> :: ",h1_bkg.Integral()
     print "--> :: ",h1_sig.Integral()
@@ -115,16 +115,16 @@ for cat in cats :
         beff = h1_bkg.Integral(ibin,h1_sig.GetNbinsX())/float(h1_bkg.Integral())
         seff = h1_sig.Integral(ibin,h1_sig.GetNbinsX())/float(h1_sig.Integral())
         roc1.SetPoint (ibin+1,beff,seff)
-        list1.append([abs(h1_sig.GetBinCenter(ibin)-wp_cuts[cat]), [beff,seff]])
+        # list1.append([abs(h1_sig.GetBinCenter(ibin)-wp_cuts[cat]), [beff,seff]])
     roc1.SetPoint (h1_sig.GetNbinsX()+2,0,0)
 
 
-    opp_1 = min(x for x in list1)
-    p1 = heppi.ROOT.TEllipse(opp_1[1][0],opp_1[1][1],0.01,0.013)
-    p1.SetFillColor(132)
-    p1.SetLineWidth(0)
-    p1.SetLineColor(132)
-    points.append(p1)
+    # opp_1 = min(x for x in list1)
+    # p1 = heppi.ROOT.TEllipse(opp_1[1][0],opp_1[1][1],0.01,0.013)
+    # p1.SetFillColor(132)
+    # p1.SetLineWidth(0)
+    # p1.SetLineColor(132)
+    # points.append(p1)
 
     c =  heppi.ROOT.TCanvas("c","c",700,700)
     c.cd()
@@ -155,13 +155,13 @@ for cat in cats :
     gr.Draw("AL")
     c.Update()
     legend.Draw()
-    heppi.utils.draw_labels( ["CMSSW-80x"] + legend_cut[cats.index(cat)] )
+    heppi.utils.draw_labels( ["CMSSW-80x"] + [cat[1]] )
     line = heppi.ROOT.TLine()
     line.SetLineStyle(7)
     line.SetLineWidth(2)
     line.DrawLine(0,1,1,1)
     line.DrawLine(0,0,1,1)
-    label = '_QGL_region_' + str(cats.index(cat))
+    label = '_QGL_region_' + str(cats_eta.index(cat))
     #for p in points:
     #    p.Draw()
     c.SaveAs("plots/ROC_"+_sig_+'_'+_bkg_+label+".pdf")

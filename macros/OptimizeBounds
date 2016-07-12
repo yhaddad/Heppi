@@ -40,15 +40,6 @@ def fom(s,b):
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    # heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
-
-    # stack = heppi.instack(
-        # plotcard  = opt.plotcard ,
-        # sampledir = opt.sampledir
-    # )
-
-    # stack.read_plotcard()
-    # stack.book_trees(True)
     roof = ROOT.TFile.Open(opt.plotcard)
     h2_sig = roof.Get('scatter_sig_dipho_dijet_MVA_dipho_mass')
     h2_bkg = roof.Get('scatter_bkg_dipho_dijet_MVA_dipho_mass')
@@ -59,16 +50,12 @@ if __name__ == "__main__":
 
     fexp = ROOT.TF1('_fexp_','[0]*[1]*TMath::Exp(-x*[1])',100,180)
     def get_projection(imin=0,imax=1):
-        # imin=1800
-        # imax=2000
         hmgg_sig = h2_sig.ProjectionY ('_ps',imin, imax)
         hmgg_bkg = h2_bkg.ProjectionY ('_pb',imin, imax)
         hstd     = ROOT.TH1F('hstd','',1000,-50,50)
-        fexp.SetParameter(0,hmgg_bkg.Integral())
-        fexp.SetParameter(1,0.01)
+        fexp.SetParameter (0,hmgg_bkg.Integral())
+        fexp.SetParameter (1,0.01)
         fexp.SetParLimits (1,0.5e-05,1)
-
-        # r = hmgg_bkg.Fit(fexp,"SWL","",100,140)
         for ibin in range(1,hmgg_bkg.GetNbinsX()-1):
             dx1 = (hmgg_bkg.GetBinContent(ibin+1) + hmgg_bkg.GetBinContent(ibin-1))/2.0
             dx2 = (hmgg_bkg.GetBinContent(ibin)   + hmgg_bkg.GetBinContent(ibin-1))/2.0
@@ -90,12 +77,10 @@ if __name__ == "__main__":
     nb_tot = fexp.GetParameter(0)
 
     @np.vectorize
-    def bkg_cdf(x):
+    def significance(x):
         hmgg_bkg = h2_bkg.ProjectionY ('_pb',int(x), 2000)
         hmgg_sig = h2_sig.ProjectionY ('_pb',int(x), 2000)
         hstd     = ROOT.TH1F('hstd','',1000,-50,50)
-        # fexp.SetParameter(0,hmgg_bkg.Integral())
-        # fexp.SetParameter(1,0.03)
         for ibin in range(1,hmgg_bkg.GetNbinsX()-1):
             dx1 = (hmgg_bkg.GetBinContent(ibin+1) + hmgg_bkg.GetBinContent(ibin-1))/2.0
             dx2 = (hmgg_bkg.GetBinContent(ibin)   + hmgg_bkg.GetBinContent(ibin-1))/2.0
@@ -104,12 +89,9 @@ if __name__ == "__main__":
             if abs(dx) > hstd.GetRMS():
                 hmgg_bkg.SetBinError  (ibin,0)
                 hmgg_bkg.SetBinContent(ibin,0)
-        # r = hmgg_bkg.Fit(fexp, "QWLS")
         b = hmgg_bkg.Integral()
         s = hmgg_sig.Integral()
-        # print '-->  ', x, ' ', b, ' chi2', r.Chi2()/float(r.Ndf())
-        return s*s/(b+s)
-        # s = fexp.GetParameter(0)
+        return s*s/(b) if b!=0 else 0
 
 
     # _c_= ROOT.TCanvas('_c_','',500,500)
