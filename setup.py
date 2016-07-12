@@ -42,12 +42,8 @@ setup(
     ],
     package_dir          = {'heppi': 'heppi'},
     include_package_data = True,
-    entry_points = {
-        'console_scripts': [
-            'heppi-draw = heppi-draw',
-        ]
-    },
-    install_requires    = requirements,
+    scripts              = ['./heppi-draw'],
+    install_requires     = requirements,
     license     = "ISCL",
     zip_safe    = False,
     keywords    = ['Heppi','heppi'],
