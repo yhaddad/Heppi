@@ -995,21 +995,16 @@ class instack ():
         hstack.Draw('hist,same')
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
         herrstat.Draw('E2,same')
-        herrsyst.Draw('E2,same')
-        # for key in self.systematics:
-        #     self.systematics[key].up_histo.SetLineColor(132)
-        #     self.systematics[key].down_histo.SetLineColor(122)
-        #     self.systematics[key].up_histo.Draw('hist,same')
-        #     self.systematics[key].down_histo.Draw('hist,same')
-
+        if len(self.systematics)!=0:herrsyst.Draw('E2,same')
         hdata = None
         for h in variable.root_histos:
-            if 'data' not in h.GetName():
+            if 'data' in h.GetName():
                 h.SetFillStyle(0)
-                h.Draw('hist,same')
-            else:
                 h.Draw('E,same')
                 hdata = h
+            # else:
+            #     h.Draw('E,same')
+            #     hdata = h
         if len(self.systematics)>0:
             variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
         else:
@@ -1051,7 +1046,7 @@ class instack ():
             ROOT.gPad.SetGridy()
             ROOT.gPad.SetGridx()
         errorHist.Draw('E2')
-        systHist.Draw('E2,same')
+        if len(self.systematics)!=0: systHist.Draw('E2,same')
         ratioHist = None
 
         sig_and_bkg_ratio = []
