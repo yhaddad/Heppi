@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from optparse   import OptionParser
-# from heppi      import heppi
+from heppi      import heppi
 import ROOT
 # include the plotting tools from matplotlib
 # and the optimisation tools from scipy
@@ -31,23 +31,14 @@ def get_options():
     parser.add_option('--verbose', dest='verbose', default='INFO',
                      help="Increase verbosity (specify multiple times for more)")
     return parser.parse_args()
-def fom(s,b):
-    if (s+b) !=0 :
-        return (s/math.sqrt(s+b))
-    else:
-        return 0.0
-
 
 if __name__ == "__main__":
     (opt, args) = get_options()
-    roof = ROOT.TFile.Open(opt.plotcard)
-    h2_sig = roof.Get('scatter_sig_dipho_dijet_MVA_dipho_mass')
-    h2_bkg = roof.Get('scatter_bkg_dipho_dijet_MVA_dipho_mass')
-
-    print "Nx ==", h2_sig.GetNbinsX()
-    print "Ny ==", h2_sig.GetNbinsY()
-
-
+    stack = heppi.instack(
+        plotcard  = opt.plotcard,
+        sampledir = opt.sampledir
+    )
+    
     fexp = ROOT.TF1('_fexp_','[0]*[1]*TMath::Exp(-x*[1])',100,180)
     def get_projection(imin=0,imax=1):
         hmgg_sig = h2_sig.ProjectionY ('_ps',imin, imax)

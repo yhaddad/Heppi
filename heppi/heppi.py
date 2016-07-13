@@ -284,16 +284,12 @@ class sample  (object):
         """
         self.root_tree = tree
     def set_syst_tree(self, syst ,tree_up, tree_dw):
-        print ' medium fill::', tree_up
-        print ' medium fill::', tree_dw
         if self.systematics.get(syst,None) == None:
             _syst_ = {
                 "up_root_tree"   : tree_up,
                 "down_root_tree" : tree_dw
             }
             self.systematics[syst] = systematic(_syst_)
-            print ' fill ::', self.systematics[syst].up_root_tree
-            print ' fill ::', self.systematics[syst].down_root_tree
         else:
             self.systematics[syst].up_root_tree   = tree_up
             self.systematics[syst].down_root_tree = tree_dw
@@ -429,7 +425,6 @@ class instack ():
                     if ':' in sam:
                         _sam_ = sam.split(':')[0]
                         _tre_ = sam.split(':')[1]
-                    print '\t the infos', _sam_, '  ', _tre_
                     for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                         chain.Add( f + '/' + _tre_ )
                         logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
@@ -445,8 +440,6 @@ class instack ():
                                     _syst_chain_.Add(f)
                             self.systematics[systkey].append_tree(_syst_chain_, level)
                             _ch_[level] = _syst_chain_
-                        print ' before fill ::', _ch_['up']
-                        print ' before fill ::', _ch_['down']
                         self.samples[proc].set_syst_tree(systkey,
                                                          _ch_['up'],
                                                          _ch_['down'])
@@ -468,8 +461,6 @@ class instack ():
                                 _syst_chain_.Add(f)
                             self.systematics[systkey].append_tree(_syst_chain_, level)
                             _ch_[level] = _syst_chain_
-                        print ' before fill ::', _ch_['up']
-                        print ' before fill ::', _ch_['down']
                         self.samples[proc].set_syst_tree(systkey,
                                                          _ch_['up'],
                                                          _ch_['down'])
@@ -519,15 +510,12 @@ class instack ():
                     tablefmt="psql"))
     #---------------------------------------------------------
     def print_systematics(self):
-
-
         for key,sample in self.samples.items():
             if len(sample.systematics)==0: continue
             _tab_cuts_ = []
             for sys in sample.systematics:
                 up = 0
                 dw = 0
-                print 'print ::', sample.systematics[sys].down_root_tree
                 if sample.systematics[sys].up_root_tree   != None:
                     up = sample.systematics[sys].up_root_tree.GetEntries()
                 if sample.systematics[sys].down_root_tree != None:
@@ -577,7 +565,6 @@ class instack ():
                     _selec_.append(100*sample.root_tree.GetEntries(_cut_)/float(tot_events))
                 _table_.append(_selec_)
         logger.info("\n" + tabulate(_table_, _header_,tablefmt=format,floatfmt=".2f"))
-
     #---------------------------------------------------------
     def makeRatioCanvas(name='_ratio_'):
         """returns a divided canvas for ratios"""
@@ -603,8 +590,9 @@ class instack ():
             line.SetLineWidth(2)
             line.DrawLine(cat,miny,cat,maxy)
     #---------------------------------------------------------
-    def MakeStatProgression(self,myHisto,histDwSys={},histUpSys={},
-                            title="", systematic_only=True, combine_with_systematic=True):
+    def make_stat_progression(self,myHisto,systematics={},
+                            systematic_only=True,
+                            combine_with_systematic=True):
         """
         This function returns a function with
         the statistical precision in each bin
@@ -620,17 +608,24 @@ class instack ():
         systPrecision.SetFillStyle(settings.ratio_syst_band_style)
         systPrecision.SetMarkerColorAlpha(0,0)
 
+
         if len(self.systematics)==0 : systematic_only = False
-        if systematic_only:
-            for ibin in range(myHisto.GetNbinsX()+1):
-                y    = statPrecision.GetBinContent(ibin)
-                stat = statPrecision.GetBinError  (ibin)
+        for ibin in range(myHisto.GetNbinsX()+1):
+            y    = statPrecision.GetBinContent(ibin)
+            stat = statPrecision.GetBinError  (ibin)
+            if( y > 0 ):
+                statPrecision.SetBinContent(ibin,      1 )
+                statPrecision.SetBinError  (ibin, stat/y )
+            else:
+                statPrecision.SetBinContent(ibin,   1 )
+                statPrecision.SetBinError  (ibin,   0 )
+            if systematic_only:
                 up_err_sum2 = 0
                 dw_err_sum2 = 0
                 if( y > 0 ):
                     up_err_sum2 = (stat/y)*(stat/y)
                     dw_err_sum2 = (stat/y)*(stat/y)
-                    for key,syst in self.systematics.items():
+                    for key,syst in systematics.items():
                         up_diff   = (syst.up_histo.GetBinContent  (ibin)- y)/y
                         dw_diff   = (syst.down_histo.GetBinContent(ibin)- y)/y
                         if( up_diff > 0 ):
@@ -644,12 +639,6 @@ class instack ():
 
                 systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
                 systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
-                if( y > 0 ):
-                    statPrecision.SetBinContent(ibin,   1)
-                    statPrecision.SetBinError  (ibin,   stat/y )
-                else:
-                    statPrecision.SetBinContent(ibin,   1)
-                    statPrecision.SetBinError  (ibin,   0)
         statPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         systPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         return (statPrecision, systPrecision)
@@ -797,7 +786,7 @@ class instack ():
         c.cd()
         c.cd(2)
 
-        (errorHist,systHist) = self.MakeStatProgression(histMC,title="")
+        (errorHist,systHist) = self.make_stat_progression(histMC)
         ROOT.SetOwnership(errorHist,0)
         ROOT.SetOwnership(systHist ,0)
         errorHist.GetXaxis().SetTitle(xTitle)
@@ -989,7 +978,7 @@ class instack ():
         if variable.log:
             if variable.norm :
                 _ymin_ = 1e-4 if _ymin_ <= 0 else _ymin_
-                _ymax_ = 1.0 #hstack.GetMaximum()
+                _ymax_ = 75 * hstack.GetMaximum()
             else:
                 _ymin_ = (0.01 - 0.003) if _ymin_ <= 0 else _ymin_
                 _ymax_ = hstack.GetMaximum()*1000
@@ -1005,8 +994,8 @@ class instack ():
         _htmp_.Draw('hist')
         hstack.Draw('hist,same')
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
-        herrsyst.Draw('E2,same')
         herrstat.Draw('E2,same')
+        herrsyst.Draw('E2,same')
         # for key in self.systematics:
         #     self.systematics[key].up_histo.SetLineColor(132)
         #     self.systematics[key].down_histo.SetLineColor(122)
@@ -1041,14 +1030,14 @@ class instack ():
         variable.root_legend.SetShadowColor(0)
         variable.root_legend.Draw()
         # draw labels
-        if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
+        # if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
         utils.draw_labels(self.options.label)
-        if (self.systematics.keys())>0 : self.options.label.pop()
+        # if (self.systematics.keys())>0 : self.options.label.pop()
         utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
         #
         c.cd()
         c.cd(2)
-        (errorHist,systHist) = self.MakeStatProgression(hstack.GetStack().Last(),self.systematics)
+        (errorHist,systHist) = self.make_stat_progression(hstack.GetStack().Last(),self.systematics)
         ROOT.SetOwnership(errorHist,0)
         ROOT.SetOwnership(systHist ,0)
         errorHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
@@ -1058,11 +1047,13 @@ class instack ():
         systHist.GetYaxis().SetTitle('Data/MC')
         systHist.GetYaxis().CenterTitle(True)
         self.customizeHisto(errorHist)
-        # systHist.Draw('E2')
+        if settings.ratio_plot_grid :
+            ROOT.gPad.SetGridy()
+            ROOT.gPad.SetGridx()
         errorHist.Draw('E2')
         systHist.Draw('E2,same')
-        #errorHist.Draw('E2,same')
         ratioHist = None
+
         sig_and_bkg_ratio = []
         #
         if hdata==None:
@@ -1119,7 +1110,7 @@ class instack ():
             c.SaveAs( 'plots/' + histname + '.' + form)
 
         variable.clear()
-        if len(self.systematics.keys())>0: self.options.label.pop()
+        # if len(self.systematics.keys())>0: self.options.label.pop()
     def histogram(self, variable, type='signal', cut="", label=""):
         _cutflow_ = self.variable_cutflow(variable.name,'')
         _hist_ = ROOT.TH1F( 'htot_tree_' + type + '_' + variable.name +'_'+ label,
@@ -1160,8 +1151,6 @@ class instack ():
         selection = "(%s)&&(%s)" % (allsel, selection)
         hsel = self.histogram(variable, type=sample, label = 'sel_' + label, cut=selection)
         htot = self.histogram(variable, type=sample, label = 'all_' + label, cut=allsel   )
-        print '\t hsel ==', hsel.GetNbinsX()," :: ", hsel.GetEntries()," : ", selection
-        print '\t htot ==', htot.GetNbinsX()," :: ", htot.GetEntries()," : ", allsel
         _gr_ = ROOT.TGraphAsymmErrors(hsel,htot)
         _gr_.SetName('gr_' + hsel.GetName())
 
@@ -1194,8 +1183,6 @@ class instack ():
         _cutflow_ = self.variable_cutflow(variable.name,'')
         if selection != "" :
             _cutflow_ = _cutflow_ + "&&" + selection
-        print 'cut-flow ::', _cutflow_
-        print ','.join( ['(1000', ','.join(variable.hist.split(',')[1:])])
         self.samples[sig_sample].root_tree.Project(
             'hsig_' + variable.name + ','.join( ['(1000', ','.join(variable.hist.split(',')[1:])]),
             variable.formula,
@@ -1207,7 +1194,6 @@ class instack ():
                 ]
             )
         )
-        print 'ROC for ::', self.samples[sig_sample], "::",self.samples[bkg_sample]
         if self.samples[bkg_sample].cut != "":
             _cutflow2_ = _cutflow_ + "&&" + self.samples[bkg_sample].cut
         else:

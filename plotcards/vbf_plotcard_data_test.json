@@ -157,7 +157,7 @@
       "title": "p_{t}(#gamma_2)"
     },
     "dipho_mass": {
-      "hist" : "(1600,100,180)",
+      "hist" : "(6400,100,180)",
       "cut"  : "(dipho_mass>100 && dipho_mass<180)",
       "blind": "",
       "log"  : true,
@@ -314,18 +314,7 @@
     "kfactor": 0.89,
     "lumi": 2.3
   },
-  "systematics": {
-    "UpTrees": [
-      "VBFTagDumper/trees/*_13TeV_VBF_JERUp01sigma",
-      "VBFTagDumper/trees/*_13TeV_VBF_JECUp01sigma",
-      "VBFTagDumper/trees/*_13TeV_VBF_RMSShiftUp01sigma"
-    ],
-    "DwTrees": [
-      "VBFTagDumper/trees/*_13TeV_VBF_JERDown01sigma",
-      "VBFTagDumper/trees/*_13TeV_VBF_JECDown01sigma",
-      "VBFTagDumper/trees/*_13TeV_VBF_RMSShiftDown01sigma"
-    ]
-  },
+  "systematics": { },
   "options": {
     "label": [
       "VBF preselection",
