@@ -1,0 +1,234 @@
+#!/usr/bin/env python
+
+"""
+This is a test script to run few Heppi options
+"""
+#import heppi
+from heppi import heppi
+heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+# heppi.ROOT.gROOT.SetBatch( heppi.ROOT.kTRUE  )
+
+print "-----------------------"
+print dir(heppi)
+print "-----------------------"
+
+
+def customize_roc(roc):
+    roc.GetYaxis().SetTitleSize(25)
+    roc.GetXaxis().SetTitleSize(25)
+    roc.GetYaxis().SetTitleOffset (1)
+    roc.GetXaxis().SetTitleOffset (1)
+
+stack = heppi.instack(
+    plotcard  = 'plotcards/vbf_plotcard_data_test.json',
+    sampledir = 'data/data_76x'
+)
+heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
+
+stack.read_plotcard()
+stack.book_trees(True)
+stack.print_cuts()
+
+cats    = [
+    ["vbf_125" , "ggh_125" ,"ggh"],
+    #["vbf_125" , "jetjet" ,"jet-jet"],
+    #["vbf_125" , "gjet"   ,"#gamma-jet"],
+    #["vbf_125" , "ghh_125","ggH"],
+    #["vbf_125" , "dipho","#gamma-#gamma"],
+    #["vbf_125" , "Data","Data"]
+]
+print cats
+for cat in cats :
+    _sig_ = cat[0]
+    _bkg_ = cat[1]
+    print 'cat ::', cat[0], ' -- ',cat[1]
+
+    # v1 = ''
+    # v2 = 'dipho_dijet_MVA'
+
+    v1 = 'dijet_mva'
+    v2 = 'dijet_mva'
+
+    h1_sig =  stack.histogram(variable = stack.variables[v1], type=_sig_, label='_%s_%s' %(cat[0],cat[1]), cut = "dijet_Mjj>251")
+    h1_bkg =  stack.histogram(variable = stack.variables[v1], type=_bkg_, label='_%s_%s' %(cat[0],cat[1]), cut = "dijet_Mjj>251")
+    h1_sig.Smooth(1)
+    h1_bkg.Smooth(1)
+    h2_sig =  stack.histogram(variable = stack.variables[v2], type=_sig_, label='_%s_%s' %(cat[0],cat[1]), cut = "dijet_Mjj>250")
+    h2_bkg =  stack.histogram(variable = stack.variables[v2], type=_bkg_, label='_%s_%s' %(cat[0],cat[1]), cut = "dijet_Mjj>250")
+    #h2_sig.Smooth(1)
+    #h2_bkg.Smooth(1)
+    print "--> :: ",h1_bkg.Integral()
+    print "--> :: ",h1_sig.Integral()
+    print "--> :: ",h2_bkg.Integral()
+    print "--> :: ",h2_sig.Integral()
+
+    roc1 = heppi.ROOT.TGraph()
+    roc2 = heppi.ROOT.TGraph()
+
+    list1 = []
+    roc1.SetPoint (0,1,1)
+    for ibin in range(0, h1_sig.GetNbinsX()+1):
+        beff = h1_bkg.Integral(ibin,h1_sig.GetNbinsX())/float(h1_bkg.Integral())
+        seff = h1_sig.Integral(ibin,h1_sig.GetNbinsX())/float(h1_sig.Integral())
+        roc1.SetPoint (ibin+1,beff,seff)
+    roc1.SetPoint (h1_sig.GetNbinsX()+2,0,0)
+
+    roc2.SetPoint (0,1,1)
+    for ibin in range(0, h2_sig.GetNbinsX()+1):
+        beff = h2_bkg.Integral(ibin,h2_sig.GetNbinsX())/float(h2_bkg.Integral())
+        seff = h2_sig.Integral(ibin,h2_sig.GetNbinsX())/float(h2_sig.Integral())
+        roc2.SetPoint (ibin+1,beff,seff)
+    roc2.SetPoint (h2_sig.GetNbinsX()+2,0,0)
+
+    c =  heppi.ROOT.TCanvas("c","c",700,700)
+    c.cd()
+    legend  = heppi.ROOT.TLegend(0.5, 0.2,0.9,0.4)
+    legend.SetTextAlign( 12 )
+    legend.SetTextFont ( 43 )
+    legend.SetTextSize ( 18 )
+    legend.SetLineColor( 0 )
+    legend.SetFillColor( 0 )
+    legend.SetFillStyle( 0 )
+    legend.SetLineColorAlpha(0,0)
+    legend.SetShadowColor(0)
+
+    heppi.ROOT.gPad.SetGridx()
+    heppi.ROOT.gPad.SetGridy()
+
+    roc1.SetLineColor(132)
+    roc2.SetLineColor(122)
+    roc1.SetLineWidth(2)
+    roc2.SetLineWidth(2)
+    legend.AddEntry( roc1 , "new  MVA", "l" );
+    # legend.AddEntry( roc2 , "old  MVA", "l" );
+
+    gr = heppi.ROOT.TMultiGraph()
+    gr.SetTitle(";#varepsilon_{%s};#varepsilon_{%s}" % (cat[2],"VBF"))
+    gr.Add(roc1)
+    # gr.Add(roc2)
+
+    gr.Draw("AL")
+    gr.GetYaxis().SetRangeUser(0,1.3)
+    gr.GetXaxis().SetRangeUser(0,1)
+    customize_roc(gr)
+    gr.Draw("AL")
+    c.Update()
+    legend.Draw()
+    heppi.utils.draw_labels( ["CMSSW-80x", "","VBF Preselection"] )
+    heppi.utils.draw_cms_headlabel(label_right="")
+    line = heppi.ROOT.TLine()
+    line.SetLineStyle(7)
+    line.SetLineWidth(2)
+    line.DrawLine(0,1,1,1)
+    label = '_category_%s_%s' % (cat[0],cat[1])
+    c.cd()
+    c.SaveAs("plots/ROC_"+_sig_+'_'+_bkg_+label+".pdf")
+    c.SaveAs("plots/ROC_"+_sig_+'_'+_bkg_+label+".png")
+
+
+# roc = stack.make_roc('dipho_dijet_MVA','')
+# raw_input()
+#
+# cuts = stack.variable_cutflow("nvtx")
+# INFO:heppi:  -- variable ::      dijet_LeadJPt  (60,15,265)
+# INFO:heppi:  -- variable ::       dijet_SubJPt  (60,15,265)
+# INFO:heppi:  -- variable ::      dijet_leadEta    (50,-5,5)
+# INFO:heppi:  -- variable ::   dijet_subleadEta    (50,-5,5)
+# INFO:heppi:  -- variable ::          dijet_Mjj   (40,0,800)
+# INFO:heppi:  -- variable ::          dijet_Zep    (50,0,10)
+# INFO:heppi:  -- variable ::     dijet_abs_dEta    (20,0,10)
+# INFO:heppi:  -- variable :: dijet_dipho_dphi_trunc     (30,0,3)
+# INFO:heppi:  -- variable ::    dipho_lead_ptoM     (25,0,2)
+# INFO:heppi:  -- variable :: dipho_sublead_ptoM     (25,0,2)
+# INFO:heppi:  -- variable ::         dipho_PToM     (50,0,5)
+# INFO:heppi:  -- variable ::    dipho_subleadPt   (50,0,200)
+# INFO:heppi:  -- variable ::         dipho_mass (40,100,180)
+# INFO:heppi:  -- variable ::               nvtx    (40,0,40)
+
+# list_corr_varx =  ["dipho_mass"]
+# list_corr_vary =  [
+#     "dijet_Mjj",
+#     "dipho_mass",
+#     "dijet_abs_dEta",
+#     "nvtx",
+#     "dijet_Zep",
+#     "dijet_dipho_dphi_trunc",
+#     "dipho_PToM",
+#     "dipho_lead_ptoM",
+#     "dijet_LeadJPt",
+#     "dijet_SubJPt",
+#     "dipho_lead_ptoM",
+#     "dipho_sublead_ptoM"
+#     ]
+#
+# for varx in list_corr_varx :
+#     for vary in list_corr_vary :
+#         if vary != varx :
+#             print varx, " .vs. ", vary
+#             stack.scatter(varx,vary,'label',make_profiles = True)
+#             stack.scatter(varx,vary,'label',make_profiles = False)
+# print "signal events    := ", stack.get_signal_tree().GetEntries()
+# print "background event := ", stack.get_background_tree().GetEntries()
+#
+# hist  = heppi.ROOT.TH2F("hist" ,";p^{lead}_{T}(GeV);p^{sub}_{T}(GeV);significance",7,15,50,7,15,50)
+# h_01 = heppi.ROOT.TH2F("h_01",";p^{lead}_{T}(GeV);p^{sub}_{T}(GeV);fake rate"   ,7,15,50,7,15,50)
+# h_02 = heppi.ROOT.TH2F("h_02",";p^{lead}_{T}(GeV);p^{sub}_{T}(GeV);fake rate"   ,7,15,50,7,15,50)
+# h_12 = heppi.ROOT.TH2F("h_12",";p^{lead}_{T}(GeV);p^{sub}_{T}(GeV);fake rate"   ,7,15,50,7,15,50)
+#
+#
+# for cut1 in [15,20,25,30,35,40,45]:
+#     for cut2 in [15,20,25,30,35,40,45]:
+#         if cut1 >= cut2 :
+#             cut   = "weight*(" + cuts + "&& dijet_LeadJPt>" + str(cut1) + "&& dijet_SubJPt>" + str(cut2) + ")"
+#             cut_01 = "weight*(" + cuts + "&& dijet_LeadJPt>" + str(cut1) + "&& dijet_SubJPt>" + str(cut2) + "&& dijet_jet1_match )"
+#             cut_02 = "weight*(" + cuts + "&& dijet_LeadJPt>" + str(cut1) + "&& dijet_SubJPt>" + str(cut2) + "&& dijet_jet2_match )"
+#             cut_12 = "weight*(" + cuts + "&& dijet_LeadJPt>" + str(cut1) + "&& dijet_SubJPt>" + str(cut2) + "&& dijet_jet1_match && dijet_jet2_match )"
+#
+#             stack.get_signal_tree().Project("hist_s(3,0,3)","1", cut )
+#             stack.get_background_tree().Project("hist_b(3.0.3)","1", cut )
+#
+#             stack.get_signal_tree().Project("hist_01(3,0,3)","1", cut_01 )
+#             stack.get_signal_tree().Project("hist_02(3,0,3)","1", cut_02 )
+#             stack.get_signal_tree().Project("hist_12(3,0,3)","1", cut_12 )
+#
+#             hist_s = heppi.ROOT.gDirectory.Get( 'hist_s' )
+#             hist_s.SetDirectory(0)
+#             hist_b = heppi.ROOT.gDirectory.Get( 'hist_b' )
+#             hist_b.SetDirectory(0)
+#             hist_01 = heppi.ROOT.gDirectory.Get( 'hist_01' )
+#             hist_01.SetDirectory(0)
+#             hist_02 = heppi.ROOT.gDirectory.Get( 'hist_02' )
+#             hist_02.SetDirectory(0)
+#             hist_12 = heppi.ROOT.gDirectory.Get( 'hist_12' )
+#             hist_12.SetDirectory(0)
+#
+#             signif = 0
+#             s = hist_s.Integral()
+#             b = hist_b.Integral()
+#
+#             s_01 = hist_01.Integral()
+#             s_02 = hist_02.Integral()
+#             s_12 = hist_12.Integral()
+#
+#             h_01.Fill(cut1,cut2,s_01/s)
+#             h_02.Fill(cut1,cut2,s_02/s)
+#             h_12.Fill(cut1,cut2,s_12/s)
+#
+#             if (s+b) !=0:
+#                 signif = s*s / (s + b)
+#                 print "[%i,%i] = (%f,%f) = %f" % (cut1,cut2,s,b,signif)
+#                 hist.Fill(cut1,cut2,signif)
+# c = heppi.ROOT.TCanvas("c","c",500,500)
+# c.cd()
+# hist.Draw("colz")
+# c01 = heppi.ROOT.TCanvas("c01","c",500,500)
+# c01.cd()
+# h_01.Draw("colz")
+# c02 = heppi.ROOT.TCanvas("c02","c",500,500)
+# c02.cd()
+# h_02.Draw("colz")
+# c12 = heppi.ROOT.TCanvas("c12","c",500,500)
+# c12.cd()
+# h_12.Draw("colz")
+
+# raw_input('...')

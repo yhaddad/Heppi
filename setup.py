@@ -36,7 +36,7 @@ setup(
     author           = "Yacine Haddad",
     author_email     = 'yhaddad@cern.ch',
     url              = 'https://github.com/yhaddad/Heppi',
-    download_url     = 'https://github.com/yhaddad/Heppi/tarball/0.1',
+    download_url     = 'https://github.com/yhaddad/Heppi/tarball/2.1',
     packages = [
         'heppi',
     ],

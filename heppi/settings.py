@@ -33,4 +33,4 @@ canvas_height              = 700+150
 two_colomn_legend          = True
 
 #=== output files
-plot_formats              = ["pdf"] # ["pdf","png", "root", "eps"]
+plot_formats              = ["pdf","png"] # ["pdf","png", "root", "eps"]

@@ -61,7 +61,8 @@ def get_eff_nsig(stack, bound = [-1,1]):
     nb = h_bkg.Integral()
     print 'bound :: ', bound
     print '[s,b] :: [', ns,',', nb,'] in range[',125-(3*sigma),',',125+(3*sigma),']'
-
+    h_sig.Delete()
+    h_bkg.Delete()
     return (ns*ns / nb) if nb!=0 else 0
 
 
@@ -87,10 +88,12 @@ if __name__ == "__main__":
 
 
     hist2D = ROOT.TH2F('hist2D','',50,0,1,50,0,1)
-    delta = 0.02
-    x = y = np.arange(0, 1, delta)
+    delta = 0.01
+    x = np.arange(0.69,0.99, delta)
+    y = np.arange(0.50,0.80, delta)
     for ix in range(x.size) :
         for iy in range(y.size) :
+            if ix < iy : continue
             z = model(stack,[x[ix],y[iy]])
             hist2D.SetBinContent(ix,iy,z)
 

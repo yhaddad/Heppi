@@ -92,8 +92,8 @@
     },*/
     "dijet_Mjj": {
       "hist": "(40,0,800)",
-      //"cut": "dijet_Mjj>250",
-      "cut"  : "",
+      "cut": "dijet_Mjj>250",
+      /*"cut"  : "",*/
       "blind": "",
       "log": true,
       "norm": false,

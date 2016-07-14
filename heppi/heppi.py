@@ -56,7 +56,7 @@ class utils:
             s = ('' if unit else '1')
         return s
     @staticmethod
-    def draw_cut_line(hist, variable, axis='x'):
+    def draw_cut_line(hist, variable, axis=''):
         if len(variable.cut) != 0:
             ymin  = hist.GetMinimum()
             ymax  = hist.GetMaximum()
@@ -80,7 +80,7 @@ class utils:
                     if cut > hist.GetYaxis().GetXmin() or cut < hist.GetYaxis().GetXmax():
                         line.DrawLine(xmin,cut,xmax,cut)
                 else:
-                    logger.error(colored("axis not defined or not supported ...","red"))
+                    line.DrawLine(xmin,cut,xmax,cut)
     @staticmethod
     def draw_labels(label, position='top'):
         t = ROOT.TLatex()
@@ -1115,7 +1115,7 @@ class instack ():
                             float(variable.range[1])
             )
         for proc,sample in self.samples.items():
-            if type.lower() not in sample.label.lower(): continue
+            if type.lower() not in proc.lower(): continue
             if sample.cut != '':
                 _cutflow_ = _cutflow_ + '&&' + sample.cut
             if cut != "":
