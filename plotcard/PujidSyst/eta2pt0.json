@@ -1,0 +1,370 @@
+{
+    "variables": {
+        "isGold": {
+            "hist": "(2,-0.5,1.5)",
+            //"cut" : "",
+            "cut": "isGold>0.5",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "isGold"
+        },
+        "nvtx": {
+            "hist": "(40,0,40)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": true,
+            "title": "N_{vtx}"
+        },
+        "rho": {
+            "hist": "(50,0,50)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#rho"
+        },
+        "n_jets": {
+            "hist": "(12,0.5,12.5)",
+            //"cut"  : "",
+            "cut": "n_jets<1.5",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "N_{jets}(p_{t}>30 GeV)"
+        },
+        "jet_HFHadronEnergyFraction": {
+            "hist": "(55,0.,1.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFHadronEnergyFraction"
+        },
+        "jet_HFHadronEnergy": {
+            "hist": "(100,0.,1000.)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFHadronEnergy"
+        },
+        "jet_HFHadronMultiplicity": {
+            "hist": "(30,-0.5,29.5)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFHadronMultiplicity"
+        },
+        "jet_HFEMEnergyFraction": {
+            "hist": "(55,0.,1.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFEMEnergyFraction"
+        },
+        "jet_HFEMEnergy": {
+            "hist": "(100,0.,1000.)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFEMEnergy"
+        },
+        "jet_HFEMMultiplicity": {
+            "hist": "(30,-0.5,29.5)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "HFEMMultiplicity"
+        },
+        "jetPt": {
+            "hist": "(100,0.,500.)",
+            //"cut"  : "(jetPt/zPt)>0.8 && (jetPt/zPt)<1.2",
+            //"cut"  : "(jetPt/zPt)>0.7 && (jetPt/zPt)<1.3",
+            "cut"  : "jetPt>20.0 && jetPt<30.0",
+            //"cut"  : "jetPt>30.0 && jetPt<50.0",
+            //"cut"  : "jetPt>50.0 && jetPt<9999.0",
+            //"cut"  : "jetPt>60",
+            "blind" : "",
+            "log"   : true,
+            "norm"  : false,
+            "title" : "P_{t}(jet)[GeV]"
+        },
+        "jetEta": {
+            "hist"  : "(100,-5,5)",
+            //"cut"  : "",
+            //"cut"   : "abs(jetEta)<2.5 ",
+            //"cut"  : "abs(jetEta)>2.5 && abs(jetEta)<2.75",
+            "cut"  : "abs(jetEta)>2.75 && abs(jetEta)<3.0",
+            //"cut"  : "abs(jetEta)>3.0 ",
+            "blind" : "",
+            //"log"  : true,
+            "log"   : false,
+            "norm"  : false,
+            "title" : "#eta(jet)"
+        },
+        "jetPhi": {
+            "hist": "(100,-3.5,3.5)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#phi(jet)"
+        },
+        "jet_rms": {
+            "hist": "(50,0.,0.1)",
+            "cut": "",
+            //	    "cut"  : "(jet_rms<0.03)*(jetEta>2.5)+(jet_rms<0.03)*(jetEta<-2.5)+((jetEta>-2.5)*(jetEta<2.5))",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "RMS_{jet}"
+        },
+        "jet_RMS:=0.1-jet_rms": {
+            "hist": "(50,0.,0.1)",
+            "cut": "",
+            //	    "cut"  : "(jet_rms<0.03)*(jetEta>2.5)+(jet_rms<0.03)*(jetEta<-2.5)+((jetEta>-2.5)*(jetEta<2.5))",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "RMS_{jet}"
+        },
+        "jet_QGL": {
+            "hist": "(55,0.,1.1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "QGL_{jet}"
+        },
+        //"jet_puJetIdMVA": {
+        "jet_pujid": {
+            "hist": "(40,-1,1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "jet_pujid"
+        },
+        "jet_rawPt": {
+            "hist": "(100,0.,1000.)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "P_{t}^{raw}(jet)[GeV]"
+        },
+        "jet_match": {
+            "hist": "(2,0.,1.)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "jet_match"
+        },
+        "zMass": {
+            "hist": "(100,40.,140.)",
+            //"cut"  : "",
+            "cut": "zMass>70&&zMass<110",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "m_{ee}[GeV]"
+        },
+        "zPt": {
+            "hist"  : "(75,0.,150.)",
+            "cut"   : "",
+            "blind" : "",
+            "log"   : true,
+            "norm"  : false,
+            "title" : "P_{t}(Z)[GeV]"
+        },
+        "ptBalence:=zPt/jetPt": {
+            "hist"  : "(100,0.,2.0)",
+            //"cut"   : "(zPt/jetPt)>0.8&&(zPt/jetPt)<1.2",
+            "cut"   : "",
+            "blind" : "",
+            "log"   : false,
+            "norm"  : false,
+            "title" : "P_{t}(Z)/P_{t}(jet)"
+        },
+        "ptDiff:=abs(zPt-jetPt)": {
+            "hist"  : "(100,0.,100)",
+            "cut"   : "",
+            "blind" : "",
+            "log"   : true,
+            "norm"  : false,
+            "title" : "P_{t}(Z)/P_{t}(jet)"
+        },
+        "zEta": {
+            "hist": "(100,-5.,5.)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#eta(Z)"
+        },
+        "zPhi": {
+            "hist": "(100,-3.2,3.2)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#phi(Z)"
+        },
+        "deltaPhiZJet": {
+            "hist": "(100,-3.2,3.2)",
+            "cut": "abs(deltaPhiZJet)>2.5",
+            //"cut"  : "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "deltaPhiZJet"
+        },
+        "smartIndex": {
+            "hist": "(2,0,2)",
+            //"cut": "smartIndex>0.5",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "smartIndex"
+        },
+        "vtxZCoord": {
+            "hist": "(40,-20.,20.)",
+            //"hist" : "(100,-50.,50.)",
+            //"cut"  : "",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "vtxZCoord"
+        }
+
+    },
+    /*"scatter": {
+        "xlist": ["dipho_mass"],
+        "ylist": [
+            "dijet_Mjj",
+            "dipho_mass",
+            "dijet_abs_dEta",
+            "nvtx",
+            "dijet_Zep",
+            "dijet_dipho_dphi_trunc",
+            "dipho_PToM",
+            "dipho_lead_ptoM",
+            "dijet_LeadJPt",
+            "dijet_SubJPt",
+            "dipho_lead_ptoM",
+            "dipho_sublead_ptoM"
+        ],
+        "profile": true,
+        "scatter": true,
+        "logz": false,
+        "normz": true
+    },*/
+    "processes": {
+        "Zee": {
+            "color": 133,
+            "order": 0,
+            "name": "DY",
+            "title": "DY",
+            "tree" : "Zee",
+            "cut"  : "",
+            "label": "background"
+        },
+        "pileup": {
+            "color": 121,
+            "order": 1,
+            "name": "DY",
+            "title": "pile-up",
+            "tree" : "Zee",
+            "cut"  : "jet_match==0",
+            "label": "spectator"
+        },
+        "jets": {
+            "color": 130,
+            "order": 2,
+            "name": "DY",
+            "title": "jet-match",
+            "tree" : "Zee",
+            "cut"  : "jet_match==1",
+            "label": "spectator"
+        },
+        /*"quark": {
+            "color": 132,
+            "order": 3,
+            "name": "DY",
+            "title": "quark-Jet",
+            "tree" : "Zee",
+            "cut"  : "(jet_partonFlavour!=21 && jet_partonFlavour !=0)",
+            "label": "signal"
+        },
+        "gluon": {
+            "color": 123,
+            "order": 0,
+            "name": "DY",
+            "title": "gluon-Jet",
+            "tree" : "Zee",
+            "cut"  : "(jet_partonFlavour==21)",
+            "label": "spectator"
+        },*/
+        "Data": {
+            "tree": "Data",
+            "color": 1,
+            "order": 2,
+            "name": "DoubleEG",
+            "cut": "",
+            "title": "data",
+            "label": "data"
+        }
+    },
+    "systematics": {
+	"UpTrees" : [ /*"ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_RMSShiftUp01sigma",
+		      "ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_JECUp01sigma",
+		      "ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_JERUp01sigma"*/],
+
+	"DwTrees" : [ /*"ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_RMSShiftDown01sigma",
+		      "ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_JECDown01sigma",
+		      "ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet_JERDown01sigma"*/]
+    },
+    "selection": {
+	"name": "zplusjet_80x",
+	"title": ""
+    },
+    "labels":{
+	"name" : [
+	    "80X-DoubleEG",
+	    "Z + 1 jet",
+	    //"JEC+JER+RMS",
+	    //"",
+	    "70 < m_{#gamma#gamma} < 110 GeV",
+	    "2.75 < |#eta_{jet}| < 3.0",
+            "20 < p_{T} < 30"
+	]
+    },
+    "tree": {
+	"name": "ZPlusJetTagDumper/trees/*_13TeV_ZPlusJet",
+	//"kfactor":0.261,
+	"kfactor":0.3436,
+	"lumi"   : 6.26
+    }
+    /*"options": {
+        "label": [
+            "CMSSW-80x",
+            //"",
+            "70 < m_{ee} < 110 GeV",
+            "|#eta_{jet}| < 2.5",
+            "20 < p_{T} < 30"
+        ],
+        "treename": "ZPlusJetTagDumper/trees/{sampleid}_13TeV_ZPlusJet",
+        "intlumi": 6.26,
+	"kfactor": 0
+        //"ratio_range": [0, 2.1]
+    }*/
+}

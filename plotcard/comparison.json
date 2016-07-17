@@ -216,7 +216,7 @@
 	    "title": "BDT_{combined}"
 	},
 	"dipho_leadPt": {
-	    "hist" : "(75,0,150)",
+	    "hist" : "(40,0,200)",
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : false,
@@ -225,7 +225,7 @@
 	    "title": "dipho_leadPt"
 	},
 	"dipho_subPt": {
-	    "hist" : "(50,0,100)",
+	    "hist" : "(40,0,200)",
 	    "cut"  : "",
 	    "blind": "",
 	    "log"  : false,
@@ -250,10 +250,10 @@
 	    "title": "dipho_subEta"
 	},
 	"dipho_vtxprob": {
-	    "hist" : "(20,0.9,1)",
+	    "hist" : "(50,0,1)",
 	    "cut"  : "",
 	    "blind": "",
-	    "log"  : true,
+	    "log"  : false,
 	    "norm" : false,
 	    "title": "dipho_vtxprob"
 	},
@@ -261,7 +261,7 @@
 	    "hist" : "(40,-1,1)",
 	    "cut"  : "",
 	    "blind": "",
-	    "log"  : true,
+	    "log"  : false,
 	    "norm" : false,
 	    "title": "dipho_CosPhi"
 	},
@@ -280,22 +280,6 @@
 	    "log"  : false,
 	    "norm" : false,
 	    "title": "dipho_sigmawv"
-	},
-	"dipho_leadIDMVA": {
-	    "hist" : "(20,-1,1)",
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : false,
-	    "norm" : false,
-	    "title": "dipho_leadIDMVA"
-	},
-	"dipho_subIDMVA": {
-	    "hist" : "(20,-1,1)",
-	    "cut"  : "",
-	    "blind": "",
-	    "log"  : false,
-	    "norm" : false,
-	    "title": "dipho_subIDMVA"
 	},
 	"nvtx": {
 	    "hist" : "(40,0,40)",
@@ -325,110 +309,33 @@
 
     },
     "processes": {
-	"vbf_125" : {
-	    "color": 2,
-	    "order": 0,
-	    "name" : ["VBFHToGG"],
-	    "title": "VBF(m_{h}=125)",
-	    "cut"  : "",
-	    "kfactor" : 90,
-	    "label": "signal"
-	},
-	"ghh_125" : {
-	    "color": 135,
-	    "order": 1,
-	    "name" : ["GluGluHToGG"],
-	    "title": "ggf(m_{h}=125)",
-	    "cut"  : "",
-	    //"kfactor" : 50,
-	    "label": "spectator"
-	},
-	"dipho": {
-	    "color": 122,
-	    "order": 2,
-	    "name" : [
-		"DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa:vbfTagDumper/trees/dipho_13TeV_VBFDiJet"
-	    ],
-	    "title": "#gamma-#gamma",
-	    //"title": "prompt-prompt",
-	    "cut"  : "",
-	    "label": "background"
-	},
-	"gjet": {
-	    "color": 127,
-	    "order": 4,
-	    "name" : [
-		"GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
-		"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
-		"GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
-		//"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-		//"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-		//"QCD_Pt-30to40_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"QCD_Pt-30toInf_Param_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"QCD_Pt-40toInf_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-		//"ParamQCD30to40:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"ParamQCD40toInf:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-	    ],
-	    "title": "fake-#gamma (GJet)",
-	    //"title": "prompt-fake (GJet)",
-	    //"kfactor" : 0.01,
-	    "weight"  : "(qcd_pt1_weight*qcd_pt2_weight)",
-	    "cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
-	    //"cut"  : "(qcd_pt1_weight<=1 && qcd_pt1_weight>=0 && qcd_pt2_weight>=0 && qcd_pt2_weight<=1)",
-	    "label": "background"
-	},
-	"param": {
+	"Original": {
 	    "color": 128,
 	    "order": 3,
 	    "name" : [
-		//"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+		"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+		"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+	    ],
+	    "title": "fake-#gamma (enriched)",
+	    "weight"  : "(qcd_pt1_weight*qcd_pt2_weight)",
+	    "cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
+	    "label": "background"
+	},
+	"Data": {
+	    "color": 1,
+	    "order": 4,
+	    "name" : [
 		"ParamQCDvtx30to40:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
 		"ParamQCDvtx40toInf:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
 	    ],
 	    "title": "fake-#gamma (param.)",
-	    //"title": "fake-#gamma (enriched)",
-	    //"kfactor" : 0.01,
-	    //"weight"  : "(qcd_pt1_weight*qcd_pt2_weight)",
 	    "weight"  : "(qcd_pt1_weight*qcd_pt2_weight*0.416*0.809)",
 	    "cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
-	    //"cut"  : "(qcd_pt1_weight<=1 && qcd_pt1_weight>=0 && qcd_pt2_weight>=0 && qcd_pt2_weight<=1)",
-	    "label": "background"
-	},
-	"jetjet":{
-	    "color": 130,
-	    "order": 5,
-	    "name" : [
-		"GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
-		"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
-		"QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-		//"QCD_Pt-30to40_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"QCD_Pt-30toInf_Param_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
-		//"QCD_Pt-40toInf_Param_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
-	    ],
-	    //"title": "jet-jet",
-	    "title": "fake-fake",
-	    "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
-	    "label": "background"
-	},
-	//}
-	"Data":{
-	    "color": 1,
-	    "order": 6,
-	    "name" : [
-		"DoubleEG"
-	    ],
-	    "cut"  : "",
-	    "title": "data",
 	    "label": "data"
 	}
     },
 
     "selection" : {
-	//"name"  : "Normal-Preselection",
 	"name"  : "VBF-Preselection",
 	//"name"  : "VBF-0",
 	//"name"  : "VBF-1",
@@ -439,9 +346,8 @@
 	//"name": "VBFTagDumper/trees/*_13TeV_VBF",
 	"name": "vbfTagDumper/trees/*_13TeV_VBFDiJet",
 	//"kfactor": 0.34,
-	//"kfactor": 0.7,
+	"kfactor": 0.7,
 	//"kfactor": 0.36,
-	"kfactor": 2.1479,
 	"lumi"   : 2.6
     },
 
@@ -467,7 +373,7 @@
 	    //"Category : VBF-0",
 	    //"Category : VBF-1",
 	    //"Original"
-	    "Parameterised"
+	    "Comparison"
 	]
     }
 
