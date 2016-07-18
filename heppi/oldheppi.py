@@ -42,11 +42,9 @@ sampledir   = './data/new' ## temp variable
 treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
 treesUpSys  = []
 treesDwSys  = []
-branchUpSys  = []
-branchDwSys  = []
 #treename    = '*_13TeV_VBFDiJet'
-options       = None   
-allnormhist   = False
+options     = None   
+allnormhist = False
 treeinfo      = {}
 title_on_plot = []
 globalOptions = {}
@@ -59,13 +57,11 @@ def read_plotcard(plotcard, cut_card=''):
     global treeinfo
     global treesUpSys
     global treesDwSys
-    global branchUpSys
-    global branchDwSys
     global treename
     global globalOptions
     config = None
     with open(plotcard) as f:
-        config = json.loads(jsmin(f.read()))
+        config = json.loads(jsmin(f.read()) )#, object_pairs_hook=collections.OrderedDict) #Ed
     if cut_card != '':
         logger.info(' ---- cut card is specified ----')
         logger.info(' -- %20s ' % ( cut_card )        )
@@ -109,14 +105,10 @@ def read_plotcard(plotcard, cut_card=''):
             treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
         if 'systematics' in key:
             logger.info(' ---- book selections ---------')
-            treesUpSys  = config[key].get('UpTrees' ,[])
-            treesDwSys  = config[key].get('DwTrees' ,[])
-            branchUpSys = config[key].get('UpBranch',[])
-            branchDwSys = config[key].get('DwBranch',[])
-            logger.info(' -- tree Up :: %12s' % ( treesUpSys) )
-            logger.info(' -- tree Dw :: %12s' % ( treesDwSys) )
-            logger.info(' -- branch Up :: %12s' % ( branchUpSys) )
-            logger.info(' -- branch Dw :: %12s' % ( branchDwSys) )
+            treesUpSys = config[key].get('UpTrees',[])
+            treesDwSys = config[key].get('DwTrees',[])
+            logger.info(' -- %12s' % ( treesUpSys) )
+            logger.info(' -- %12s' % ( treesUpSys) )
         if 'globalOptions' in key:
             logger.info(' ---- book selections ---------')
             globalOptions = config[key]
@@ -261,27 +253,60 @@ def MakeStatProgression(myHisto,histDwSys={},histUpSys={},
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-
-            up_errsum2   = 0
-            down_errsum2 = 0
-            if( y > 0 ):
-                up_errsum2   = (stat/y)*(stat/y) 
-                down_errsum2 = (stat/y)*(stat/y) 
-                for sys in histUpSys:
-                    up_diff   = (histUpSys[sys].GetBinContent(ibin) - y) / y 
-                    if( up_diff > 0 ):
-                        up_errsum2   += up_diff*up_diff 
-                for sys in histDwSys:
-                    down_diff = (histDwSys[sys].GetBinContent(ibin) - y) / y 
-                    if( down_diff < 0 ):
-                        down_errsum2 += down_diff*down_diff 
-            up_error   = math.sqrt(up_errsum2)  
-            down_error = math.sqrt(down_errsum2)  
-            band_max   = 1 + up_error 
-            band_min   = 1 - down_error 
+            
+            
+            valup = {}
+            valdw = {}
+            #vals  = [y]
+            #print "--> Nm[",ibin,"]::  (", y ,")"
+            for sys in histUpSys:
+                val   = histUpSys[sys].GetBinContent(ibin)
+                #vals += [val]
+                valup[sys] = val
+                #print "--> Up[",ibin,"]:: ", sys, " (", val ,")"
+            for sys in histDwSys:
+                val   = histDwSys[sys].GetBinContent(ibin)
+                #vals += [val]
+                valdw[sys] = val
+                #print "--> Dw[",ibin,"]:: ", sys, " (", val ,")"
                 
-            statPrecision.SetBinContent(ibin, (band_max + band_min)/2.0); 
-            statPrecision.SetBinError  (ibin, (band_max - band_min)/2.0); 
+            #largest_val  = max(vals)
+            #smallest_val = min(vals)
+
+            systError2   = 0
+            for up in valup:
+                dw = up.replace("Up","Down")
+                e = 0.5*(valup[up] - valdw[dw])
+                #print "--> error[",ibin,"]:: ", up, " (", e ,")"
+                systError2 += e*e 
+                            
+            error  = 0
+            if combine_with_systematic:
+                #math.sqrt(syst*syst + stat*stat) 
+                error = math.sqrt(systError2 + stat*stat)
+            else:
+                #error = 0.5*(largest_val - smallest_val)
+                error = math.sqrt(systError2)
+            #print "--> stat error[",ibin,"]:: (", stat ,")"
+            #print "--> syst error[",ibin,"]:: (", math.sqrt(systError2) ,")"
+            #print "--> combined error[",ibin,"]:: (", error ,")"
+            if (y>0):
+                statPrecision.SetBinContent(ibin,   1)#0.5*(largest_val + smallest_val)/y);
+                statPrecision.SetBinError  (ibin,   error/y );
+                
+            else:
+                statPrecision.SetBinContent(ibin,   1);
+                statPrecision.SetBinError  (ibin,   0);
+    else:
+        for bin in range(myHisto.GetNbinsX()+1):
+            y   = statPrecision.GetBinContent(bin);
+            err = statPrecision.GetBinError  (bin);
+            if (y>0):
+                statPrecision.SetBinContent(bin,1);
+                statPrecision.SetBinError  (bin,err/y);
+            else:
+                statPrecision.SetBinContent(bin,1);
+                statPrecision.SetBinError  (bin,0);
                 
     range_ = globalOptions.get("ratio_range",settings.ratio_precision_range)
     statPrecision.GetYaxis().SetRangeUser(range_[0], range_[1])
@@ -307,26 +332,26 @@ def drawStatErrorBand(myHisto,histDwSys={},histUpSys={},systematic_only=True, co
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin);
             stat = statPrecision.GetBinError  (ibin);
-
-            up_errsum2   = stat*stat 
-            down_errsum2 = stat*stat 
+            
+            vals = [y]
             for sys in histUpSys:
-                up_diff   = histUpSys[sys].GetBinContent(ibin) - y 
-                if( up_diff > 0   ):
-                    up_errsum2   += up_diff*up_diff 
+                val = histUpSys[sys].GetBinContent(ibin)
+                vals += [val]
             for sys in histDwSys:
-                down_diff = histDwSys[sys].GetBinContent(ibin) - y 
-                if( down_diff < 0 ):
-                    down_errsum2 += down_diff*down_diff 
+                val= histDwSys[sys].GetBinContent(ibin)
+                vals += [val]
+            largest_val  = max(vals)
+            smallest_val = min(vals)
             
-            up_error   = math.sqrt(up_errsum2)  
-            down_error = math.sqrt(down_errsum2)  
-            band_max   = y + up_error 
-            band_min   = y - down_error 
+            error  = 0
+            if combine_with_systematic:
+                syst  = 0.5*(largest_val - smallest_val)
+                error = math.sqrt(syst*syst + stat*stat) 
+            else:
+                error = 0.5*(largest_val - smallest_val)
                 
-            statPrecision.SetBinContent(ibin, (band_max + band_min)/2.0); 
-            statPrecision.SetBinError  (ibin, (band_max - band_min)/2.0); 
-            
+            statPrecision.SetBinContent(ibin,   (largest_val + smallest_val)/2.0);
+            statPrecision.SetBinError  (ibin,   error);      
     return statPrecision
 
 #---------------------------------------------------------
@@ -598,13 +623,7 @@ def draw_instack(variable, label='VBF', select=''):
     for sys in treesDwSys:
         sysname   = sys.split('*')[1]
         histDwSys.update({sysname : None })
-    for sys in branchUpSys:
-        histUpSys.update({sys : None })
-    for sys in branchDwSys:
-        histDwSys.update({sys : None })
-        
-
-        
+    
     if len(cutflow)!=0 and options.nocuts==False:
         cutflow = 'weight*(' + cutflow + ')'
     else:
@@ -652,7 +671,6 @@ def draw_instack(variable, label='VBF', select=''):
             if proc == 'Zee':  # Ed
                 sysname = sys.split('*')[1]
                 treeUp  = [x for x in samples[proc].get('_root_tree_sysUp_') if sysname in x.GetName()][0]
-                print 'sys ::', sys, ' :: treeUp ::', treeUp, ' :: ', treeUp.GetEntries()
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
@@ -674,7 +692,6 @@ def draw_instack(variable, label='VBF', select=''):
                 #treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
                 sysname   = sys.split('*')[1]
                 treeDw  = [x for x in samples[proc].get('_root_tree_sysDw_') if sysname in x.GetName()][0]
-                print 'sys ::', sys, ' :: treeUp ::', treeDw, ' :: ', treeDw.GetEntries()
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
@@ -690,48 +707,7 @@ def draw_instack(variable, label='VBF', select=''):
                     histDwSys[sysname] = histDw
                 else:
                     histDwSys[sysname].Add(histDw)
-        # ======= weight systematics
-        for sys in branchUpSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
-                print 'sys ::', sys, ' :: treeUp ::', tree, ' :: ', tree.GetEntries(), ' :: ', 'weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
-                                                                                                                        treeinfo.get('lumi'   ,1.0),
-                                                                                                                        sys,
-                                                                                                                        samples[proc].get('kfactor',1.0))
-                tree.Project(
-                    'h_weight_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
-                    formula,
-                    _cutflow_.replace('weight','weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
-                                                                        treeinfo.get('lumi'   ,1.0),
-                                                                        sys,
-                                                                        samples[proc].get('kfactor',1.0)))
-                )
-                histUp = ROOT.gDirectory.Get('h_weight_UpSys_' + sysname +'_'+ varname)
-                histUp.SetDirectory(0)
-                if histUpSys[sys]    == None:
-                    histUpSys[sys] = histUp
-                else:
-                    histUpSys[sys].Add(histUp)
-
-        for sys in branchDwSys:
-            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
-                print 'sys ::', sys, ' :: treeUp ::', tree, ' :: ', tree.GetEntries(), ' :: ', 'weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
-                                                                                                                        treeinfo.get('lumi'   ,1.0),
-                                                                                                                        sys,
-                                                                                                                        samples[proc].get('kfactor',1.0))
-                tree.Project(
-                    'h_weight_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
-                    formula,
-                    _cutflow_.replace('weight','weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
-                                                                        treeinfo.get('lumi'   ,1.0),
-                                                                        sys,
-                                                                        samples[proc].get('kfactor',1.0)))
-                )
-                histDw = ROOT.gDirectory.Get('h_weight_DwSys_' + sysname +'_'+ varname)
-                histDw.SetDirectory(0)
-                if histDwSys[sys]    == None:
-                    histDwSys[sys] = histDw
-                else:
-                    histDwSys[sys].Add(histDw)
+                    
         # ----------------------------------------------    
         hist = ROOT.gDirectory.Get('h_' + varname )
         hist.SetDirectory(0)
@@ -790,7 +766,7 @@ def draw_instack(variable, label='VBF', select=''):
     else:
         ymin = 0
         ymax = hstack.GetMaximum() + hstack.GetMaximum()*0.5
-        #ymax = 4000
+        #ymax = 400
         #ymax = 700
         #ymax = 25 
         #ymax = 30 
@@ -902,10 +878,3 @@ def draw_instack(variable, label='VBF', select=''):
     c.SaveAs( 'plots/' + histfilename + '.png')
     c.SaveAs( 'plots/' + histfilename + '.pdf')
     
-#// Local Variables:
-#// mode:python
-#// indent-tabs-mode:nil
-#// tab-width:4
-#// c-basic-offset:4
-#// End:
-#// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
