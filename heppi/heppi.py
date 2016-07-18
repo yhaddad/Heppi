@@ -42,9 +42,11 @@ sampledir   = './data/new' ## temp variable
 treename    = 'vbfTagDumper/trees/*_13TeV_VBFDiJet'
 treesUpSys  = []
 treesDwSys  = []
+branchUpSys  = []
+branchDwSys  = []
 #treename    = '*_13TeV_VBFDiJet'
-options     = None   
-allnormhist = False
+options       = None   
+allnormhist   = False
 treeinfo      = {}
 title_on_plot = []
 globalOptions = {}
@@ -57,11 +59,13 @@ def read_plotcard(plotcard, cut_card=''):
     global treeinfo
     global treesUpSys
     global treesDwSys
+    global branchUpSys
+    global branchDwSys
     global treename
     global globalOptions
     config = None
     with open(plotcard) as f:
-        config = json.loads(jsmin(f.read()), object_pairs_hook=collections.OrderedDict)
+        config = json.loads(jsmin(f.read()))
     if cut_card != '':
         logger.info(' ---- cut card is specified ----')
         logger.info(' -- %20s ' % ( cut_card )        )
@@ -105,10 +109,14 @@ def read_plotcard(plotcard, cut_card=''):
             treename = treeinfo.get('name','vbfTagDumper/trees/*_13TeV_VBFDiJet')
         if 'systematics' in key:
             logger.info(' ---- book selections ---------')
-            treesUpSys = config[key].get('UpTrees',[])
-            treesDwSys = config[key].get('DwTrees',[])
-            logger.info(' -- %12s' % ( treesUpSys) )
-            logger.info(' -- %12s' % ( treesUpSys) )
+            treesUpSys  = config[key].get('UpTrees' ,[])
+            treesDwSys  = config[key].get('DwTrees' ,[])
+            branchUpSys = config[key].get('UpBranch',[])
+            branchDwSys = config[key].get('DwBranch',[])
+            logger.info(' -- tree Up :: %12s' % ( treesUpSys) )
+            logger.info(' -- tree Dw :: %12s' % ( treesDwSys) )
+            logger.info(' -- branch Up :: %12s' % ( branchUpSys) )
+            logger.info(' -- branch Dw :: %12s' % ( branchDwSys) )
         if 'globalOptions' in key:
             logger.info(' ---- book selections ---------')
             globalOptions = config[key]
@@ -577,7 +585,13 @@ def draw_instack(variable, label='VBF', select=''):
     for sys in treesDwSys:
         sysname   = sys.split('*')[1]
         histDwSys.update({sysname : None })
-    
+    for sys in branchUpSys:
+        histUpSys.update({sys : None })
+    for sys in branchDwSys:
+        histDwSys.update({sys : None })
+        
+
+        
     if len(cutflow)!=0 and options.nocuts==False:
         cutflow = 'weight*(' + cutflow + ')'
     else:
@@ -616,9 +630,11 @@ def draw_instack(variable, label='VBF', select=''):
             )
         #=== systematics 
         for sys in treesUpSys:
+            
             if proc != 'Data' and 'signal' != samples[proc].get('label',''):        
                 sysname = sys.split('*')[1]
                 treeUp  = [x for x in samples[proc].get('_root_tree_sysUp_') if sysname in x.GetName()][0]
+                print 'sys ::', sys, ' :: treeUp ::', treeUp, ' :: ', treeUp.GetEntries()
                 treeUp.Project(
                     'h_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
@@ -637,6 +653,7 @@ def draw_instack(variable, label='VBF', select=''):
                 #treeDw    = samples[proc].get('_root_tree_sysDw_')[0]
                 sysname   = sys.split('*')[1]
                 treeDw  = [x for x in samples[proc].get('_root_tree_sysDw_') if sysname in x.GetName()][0]
+                print 'sys ::', sys, ' :: treeUp ::', treeDw, ' :: ', treeDw.GetEntries()
                 treeDw.Project(
                     'h_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
                     formula,
@@ -650,7 +667,48 @@ def draw_instack(variable, label='VBF', select=''):
                     histDwSys[sysname] = histDw
                 else:
                     histDwSys[sysname].Add(histDw)
-                    
+        # ======= weight systematics
+        for sys in branchUpSys:
+            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
+                print 'sys ::', sys, ' :: treeUp ::', tree, ' :: ', tree.GetEntries(), ' :: ', 'weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
+                                                                                                                        treeinfo.get('lumi'   ,1.0),
+                                                                                                                        sys,
+                                                                                                                        samples[proc].get('kfactor',1.0))
+                tree.Project(
+                    'h_weight_UpSys_' + sysname +'_'+ varname + variables[variable]['hist'],
+                    formula,
+                    _cutflow_.replace('weight','weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
+                                                                        treeinfo.get('lumi'   ,1.0),
+                                                                        sys,
+                                                                        samples[proc].get('kfactor',1.0)))
+                )
+                histUp = ROOT.gDirectory.Get('h_weight_UpSys_' + sysname +'_'+ varname)
+                histUp.SetDirectory(0)
+                if histUpSys[sys]    == None:
+                    histUpSys[sys] = histUp
+                else:
+                    histUpSys[sys].Add(histUp)
+
+        for sys in branchDwSys:
+            if proc != 'Data' and 'signal' != samples[proc].get('label',''):
+                print 'sys ::', sys, ' :: treeUp ::', tree, ' :: ', tree.GetEntries(), ' :: ', 'weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
+                                                                                                                        treeinfo.get('lumi'   ,1.0),
+                                                                                                                        sys,
+                                                                                                                        samples[proc].get('kfactor',1.0))
+                tree.Project(
+                    'h_weight_DwSys_' + sysname +'_'+ varname + variables[variable]['hist'],
+                    formula,
+                    _cutflow_.replace('weight','weight*%f*%f*%s*%f' % ( treeinfo.get('kfactor',1.0),
+                                                                        treeinfo.get('lumi'   ,1.0),
+                                                                        sys,
+                                                                        samples[proc].get('kfactor',1.0)))
+                )
+                histDw = ROOT.gDirectory.Get('h_weight_DwSys_' + sysname +'_'+ varname)
+                histDw.SetDirectory(0)
+                if histDwSys[sys]    == None:
+                    histDwSys[sys] = histDw
+                else:
+                    histDwSys[sys].Add(histDw)
         # ----------------------------------------------    
         hist = ROOT.gDirectory.Get('h_' + varname )
         hist.SetDirectory(0)
