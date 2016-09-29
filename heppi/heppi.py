@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#from __future__ import print_function
 
 try:
     import ROOT
@@ -9,13 +8,12 @@ except ImportError:
         ROOT is not in your environement, or not intsalled.
         Please check!
         """)
-
 try:
-    from   termcolor    import colored
-    from   jsmin        import jsmin
-    from   progressbar  import ProgressBar, Bar, Percentage, ETA
-    from   jsonmerge    import merge
-    from   tabulate     import tabulate
+    from termcolor    import colored
+    from jsmin        import jsmin
+    from progressbar  import ProgressBar, Bar, Percentage, ETA
+    from jsonmerge    import merge
+    from tabulate     import tabulate
 
 except ImportError:
     raise ImportError(
@@ -23,7 +21,7 @@ except ImportError:
         please install termcolor and jsmin, and try again.
         Suggestion: pip install requirement.txt --user
         """)
-import  os, sys, glob, sys, json, re, logging, collections, math, parser, pprint
+import  glob, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
 import  settings
 
@@ -1002,16 +1000,16 @@ class instack ():
                 h.SetFillStyle(0)
                 h.Draw('E,same')
                 hdata = h
-            # else:
-            #     h.Draw('E,same')
-            #     hdata = h
+            else:
+                h.Draw('E,same')
+                hdata = h
         if len(self.systematics)>0:
             variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
         else:
             variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
 
         # cosmetics
-        utils.draw_cut_line(_htmp_,variable)
+        utils.draw_cut_line(_htmp_,variable,'x')
         self.draw_categories(variable.boundaries, miny=_htmp_.GetMinimum(),maxy=_htmp_.GetMaximum())
         ROOT.gPad.RedrawAxis()
         # this is for the legend
