@@ -75,7 +75,7 @@ if __name__ == "__main__":
                                 sampledir = opt.sampledir )
     except IOError as e:
         print "I/O error({0}): {1}".format(e.errno, e.strerror)
-
+        
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
     stack.print_cuts()
