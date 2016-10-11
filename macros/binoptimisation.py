@@ -71,7 +71,7 @@ def draw_ROC(var ='dipho_dijet_MVA',
     ordsam = OrderedDict(sorted(heppi.samples.items(), key=lambda x: x[1]['order']))
     for proc in ordsam:
         tree  = heppi.samples[proc].get('_root_tree_')#roof.Get(treename.replace('*',proc))
-        histstr = '(%i,%f,%f)' %(int(400),-1, 1)
+        histstr = '({0:d},{1:f},{2:f})'.format(int(400), -1, 1)
         if proc == 'Data':
             cutflow = cutflow.replace('weight*','').replace('weight','')
             
@@ -178,7 +178,7 @@ def GetBondaryBin(var    = 'dijet_BDT',
     hsig.SetTitle(";" + heppi.variables[var]['title']+";entries")
     # === cutflow
     if len(cutflow)!=0 :
-        cutflow = 'weight*(' + cutflow + ('&& %s > %f' % (var, xmin)) + ('&& %s < %f' % (var, xmax)) + ')'
+        cutflow = 'weight*(' + cutflow + ('&& {0!s} > {1:f}'.format(var, xmin)) + ('&& {0!s} < {1:f}'.format(var, xmax)) + ')'
     else:
         cutflow = 'weight'
         
@@ -186,7 +186,7 @@ def GetBondaryBin(var    = 'dijet_BDT',
     ordsam = OrderedDict(sorted(heppi.samples.items(), key=lambda x: x[1]['order']))
     for proc in ordsam:
         tree  = heppi.samples[proc].get('_root_tree_')#roof.Get(treename.replace('*',proc))
-        histstr = '(%i,%f,%f)' %(int(nbin),-1, 1)
+        histstr = '({0:d},{1:f},{2:f})'.format(int(nbin), -1, 1)
         tree.Project(
             'h_'+var + histstr,
             var,
@@ -214,11 +214,11 @@ def GetBondaryBin(var    = 'dijet_BDT',
     catcut = []
     
     if len(cutflow)!=0 :
-        cutflow = 'weight*(' + cutflow + ('&& %s > %f' % (var, xmin)) + ('&& %s < %f' % (var, xmax)) + ')'
+        cutflow = 'weight*(' + cutflow + ('&& {0!s} > {1:f}'.format(var, xmin)) + ('&& {0!s} < {1:f}'.format(var, xmax)) + ')'
     else:
         cutflow = 'weight'
 
-    bar    = ProgressBar(widgets=[colored('-- variables:: %20s   ' % variable, 'green'),
+    bar    = ProgressBar(widgets=[colored('-- variables:: {0:20!s}   '.format(variable), 'green'),
                                   Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
     for ibin in bar(range(0, hsig.GetNbinsX()+1)):
         Z  = 0
@@ -252,7 +252,7 @@ def GetBondaryBin(var    = 'dijet_BDT',
     line.DrawLine(catvalue[0],0,catvalue[0],catvalue[1])
     
     print 'category (',catidx,') boundary [',catvalue[0],'][',catvalue[1],']'
-    draw_labels(('Category VBF-%i' % catidx)+ ' \\BDT > '+('%1.3f'%catvalue[0]))
+    draw_labels(('Category VBF-{0:d}'.format(catidx))+ ' \\BDT > '+('{0:1.3f}'.format(catvalue[0])))
     c.SaveAs('plots/fom_cat'+ str(catidx) + '.pdf')
     c.SaveAs('plots/fom_cat'+ str(catidx) + '.png')
     return catvalue
@@ -307,7 +307,7 @@ def GetCategoryBounds(var    = 'dijet_BDT',
     ordsam = OrderedDict(sorted(heppi.samples.items(), key=lambda x: x[1]['order']))
     for proc in ordsam:
         tree  = heppi.samples[proc].get('_root_tree_')#roof.Get(treename.replace('*',proc))
-        histstr = '(%i,%f,%f)' %(int(nbin),-1, 1)
+        histstr = '({0:d},{1:f},{2:f})'.format(int(nbin), -1, 1)
         tree.Project(
             'h_'+var + histstr,
             var,
@@ -371,8 +371,8 @@ def GetCategoryBounds(var    = 'dijet_BDT',
     
     print 'bounds == [',opt_bounds[0], ']'
     #draw_labels(('Category VBF-%i' % catidx)+ ' \\BDT > '+('%1.3f'%catvalue[0]))
-    c.SaveAs('plots/fom_cat_bounds_scan_smooth_%i.pdf' % smooth_index)
-    c.SaveAs('plots/fom_cat_bounds_scan_smooth_%i.png' % smooth_index)
+    c.SaveAs('plots/fom_cat_bounds_scan_smooth_{0:d}.pdf'.format(smooth_index))
+    c.SaveAs('plots/fom_cat_bounds_scan_smooth_{0:d}.png'.format(smooth_index))
     
     c2 = ROOT.TCanvas('c2_boundary_optimisation','MVA',1200,600)
     c2.Divide(2,1)
@@ -393,8 +393,8 @@ def GetCategoryBounds(var    = 'dijet_BDT',
     h_roc_bkg.Draw('colz')
     
     raw_input('.......')
-    c2.SaveAs('plots/fom_cdt_bounds_scan_smooth_%i.pdf' % smooth_index)
-    c2.SaveAs('plots/fom_cdt_bounds_scan_smooth_%i.png' % smooth_index)
+    c2.SaveAs('plots/fom_cdt_bounds_scan_smooth_{0:d}.pdf'.format(smooth_index))
+    c2.SaveAs('plots/fom_cdt_bounds_scan_smooth_{0:d}.png'.format(smooth_index))
     
     return opt_bounds
 
@@ -442,7 +442,7 @@ def GetCategoryPDFBounds(var    = 'dijet_BDT',
     ordsam = OrderedDict(sorted(heppi.samples.items(), key=lambda x: x[1]['order']))
     for proc in ordsam:
         tree  = heppi.samples[proc].get('_root_tree_')#roof.Get(treename.replace('*',proc))
-        histstr = '(%i,%f,%f)' %(int(nbin),-1, 1)
+        histstr = '({0:d},{1:f},{2:f})'.format(int(nbin), -1, 1)
         tree.Project(
             'h_'+var + histstr,
             var,
@@ -538,24 +538,24 @@ def print_categories(var, categories = [], select=''):
 
         # === cutflow
         logger.info('\hline')
-        logger.info('category( %i ) &%12.3f &&\\' % (categories.index(cat),cat))
+        logger.info('category( {0:d} ) &{1:12.3f} &&\\'.format(categories.index(cat), cat))
         logger.info('\hline')
-        logger.info('%12s &%12s &%12s &%12s \\' % ('process', 'total event', 'selection', 'efficiency'))
+        logger.info('{0:12!s} &{1:12!s} &{2:12!s} &{3:12!s} \\'.format('process', 'total event', 'selection', 'efficiency'))
         ordsam = OrderedDict(sorted(heppi.samples.items(), key=lambda x: x[1]['order']))
         for proc in ordsam:
             tree  = heppi.samples[proc].get('_root_tree_')
             cutflow_sel = ''
             cutflow_all = ''
             if len(cutflow)!=0 :
-                cutflow_sel = 'weight*(' + cutflow + ('&& %s > %f' % (var, cat)) +')'
+                cutflow_sel = 'weight*(' + cutflow + ('&& {0!s} > {1:f}'.format(var, cat)) +')'
                 cutflow_all = 'weight*(' + cutflow + ')'
             else:
-                cutflow_sel = 'weight*(' + ('%s > %f' % (var, cat)) +')'
+                cutflow_sel = 'weight*(' + ('{0!s} > {1:f}'.format(var, cat)) +')'
                 cutflow_all = 'weight'
 
             if 'Data' != proc:
-                cutflow_all = cutflow_all.replace('weight','weight*%f' % (heppi.treeinfo.get('kfactor',1.0)))
-                cutflow_sel = cutflow_sel.replace('weight','weight*%f' % (heppi.treeinfo.get('kfactor',1.0)))
+                cutflow_all = cutflow_all.replace('weight','weight*{0:f}'.format((heppi.treeinfo.get('kfactor',1.0))))
+                cutflow_sel = cutflow_sel.replace('weight','weight*{0:f}'.format((heppi.treeinfo.get('kfactor',1.0))))
             else:
                 cutflow_all = cutflow_all.replace('weight*','')
                 cutflow_sel = cutflow_sel.replace('weight*','')
@@ -572,7 +572,7 @@ def print_categories(var, categories = [], select=''):
             )
             h_sel = ROOT.gDirectory.Get('h_sel_entries_'+proc)
             h_all = ROOT.gDirectory.Get('h_all_entries_'+proc)
-            logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % (proc,h_all.Integral(),
+            logger.info('{0:12!s} &{1:12.3f} &{2:12.3f} &{3:12.3f} \\'.format(proc, h_all.Integral(),
                                                            h_sel.Integral(),
                                                            100*float(h_sel.Integral())/float(h_all.Integral())))
             if heppi.samples[proc]['label']== 'background':
@@ -587,17 +587,17 @@ def print_categories(var, categories = [], select=''):
                 
         # -------------------------------------------------------------------
         logger.info('\hline')
-        logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % ('BKG ',
+        logger.info('{0:12!s} &{1:12.3f} &{2:12.3f} &{3:12.3f} \\'.format('BKG ',
                                                          hbkg_all.Integral(),
                                                          hbkg_sel.Integral(),
                                                          100*float(hbkg_sel.Integral())/float(hbkg_all.Integral())))
-        logger.info('%12s &%12.3f &%12.3f &%12.3f \\' % ('SIG',
+        logger.info('{0:12!s} &{1:12.3f} &{2:12.3f} &{3:12.3f} \\'.format('SIG',
                                                          hsig_all.Integral(),
                                                          hsig_sel.Integral(),
                                                          100*float(hsig_sel.Integral())/float(hsig_all.Integral())))
         logger.info('\hline')
-        logger.info('S/\sqrt(S+B) = %12.3f' % (
-            float(hsig_sel.Integral())/math.sqrt(hsig_sel.Integral()+hbkg_sel.Integral()) ))
+        logger.info('S/\sqrt(S+B) = {0:12.3f}'.format((
+            float(hsig_sel.Integral())/math.sqrt(hsig_sel.Integral()+hbkg_sel.Integral()) )))
         logger.info('\hline')
 
 #class 2DimBoundaryOpt:
