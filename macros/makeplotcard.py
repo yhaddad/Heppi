@@ -41,13 +41,13 @@ def create_json(rootfile='file.root', treename='', jout=''):
             dim = [int(s) for s in re.findall('[-+]?\d*\.\d+|\d+', var.GetTitle().split('[')[1])]
 
             for idim in range(0, dim[0]):
-                _var_ = var.GetTitle().replace('[%i]'%dim[0], '[%i]'%idim)
+                _var_ = var.GetTitle().replace('[{0:d}]'.format(dim[0]), '[{0:d}]'.format(idim))
                 tree.Project("_h_"+_var_.split('[')[0],_var_)
                 _h_  = ROOT.gDirectory.Get('_h_' + _var_.split('[')[0])
                 nbin = _h_.GetNbinsX()
                 xmin = _h_.GetXaxis().GetXmin()
                 xmax = _h_.GetXaxis().GetXmax()
-                hist = "(%i,%1.3f,%1.3f)" % (nbin,xmin,xmax)
+                hist = "({0:d},{1:1.3f},{2:1.3f})".format(nbin, xmin, xmax)
                 varlist[_var_]={
                     'cut'  :'',
                     "hist" : hist,
@@ -55,9 +55,9 @@ def create_json(rootfile='file.root', treename='', jout=''):
                     "blind": "",
                     "log"  : True ,
                     "norm" : False,
-                    "title": var.GetTitle().replace('[%i]'%dim[0], '_%i'%idim)
+                    "title": var.GetTitle().replace('[{0:d}]'.format(dim[0]), '_{0:d}'.format(idim))
                 }
-                print ('variable: %25s' % var.GetTitle().replace('[%i]'%dim[0], '[%i]'%idim))
+                print ('variable: {0:25!s}'.format(var.GetTitle().replace('[{0:d}]'.format(dim[0]), '[{0:d}]'.format(idim))))
         else:
 
             tree.Project("_h_"+var.GetTitle(),var.GetTitle())
@@ -65,7 +65,7 @@ def create_json(rootfile='file.root', treename='', jout=''):
             nbin = _h_.GetNbinsX()
             xmin = _h_.GetXaxis().GetXmin()
             xmax = _h_.GetXaxis().GetXmax()
-            hist = "(%i,%1.3f,%1.3f)" % (nbin,xmin,xmax)
+            hist = "({0:d},{1:1.3f},{2:1.3f})".format(nbin, xmin, xmax)
             varlist[var.GetTitle()]={
                 'cut'  :'',
                 "hist" : hist,
@@ -75,7 +75,7 @@ def create_json(rootfile='file.root', treename='', jout=''):
                 "norm" : False,
                 "title": var.GetTitle()
             }
-            print ('variable: %25s' % var.GetTitle())
+            print ('variable: {0:25!s}'.format(var.GetTitle()))
         # create a json file
     # samples     = json.loads(open('samples.json').read())
     samples_new = {}

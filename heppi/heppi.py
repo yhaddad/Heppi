@@ -49,7 +49,7 @@ class utils:
             0.32112 --> 0.32
         """
         if num != 1:
-            s = ('%g'% (num)).rstrip('0').rstrip('.')
+            s = ('{0:g}'.format((num))).rstrip('0').rstrip('.')
         else :
             s = ('' if unit else '1')
         return s
@@ -179,7 +179,7 @@ class variable(object):
         if type(self.hist) == type([]) or type(self.hist) == type(()):
             self.nbin  = self.hist[0]
             self.range = self.hist[1:]
-            self.hist = '(%s)' % (', '.join(map(str, self.hist)))
+            self.hist = '({0!s})'.format((', '.join(map(str, self.hist))))
         else:
             self.range = re.findall("[-+]?\d+[\.]?\d*",self.hist)
             self.nbin  = int(self.range[0])
@@ -193,7 +193,7 @@ class variable(object):
         self.root_stack   = None
         self.root_cutflow = ''
     def __str__(self):
-        return " -- variable :: %20s %18s %12s" % (self.name, self.hist, self.unit)
+        return " -- variable :: {0:20!s} {1:18!s} {2:12!s}".format(self.name, self.hist, self.unit)
 class systematic(object):
     """
     object type containing Heppi options:
@@ -292,7 +292,7 @@ class sample  (object):
             self.systematics[syst].up_root_tree   = tree_up
             self.systematics[syst].down_root_tree = tree_dw
     def __str__(self):
-        return " -- sample :: %20s %12i" % (self.name, self.root_tree.GetEntries())
+        return " -- sample :: {0:20!s} {1:12d}".format(self.name, self.root_tree.GetEntries())
 class options (object):
     """
     object type containing Heppi options:
@@ -319,7 +319,7 @@ class options (object):
     def __str__(self):
         string = " -- Heppi options :\n"
         for opt in self.__dict__:
-             string += "    + %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
+             string += "    + {0:15!s} : {1:20!s} \n".format(opt , str(self.__dict__[opt]))
         return string
 class scatter_opt(object):
     """
@@ -340,7 +340,7 @@ class scatter_opt(object):
     def __str__(self):
         string = " -- Heppi scatter plots :\n"
         for opt in self.__dict__:
-             string += "  -- %15s : %20s \n" % ( opt , str(self.__dict__[opt]))
+             string += "  -- {0:15!s} : {1:20!s} \n".format(opt , str(self.__dict__[opt]))
         return string
 
 class instack ():
@@ -368,7 +368,7 @@ class instack ():
             _config_ = json.loads(jsmin(f.read()),object_pairs_hook=OrderedDict)
         if self.cutcard != '':
             logger.info(' ---- cut card is specified ----')
-            logger.info(' -- %20s ' % ( self.cutcard )    )
+            logger.info(' -- {0:20!s} '.format(( self.cutcard ))    )
             with open(self.cutcard) as f:
                 _cuts_   = json.loads(jsmin(f.read()))
                 _config_ = merge(config, cuts)
@@ -425,7 +425,7 @@ class instack ():
                         _tre_ = sam.split(':')[1]
                     for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                         chain.Add( f + '/' + _tre_ )
-                        logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
+                        logger.debug("[a][{0!s}] = [{1!s}/{2!s}]".format(sample.name, f , _tre_ ) )
                 # preliminary systematics handling
                 if 'background' in sample.label.lower()  :
                     for systkey, syst in self.systematics.items() :
@@ -449,7 +449,7 @@ class instack ():
                     _tre_ = sam.split(':')[1]
                 for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
                     chain.Add( f + '/' + _tre_ )
-                    logger.debug("[b][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
+                    logger.debug("[b][{0!s}] = [{1!s}/{2!s}]".format(sample.name, f , _tre_ ) )
                 if 'background' in sample.label.lower()  :
                     for systkey, syst in self.systematics.items() :
                         _ch_ = {}
@@ -870,7 +870,7 @@ class instack ():
         else:
             variable.root_cutflow = self.options.weight_branch
 
-        bar = ProgressBar(widgets=[colored(' -- variable :: %20s   ' % ((variable.name[:18] + '..') if len(variable.name)>20 else variable.name), 'green'),
+        bar = ProgressBar(widgets=[colored(' -- variable :: {0:20!s}   '.format(((variable.name[:18] + '..') if len(variable.name)>20 else variable.name)), 'green'),
                           Percentage(),'  ' ,Bar('>'), ' ', ETA()], term_width=100)
         for proc,sample in bar(self.samples.items()):
             _cutflow_ = variable.root_cutflow
@@ -884,9 +884,9 @@ class instack ():
                     variable.formula,
                     '*'.join(
                         [   _cutflow_,
-                            "%f" % self.options.kfactor,
-                            "%f" % self.options.intlumi,
-                            "%f" % sample.kfactor
+                            "{0:f}".format(self.options.kfactor),
+                            "{0:f}".format(self.options.intlumi),
+                            "{0:f}".format(sample.kfactor)
                         ]
                     )
                 )
@@ -898,7 +898,7 @@ class instack ():
                 )
 
             else:
-                logger.error(' -- the label of the sample "%s" is not recognised by Heepi' % sample.name )
+                logger.error(' -- the label of the sample "{0!s}" is not recognised by Heepi'.format(sample.name) )
                 return
 
             hist = ROOT.gDirectory.Get('h_' + variable.name )
@@ -907,7 +907,7 @@ class instack ():
             if variable.norm and hist.Integral()!=0:
                 hist.Sumw2()
                 hist.Scale(1.0/hist.Integral())
-            if hist.Integral() == 0 : logger.warning(' The Integral of the histogram is null, please check this variable: %s' % varkey)
+            if hist.Integral() == 0 : logger.warning(' The Integral of the histogram is null, please check this variable: {0!s}'.format(varkey))
             if 'background' in sample.label.lower():
                 for key,syst in sample.systematics.items() :
                     for _sys_flip_ in ['up','down']:
@@ -916,9 +916,9 @@ class instack ():
                             variable.formula,
                             '*'.join(
                                 [   _cutflow_,
-                                    "%f" % self.options.kfactor,
-                                    "%f" % self.options.intlumi,
-                                    "%f" % sample.kfactor
+                                    "{0:f}".format(self.options.kfactor),
+                                    "{0:f}".format(self.options.intlumi),
+                                    "{0:f}".format(sample.kfactor)
                                 ]
                             )
                         )
@@ -939,7 +939,7 @@ class instack ():
                 variable.root_histos.append(hist)
                 if sample.kfactor != 1:
                     variable.root_legend.AddEntry(hist,
-                                    sample.title + ("#times%i" % sample.kfactor ),
+                                    sample.title + ("#times{0:d}".format(sample.kfactor) ),
                                     "l" );
                 else:
                     variable.root_legend.AddEntry( hist, sample.title, "l" );
@@ -969,7 +969,7 @@ class instack ():
         ROOT.SetOwnership(_htmp_,0)
         bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variable.hist )]
         _htmp_.SetTitle(';' + variable.title
-                       + (';events / %s %s '% (utils.fformat((bounds[2]-bounds[1])/bounds[0], variable.unit != ""),
+                       + (';events / {0!s} {1!s} '.format(utils.fformat((bounds[2]-bounds[1])/bounds[0], variable.unit != ""),
                                                variable.unit) ))
         _htmp_.Reset()
         _ymax_ = max([x.GetMaximum() for x in variable.root_histos])
@@ -1028,7 +1028,7 @@ class instack ():
         # if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
         utils.draw_labels(self.options.label)
         # if (self.systematics.keys())>0 : self.options.label.pop()
-        utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+        utils.draw_cms_headlabel( label_right='#sqrt{{s}} = 13 TeV, L = {0:1.2f} fb^{{-1}}'.format(self.options.intlumi) )
         #
         c.cd()
         c.cd(2)
@@ -1126,8 +1126,8 @@ class instack ():
                 variable.formula,
                 '*'.join(
                     [   '(' + _cutflow_ + ')',
-                        "%f" % self.options.kfactor,
-                        "%f" % self.options.intlumi,
+                        "{0:f}".format(self.options.kfactor),
+                        "{0:f}".format(self.options.intlumi),
                         self.options.weight_branch
                     ]
                 )
@@ -1142,9 +1142,9 @@ class instack ():
         try:
             variable = self.variables[varkey]
         except KeyError:
-            logger.error(colored('ERROR: Variable (%s) not defined !!'% varkey ,'red'))
+            logger.error(colored('ERROR: Variable ({0!s}) not defined !!'.format(varkey) ,'red'))
             return
-        selection = "(%s)&&(%s)" % (allsel, selection)
+        selection = "({0!s})&&({1!s})".format(allsel, selection)
         hsel = self.histogram(variable, type=sample, label = 'sel_' + label, cut=selection)
         htot = self.histogram(variable, type=sample, label = 'all_' + label, cut=allsel   )
         _gr_ = ROOT.TGraphAsymmErrors(hsel,htot)
@@ -1156,7 +1156,7 @@ class instack ():
             try:
                 variable = self.variables[varkey]
             except KeyError:
-                logger.error(colored('ERROR: Variable (%s) not defined !!'% varkey ,'red'))
+                logger.error(colored('ERROR: Variable ({0!s}) not defined !!'.format(varkey) ,'red'))
                 return
 
             _h_ = self.histogram(variable, type=sample, label = label, cut=selection)
@@ -1173,7 +1173,7 @@ class instack ():
         try:
             variable = self.variables[varkey]
         except KeyError:
-            logger.error(colored('ERROR: Variable (%s) not defined !!'% varkey ,'red'))
+            logger.error(colored('ERROR: Variable ({0!s}) not defined !!'.format(varkey) ,'red'))
             return
         histname = ('roc_' + variable.name + '_' + label + '_')
         _cutflow_ = self.variable_cutflow(variable.name,'')
@@ -1184,8 +1184,8 @@ class instack ():
             variable.formula,
             '*'.join(
                 [   "(" + _cutflow_ + ")",
-                    "%f" % self.options.kfactor,
-                    "%f" % self.options.intlumi,
+                    "{0:f}".format(self.options.kfactor),
+                    "{0:f}".format(self.options.intlumi),
                     self.options.weight_branch
                 ]
             )
@@ -1199,8 +1199,8 @@ class instack ():
             variable.formula,
             '*'.join(
                 [   "(" + _cutflow2_ + ")",
-                    "%f" % self.options.kfactor,
-                    "%f" % self.options.intlumi,
+                    "{0:f}".format(self.options.kfactor),
+                    "{0:f}".format(self.options.intlumi),
                     self.options.weight_branch
                 ]
             )
@@ -1283,8 +1283,8 @@ class instack ():
                           variable_y.formula +":"+variable_x.formula,
                           '*'.join(
                                 [   "(" + _cutflow_here_ + ")",
-                                    "%f" % self.options.kfactor,
-                                    "%f" % self.options.intlumi,
+                                    "{0:f}".format(self.options.kfactor),
+                                    "{0:f}".format(self.options.intlumi),
                                     _weight_
                                 ]
                             )
@@ -1296,8 +1296,8 @@ class instack ():
                 print '::', self.options.weight_branch if 'data' not in sample.label.lower() else '1'
                 print '::', '*'.join(
                       [   "("+ _cutflow_here_+")",
-                          "%f" % self.options.kfactor,
-                          "%f" % self.options.intlumi,
+                          "{0:f}".format(self.options.kfactor),
+                          "{0:f}".format(self.options.intlumi),
                           self.options.weight_branch if 'data' not in sample.label.lower() else '1'
                       ]
                   )
@@ -1363,7 +1363,7 @@ class instack ():
 
         if make_profiles:
             _yaxistitle_ = '#LT' + variable_y.title + '#GT'
-        scatter_bkg.SetTitle(';%s %s;%s %s' % (variable_x.title, xunit, _yaxistitle_, yunit) )
+        scatter_bkg.SetTitle(';{0!s} {1!s};{2!s} {3!s}'.format(variable_x.title, xunit, _yaxistitle_, yunit) )
         scatter_bkg.GetXaxis().SetTitleOffset(0.01)
         scatter_bkg.GetYaxis().SetTitleOffset(0.01)
         scatter_sig.GetXaxis().SetTitleOffset(0.01)
@@ -1404,7 +1404,7 @@ class instack ():
 
 
         utils.draw_labels( self.options.label)
-        utils.scatter_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+        utils.scatter_cms_headlabel( label_right='#sqrt{{s}} = 13 TeV, L = {0:1.2f} fb^{{-1}}'.format(self.options.intlumi) )
 
         utils.draw_cut_line(scatter_sig,variable_x, axis='x')
         utils.draw_cut_line(scatter_sig,variable_y, axis='y')
