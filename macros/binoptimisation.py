@@ -46,9 +46,13 @@ def draw_point(x,y, size=0.01, color=121):
 
 def draw_ROC(var ='dipho_dijet_MVA',
              label='VBF', title = 'variable', axistitle='',
-             bkg = [], select='', categories=[]):
+             bkg = None, select='', categories=None):
     #c = ROOT.TCanvas("c_ROC","ROC's BDT",600,600)
     #c.cd()
+    if bkg is None:
+        bkg = []
+    if categories is None:
+        categories = []
     histos = []
     histfilename = ('plots/histogram_stack_'  +
                     var + '_' + label + '_'
@@ -260,7 +264,9 @@ def GetBondaryBin(var    = 'dijet_BDT',
 
 
 
-def significance(hs, hb, bounds=[0.5]):
+def significance(hs, hb, bounds=None):
+    if bounds is None:
+        bounds = [0.5]
     bounds.append(hs.GetXaxis().GetXmax())
     bounds.sort()
     w  = (hs.GetXaxis().GetXmax() - hs.GetXaxis().GetXmin())/float(hs.GetNbinsX())
@@ -398,7 +404,9 @@ def GetCategoryBounds(var    = 'dijet_BDT',
     
     return opt_bounds
 
-def fom(hs, hb, bounds=[0.5], nsteps=1000):
+def fom(hs, hb, bounds=None, nsteps=1000):
+    if bounds is None:
+        bounds = [0.5]
     bounds.append(hs.GetXaxis().GetXmax())
     bounds.sort()
     w  = (hs.GetXaxis().GetXmax() - hs.GetXaxis().GetXmin())/float(hs.GetNbinsX())
@@ -510,7 +518,9 @@ def GetCategoryPDFBounds(var    = 'dijet_BDT',
 
 
 
-def print_categories(var, categories = [], select=''):
+def print_categories(var, categories = None, select=''):
+    if categories is None:
+        categories = []
     for cat in categories:
         heppi.variables.update(
             {
