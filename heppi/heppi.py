@@ -149,7 +149,9 @@ class variable(object):
     * unit    :
     * boundaries :
     """
-    def __init__(self, name="", options = {}):
+    def __init__(self, name="", options = None):
+        if options is None:
+            options = {}
         self.__template__ = {
             "name"    : "",
             "hist"    : "(100,0,100)",
@@ -199,7 +201,9 @@ class systematic(object):
     object type containing Heppi options:
     * ratio_range : the range in the ratio plots
     """
-    def __init__(self, options = {}):
+    def __init__(self, options = None):
+        if options is None:
+            options = {}
         self.__template__ = {
             "up_tree"      : [],
             "down_tree"    : [],
@@ -259,7 +263,9 @@ class sample  (object):
         * background: will be stacked in the final plot
         * data      : will be drawn on top of the stacked and, signal and spectator histograms
     """
-    def __init__(self, name="", options = {}):
+    def __init__(self, name="", options = None):
+        if options is None:
+            options = {}
         self.__template__ = {
             "color"  : 0 ,
             "order"  : 0 ,
@@ -301,7 +307,9 @@ class options (object):
     * legend      : list of lignes that you want to be displayed as legend on your plot
     * treename    :  Gloabl tree name :
     """
-    def __init__(self,options = {}):
+    def __init__(self,options = None):
+        if options is None:
+            options = {}
         self.__template__ = {
             "ratio_range"   : [0.5,1.5],
             "ratioplot"     : True,
@@ -326,7 +334,9 @@ class scatter_opt(object):
     object type containing Heppi options:
     * ratio_range : the range in the ratio plots
     """
-    def __init__(self, options = {}):
+    def __init__(self, options = None):
+        if options is None:
+            options = {}
         self.__template__ = {
             "xlist"   : [""],
             "ylist"   : [""],
@@ -580,7 +590,9 @@ class instack ():
         ROOT.SetOwnership(paddw,0)
         return Rcanv
     #---------------------------------------------------------
-    def draw_categories(self,categories = [], miny=0, maxy=100):
+    def draw_categories(self,categories = None, miny=0, maxy=100):
+        if categories is None:
+            categories = []
         for cat in categories:
             line = ROOT.TLine()
             line.SetLineColor(129)
@@ -588,13 +600,15 @@ class instack ():
             line.SetLineWidth(2)
             line.DrawLine(cat,miny,cat,maxy)
     #---------------------------------------------------------
-    def make_stat_progression(self,myHisto,systematics={},
+    def make_stat_progression(self,myHisto,systematics=None,
                             systematic_only=True,
                             combine_with_systematic=True):
         """
         This function returns a function with
         the statistical precision in each bin
         """
+        if systematics is None:
+            systematics = {}
 
         statPrecision = myHisto.Clone('_ratioErrors_')
         systPrecision = myHisto.Clone('_ratioSysErrors_')
@@ -641,11 +655,13 @@ class instack ():
         systPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         return (statPrecision, systPrecision)
     #---------------------------------------------------------
-    def draw_error_band(self,myHisto,systematics={},systematic_only=True, combine_with_systematic=True):
+    def draw_error_band(self,myHisto,systematics=None,systematic_only=True, combine_with_systematic=True):
         """
         Draw this histogram with the statistical
         precision error in each bin
         """
+        if systematics is None:
+            systematics = {}
 
         statPrecision = myHisto.Clone('_statErrors_')
         ROOT.SetOwnership(statPrecision,0)
@@ -1168,7 +1184,9 @@ class instack ():
 
             return _gr_
 
-    def make_roc(self, varkey,sig_sample, bkg_sample, label='', wp = [], selection=""):
+    def make_roc(self, varkey,sig_sample, bkg_sample, label='', wp = None, selection=""):
+        if wp is None:
+            wp = []
         variable = None
         try:
             variable = self.variables[varkey]
