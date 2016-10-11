@@ -211,28 +211,28 @@ class systematic(object):
         self.__dict__  = self.__template__
         self.__dict__.update(options)
     def append_tree(self, tree=None, level='up'):
-        if tree  == None: return
+        if tree  is None: return
         if level == 'up':
-            if self.up_root_tree == None :
+            if self.up_root_tree is None :
                 self.up_root_tree = tree
             else:
                 self.up_root_tree.Add(tree)
         elif level == 'down':
-            if self.down_root_tree == None :
+            if self.down_root_tree is None :
                 self.down_root_tree = tree
             else:
                 self.down_root_tree.Add(tree)
         else:
             logger.error('systematic level does not exist, please use up or down')
     def append_hist(self, histo=None, level='down'):
-        if histo  == None: return
+        if histo  is None: return
         if level == 'up':
-            if self.up_histo == None :
+            if self.up_histo is None :
                 self.up_histo = histo
             else:
                 self.up_histo.Add(histo)
         elif level == 'down':
-            if self.down_histo == None :
+            if self.down_histo is None :
                 self.down_histo = histo
             else:
                 self.down_histo.Add(histo)
@@ -282,7 +282,7 @@ class sample  (object):
         """
         self.root_tree = tree
     def set_syst_tree(self, syst ,tree_up, tree_dw):
-        if self.systematics.get(syst,None) == None:
+        if self.systematics.get(syst,None) is None:
             _syst_ = {
                 "up_root_tree"   : tree_up,
                 "down_root_tree" : tree_dw
@@ -514,9 +514,9 @@ class instack ():
             for sys in sample.systematics:
                 up = 0
                 dw = 0
-                if sample.systematics[sys].up_root_tree   != None:
+                if sample.systematics[sys].up_root_tree   is not None:
                     up = sample.systematics[sys].up_root_tree.GetEntries()
-                if sample.systematics[sys].down_root_tree != None:
+                if sample.systematics[sys].down_root_tree is not None:
                     dw = sample.systematics[sys].down_root_tree.GetEntries()
                 _tab_cuts_.append([ sys,
                                     key,
@@ -1051,7 +1051,7 @@ class instack ():
 
         sig_and_bkg_ratio = []
         #
-        if hdata==None:
+        if hdata isNone:
             ratioHist = hstack.GetStack().Last().Clone('_temp_')
             ratioHist.Clear()
             ratioHist.SetLineColorAlpha(0,0)
@@ -1341,7 +1341,7 @@ class instack ():
         scatter_bkg.SetDirectory(0)
         scatter_bkg.SetFillColor(ROOT.kAzure + 1)
 
-        if scatter_data!=None:
+        if scatter_data is notNone:
             scatter_data.SetDirectory(0)
             ymin = scatter_data.GetYaxis().GetXmin()
             ymax = scatter_data.GetYaxis().GetXmax()
@@ -1375,7 +1375,7 @@ class instack ():
             leg_s = variable_x.root_legend.AddEntry( scatter_sig , "signal"    , "f" )
             leg_b = variable_x.root_legend.AddEntry( scatter_bkg , "background", "f" )
 
-        if scatter_data!=None:
+        if scatter_data is notNone:
             leg_b = variable_x.root_legend.AddEntry( scatter_data , "data", "lep" if make_profiles else "f" )
 
 
@@ -1424,8 +1424,8 @@ class instack ():
                 c.SaveAs('plots/scatter/' + histname + '_profile.' + form )
             else:
                 c.SaveAs('plots/scatter/' + histname + '.' + form )
-            if scatter_data!=None: scatter_data.Write()
-            if scatter_bkg !=None: scatter_bkg.Write()
-            if scatter_sig !=None: scatter_sig.Write()
+            if scatter_data is notNone: scatter_data.Write()
+            if scatter_bkg is notNone: scatter_bkg.Write()
+            if scatter_sig is notNone: scatter_sig.Write()
             c.Write()
         f.Close()
