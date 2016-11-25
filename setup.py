@@ -27,26 +27,26 @@ requirements = [
 ]
 
 test_requirements = []
-
+version  = '2.1.0'
 setup(
     name             = 'Heppi',
-    version          = '2.1.0',
+    version          =  version,
     description      = "High Energy Physics Plotting Interface",
     long_description = readme + '\n\n' + history,
     author           = "Yacine Haddad",
     author_email     = 'yhaddad@cern.ch',
     url              = 'https://github.com/yhaddad/Heppi',
-    download_url     = 'https://github.com/yhaddad/Heppi/tarball/2.1',
+    download_url     = 'https://github.com/yhaddad/Heppi/tarball/' + version,
     packages = [
         'heppi',
     ],
     package_dir          = {'heppi': 'heppi'},
     include_package_data = True,
-    scripts              = ['./heppi-draw'],
+    scripts              = ['heppi-draw','macros/makeplotcard.py'],
     install_requires     = requirements,
     license     = "ISCL",
     zip_safe    = False,
-    keywords    = ['Heppi','heppi'],
+    keywords    = ['Heppi','heppi','plotting', 'pyROOT', 'ROOT', 'HEP', 'CERN'],
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

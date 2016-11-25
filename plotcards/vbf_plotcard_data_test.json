@@ -157,7 +157,7 @@
       "title": "p_{t}(#gamma_2)"
     },
     "dipho_mass": {
-      "hist" : "(6400,100,180)",
+      "hist" : "(80,100,180)",
       "cut"  : "(dipho_mass>100 && dipho_mass<180)",
       "blind": "",
       "log"  : true,
@@ -175,7 +175,7 @@
       "title": "BDT_{jj}"
     },
     "dipho_dijet_MVA": {
-      "hist" : "(2000,-1,1)",
+      "hist" : "(1000,-1,1)",
     //  "cut"  : "dipho_dijet_MVA>0.92",
       "blind": "",
       "log"  : true,
@@ -243,7 +243,7 @@
         //"tree"  : "vbf_125",
         "label" : "signal"
     },
-    "ggh_125" : {
+    /*"ggh_125" : {
         "color" : 131,
         "order" : 1,
         "files" : "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8",
@@ -252,7 +252,7 @@
         //"kfactor" : 90,
         //"tree"  : "ggh_125",
         "label" : "spectator"
-    },
+    },*/
     "dipho": {
         "color": 122,
         "order": 2,
@@ -291,7 +291,8 @@
         "title": "jet-jet",
         "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
         "label": "background"
-    },
+    }
+    /*,
     "data":{
         "color": 1,
         "order": 6,
@@ -303,7 +304,7 @@
         "tree" : "Data",
         "cut"  : "",
         "label": "data"
-    }
+    }*/
   },
   "selection": {
     "name": "zee_76x",
@@ -326,10 +327,12 @@
     "kfactor": 1.0,
     "ratio_range" : [0,1.9]
   },
+  "categories" : [
+    {"name":"inclusive" , "cut":"1", "label":"inclusive"}
+  ],
   "labels": {
     "name": [
       "VBF preselection",
-
       "70 < m_{ee} < 110 GeV",
       ""
     ]

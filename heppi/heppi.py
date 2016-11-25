@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#from __future__ import print_function
 
 try:
     import ROOT
@@ -9,13 +8,12 @@ except ImportError:
         ROOT is not in your environement, or not intsalled.
         Please check!
         """)
-
 try:
-    from   termcolor    import colored
-    from   jsmin        import jsmin
-    from   progressbar  import ProgressBar, Bar, Percentage, ETA
-    from   jsonmerge    import merge
-    from   tabulate     import tabulate
+    from termcolor    import colored
+    from jsmin        import jsmin
+    from progressbar  import ProgressBar, Bar, Percentage, ETA
+    from jsonmerge    import merge
+    from tabulate     import tabulate
 
 except ImportError:
     raise ImportError(
@@ -23,7 +21,7 @@ except ImportError:
         please install termcolor and jsmin, and try again.
         Suggestion: pip install requirement.txt --user
         """)
-import  os, sys, glob, sys, json, re, logging, collections, math, parser, pprint
+import  glob, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
 import  settings
 
@@ -937,6 +935,7 @@ class instack ():
                 hist.SetLineStyle(1)
                 hist.SetLineWidth(2)
                 hist.SetFillStyle(0)
+                hist.SetName(hist.GetName() + '_' + sample.label)
                 variable.root_histos.append(hist)
                 if sample.kfactor != 1:
                     variable.root_legend.AddEntry(hist,
@@ -952,13 +951,14 @@ class instack ():
                 hist.SetFillColorAlpha(0,0)
                 hist.SetLineWidth(2)
                 hist.SetBinErrorOption(ROOT.TH1.kPoisson)
-                hist.SetName(hist.GetName() + 'data')
+                hist.SetName(hist.GetName() + '_data')
                 variable.root_legend.AddEntry( hist, sample.title, "lep" )
                 variable.root_histos.append(hist)
             if 'background' in sample.label:
                 hist.SetLineColor(ROOT.kBlack)
                 hist.SetFillColor(sample.color)
                 hist.SetLineWidth(2)
+                hist.SetName(hist.GetName() + '_background')
                 hstack.Add(hist)
                 variable.root_histos.append(hist)
                 variable.root_legend.AddEntry( hist, sample.title, "f" )
@@ -998,20 +998,20 @@ class instack ():
         if len(self.systematics)!=0:herrsyst.Draw('E2,same')
         hdata = None
         for h in variable.root_histos:
+            print '::' , h.GetName()
             if 'data' in h.GetName():
                 h.SetFillStyle(0)
                 h.Draw('E,same')
                 hdata = h
-            # else:
-            #     h.Draw('E,same')
-            #     hdata = h
+            if 'signal' in h.GetName() or 'spectator' in h.GetName():
+                h.Draw('hist,same')
         if len(self.systematics)>0:
             variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
         else:
             variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
 
         # cosmetics
-        utils.draw_cut_line(_htmp_,variable)
+        utils.draw_cut_line(_htmp_,variable,'x')
         self.draw_categories(variable.boundaries, miny=_htmp_.GetMinimum(),maxy=_htmp_.GetMaximum())
         ROOT.gPad.RedrawAxis()
         # this is for the legend
@@ -1101,6 +1101,7 @@ class instack ():
         c.cd()
         if variable.norm == True:
             histname = histname + '_norm'
+
         for form in settings.plot_formats :
             c.SaveAs( 'plots/' + histname + '.' + form)
 

@@ -81,4 +81,7 @@ dist: clean
 	ls -l dist
 
 install: clean
+	python setup.py install
+
+install-user: clean
 	python setup.py install --user

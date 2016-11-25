@@ -1,5 +1,5 @@
 ===============================
-Heppi
+Heppi (Hep Plotting Interface)
 ===============================
 
 .. image:: https://img.shields.io/pypi/v/heppi.svg
@@ -18,8 +18,45 @@ A High Energy Physics Plotting Interface
 * Free software: ISC license
 * Documentation: https://heppi.readthedocs.org.
 
+Discription
+-----------
+``Heppi`` is a plotting interface written in pyROOT and uses json files as configuration file.
+the plotcard systax is higly flexible allowing you to define different processes, variable, cuts
+and selection categories.
+
+
+installation
+------------
+* The recomended procedure to install ``Heppi`` is trough ``PyPI``
+  .. code-block::
+     pip install heppi
+
+* For CERN users, you might need to install the package on your .local directory by adding ``--user`` option to the previous command.
+  .. code-block::
+     pip install heppi --user
+
+* The dependencies will normaly be installed automatically.
+* Since ``Heppi`` is based on pyROOT, ROOT env must be set
+
+installation via Git:
+~~~~~~~~~~~~~~~~~~~~~
+* The alternative way to install Heppi is by cloning and building the project
+  .. code-block::
+     > git clone git@github.com:yhaddad/Heppi.git
+     > cd Heppi
+     > pip install dependencies --user
+     > make install-user
+     
 How to run
 ----------
+
+Produce a plotcard
+~~~~~~~~~~~~~~~~~~~
+* ``Heppi`` allows to create your own plotcard using the makeplotcard script. You can run
+  .. code-block::
+     makeplotcard
+
+
 Produce a stacked plots
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -27,11 +64,13 @@ Produce a stacked plots
 * you can print the options of the script by typing ``.\plot --help``
 * you have to combine the trees using ``rootmerge.py`` script
 * the commend I'm using is the follwing:
+
 .. code-block::
     ./plot -s /dir/to/merged/trees --load plotcard.json --all
 
 * if you want to print one variable in the plotcard you can replace the option ``--all`` by ``--variable`` or just ``-v`` followed by the name of the variable.
 example :
+
 .. code-block::
     ./plot -s /dir/to/merged/trees --load plotcard.json -v var1
 
@@ -49,15 +88,6 @@ Write a valid plotcard ?
 * the ``*`` will be replaced automatically by the remaining name of the tree found in the ``VBFMVADumper`` directory.
 * This is for the use of .. _``flashgg``: https://github.com/cms-analysis/flashgg type dumper trees only, a more standard version will be pushed soon
 
-installation
-------------
-* You can install the lastest stable `Heppi` version via `PyPi`
-.. code-block:: bash
-  pip install heppi --user
-
-The dependencies will be installed automatically.
-* Run the setup script to install the dependencies: ``python setup.py develop --user`` or run : ``pip install --user jsmin termcolor progressbar jsonmerge``, both ways works on lxplus.
-* ROOT env must be set, I recomend to setup CMSSW env before runnning the previous commands
 Credits
 -------
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
