@@ -911,6 +911,7 @@ class instack ():
             if 'background' in sample.label.lower():
                 for key,syst in sample.systematics.items() :
                     for _sys_flip_ in ['up','down']:
+                        print "[yacine]", _sys_flip_ + '_root_tree' ," " , syst.__dict__[_sys_flip_ + '_root_tree'].GetEntries()
                         syst.__dict__[_sys_flip_ + '_root_tree'].Project(
                             '_'.join(['h',key, _sys_flip_, variable.name]) + variable.hist,
                             variable.formula,
@@ -924,11 +925,12 @@ class instack ():
                         )
                         _h_syst = ROOT.gDirectory.Get('_'.join(['h',key, _sys_flip_, variable.name]))
                         _h_syst.SetDirectory(0)
+                        print "_h_syst_ ", _h_syst.GetEntries()
                         if variable.norm and _h_syst.Integral()!=0:
                             _h_syst.Sumw2()
                             _h_syst.Scale(1.0/_h_syst.Integral())
                         self.systematics[key].append_hist(_h_syst,_sys_flip_)
-
+                        
             hist.SetTitle(";" + variable.title + ";entries")
             if ('signal'==sample.label) or ('spectator'==sample.label):
                 hist.SetLineColor(sample.color)

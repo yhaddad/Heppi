@@ -34,22 +34,7 @@
       "unit": "GeV",
       "title": "p_{t}(jet_{2})"
     },
-    "dijet_leadEta": {
-      "hist": "(50,-5,5)",
-      "cut": "",
-      "blind": "",
-      "log": false,
-      "norm": false,
-      "title": "#eta(jet_{1})"
-    },
-    "dijet_subleadEta": {
-      "hist": "(50,-5,5)",
-      "cut": "",
-      "blind": "",
-      "log": false,
-      "norm": false,
-      "title": "#eta(jet_{2})"
-    },
+      
     /*"rms1_forward:=(abs(dijet_leadEta)>2.5)*dijet_jet1_RMS + (abs(dijet_leadEta)<=2.5)*-1": {
       "hist": "(30,0,0.15)",
       "cut": "",
