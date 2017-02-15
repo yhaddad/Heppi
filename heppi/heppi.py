@@ -41,7 +41,7 @@ class utils:
         except ValueError:
             return ""
     @staticmethod
-    def fformat(num, unit):
+    def fformat(num, has_unit):
         """
         Formating the float number to string :
             1.0     --> '' # only if there is a unit
@@ -49,10 +49,15 @@ class utils:
             0.21    --> 0.21
             0.32112 --> 0.32
         """
-        if num != 1:
-            s = ('%g'% (num)).rstrip('0').rstrip('.')
+        n = 0
+        while round(num, n ) == 0.0:
+            if n > 4 :  break
+            n += 1
+        value = round(num, n)
+        if value != -1:
+            s = ('{' + ':1.{:}f'.format(n) + '}').format(value)
         else :
-            s = ('' if unit else '1')
+            s = ('' if has_unit else '1')
         return s
     @staticmethod
     def draw_cut_line(hist, variable, axis=''):
@@ -995,10 +1000,11 @@ class instack ():
         c.cd(1)
         _htmp_ = variable.root_histos[0].Clone('__htmp__')
         ROOT.SetOwnership(_htmp_,0)
-        bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variable.hist )]
+        rx       = re.compile(settings.numeric_const_pattern, re.VERBOSE)
+        bounds   = [float(s) for s in rx.findall(variable.hist)]
+        binwidth = (bounds[2]-bounds[1])/bounds[0]
         _htmp_.SetTitle(';' + variable.title
-                       + (';events / %s %s '% (utils.fformat((bounds[2]-bounds[1])/bounds[0], variable.unit != ""),
-                                               variable.unit) ))
+                       + (';events / %s %s '% (utils.fformat(binwidth, variable.unit != "" ), variable.unit)))
         _htmp_.Reset()
         _ymax_ = max([x.GetMaximum() for x in variable.root_histos])
         _ymin_ = min([x.GetMinimum() for x in variable.root_histos])

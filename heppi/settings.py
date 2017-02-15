@@ -31,6 +31,16 @@ label_shift                = 0.04
 canvas_width               = 700
 canvas_height              = 700+150
 two_colomn_legend          = True
-
+#===
+numeric_const_pattern = r"""
+[-+]? # optional sign
+(?:
+   (?: \d* \. \d+ ) # .1 .12 .123 etc 9.1 etc 98.1 etc
+   |
+   (?: \d+ \.? ) # 1. 12. 123. etc 1 12 123 etc
+)
+# followed by optional exponent part if desired
+(?: [Ee] [+-]? \d+ ) ?
+"""
 #=== output files
 plot_formats              = ["pdf","png"] # ["pdf","png", "root", "eps"]
