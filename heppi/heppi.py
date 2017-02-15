@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+_hard_code_ = False
 try:
     import ROOT
 except ImportError:
@@ -231,11 +232,13 @@ class systematic(object):
                 self.up_histo = histo
             else:
                 self.up_histo.Add(histo)
+                self.up_histo.SetLineColor(2)
         elif level == 'down':
             if self.down_histo == None :
                 self.down_histo = histo
             else:
                 self.down_histo.Add(histo)
+                self.down_histo.SetLineColor(2)
         else:
             logger.error('systematic level does not exist, please use up or down')
     def clear_histograms(self):
@@ -300,6 +303,9 @@ class options (object):
     * ratio_plot  : make the ratio plot
     * legend      : list of lignes that you want to be displayed as legend on your plot
     * treename    :  Gloabl tree name :
+    * ratio_type  :  
+             - "defaut" is simple ratio plots Data/MC,
+             - "centred" is Data/MC - 1
     """
     def __init__(self,options = {}):
         self.__template__ = {
@@ -312,7 +318,8 @@ class options (object):
             "intlumi"       :  1.0,
             "cutflow"       : [ "" ],
             "weight_branch" : "weight",
-            "categories"    : []
+            "categories"    : [],
+            "ratio_type"    : "default"
         }
         self.__dict__  = self.__template__
         self.__dict__.update(options)
@@ -589,13 +596,16 @@ class instack ():
             line.DrawLine(cat,miny,cat,maxy)
     #---------------------------------------------------------
     def make_stat_progression(self,myHisto,systematics={},
-                            systematic_only=True,
-                            combine_with_systematic=True):
+                              systematic_only=True,
+                              combine_with_systematic=True, ratio_type="default"):
         """
         This function returns a function with
         the statistical precision in each bin
-        """
 
+        * ratio_type : 
+        default  = centred to 1 (Data/MC)
+        centred  = centred to 0 (Data/MC) - 1 
+        """
         statPrecision = myHisto.Clone('_ratioErrors_')
         systPrecision = myHisto.Clone('_ratioSysErrors_')
         statPrecision.SetFillColorAlpha(settings.ratio_error_band_color,settings.ratio_error_band_opacity)
@@ -611,11 +621,16 @@ class instack ():
         for ibin in range(myHisto.GetNbinsX()+1):
             y    = statPrecision.GetBinContent(ibin)
             stat = statPrecision.GetBinError  (ibin)
-            if( y > 0 ):
+            if ratio_type == "default":
                 statPrecision.SetBinContent(ibin,      1 )
+            elif ratio_type == "centred":
+                statPrecision.SetBinContent(ibin,      0 )
+            else:
+                logger.error(" ratio plot option not defeined ... please choose betwen 'default' or 'centred' ")
+                    
+            if( y > 0 ):
                 statPrecision.SetBinError  (ibin, stat/y )
             else:
-                statPrecision.SetBinContent(ibin,   1 )
                 statPrecision.SetBinError  (ibin,   0 )
             if systematic_only:
                 up_err_sum2 = 0
@@ -626,22 +641,29 @@ class instack ():
                     for key,syst in systematics.items():
                         up_diff   = (syst.up_histo.GetBinContent  (ibin)- y)/y
                         dw_diff   = (syst.down_histo.GetBinContent(ibin)- y)/y
-                        if( up_diff > 0 ):
-                            up_err_sum2  += up_diff*up_diff
-                        if( dw_diff < 0 ):
-                            dw_err_sum2  += dw_diff*dw_diff
+                        #if( up_diff > 0 ):
+                        up_err_sum2  += up_diff*up_diff
+                        #if( dw_diff < 0 ):
+                        dw_err_sum2  += dw_diff*dw_diff
                 up_error = math.sqrt(up_err_sum2)
                 dw_error = math.sqrt(dw_err_sum2)
-                band_max   = 1 + up_error
-                band_min   = 1 - dw_error
-
-                systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
-                systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
+                if ratio_type == "default":
+                    band_max   = 1 + up_error
+                    band_min   = 1 - dw_error
+                    systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
+                    systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
+                elif ratio_type == "centred":
+                    band_max   = 1 + up_error
+                    band_min   = 1 - dw_error
+                    systPrecision.SetBinContent(ibin, ((band_max + band_min)/2.0)-1 );
+                    systPrecision.SetBinError  (ibin,  (band_max - band_min)/2.0    );
+                else:
+                    logger.error(" ratio plot option not defeined ... please choose betwen 'default' or 'centred' ")
         statPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         systPrecision.GetYaxis().SetRangeUser(self.options.ratio_range[0], self.options.ratio_range[1])
         return (statPrecision, systPrecision)
     #---------------------------------------------------------
-    def draw_error_band(self,myHisto,systematics={},systematic_only=True, combine_with_systematic=True):
+    def draw_error_band(self,myHisto,systematics={},systematic_only=False, combine_with_systematic=True):
         """
         Draw this histogram with the statistical
         precision error in each bin
@@ -658,29 +680,26 @@ class instack ():
         systPrecision.SetFillColorAlpha(settings.syst_error_band_color,settings.syst_error_band_opacity)
         systPrecision.SetFillStyle(settings.syst_error_band_style)
         systPrecision.SetMarkerColorAlpha(0,0)
-
-
-        if combine_with_systematic : systematic_only = True
+        if combine_with_systematic :
+            systematic_only = True
         if systematic_only:
             for ibin in range(myHisto.GetNbinsX()+1):
                 y    = statPrecision.GetBinContent(ibin);
                 stat = statPrecision.GetBinError  (ibin);
-
                 up_err_sum2 = stat**2
                 dw_err_sum2 = stat**2
                 for key, syst in systematics.items():
                     up_diff   = syst.up_histo.GetBinContent(ibin)   - y
                     dw_diff   = syst.down_histo.GetBinContent(ibin) - y
-                    if up_diff > 0 :
-                        up_err_sum2 += up_diff*up_diff
-                    if dw_diff < 0 :
-                        dw_err_sum2 += dw_diff*dw_diff
+                    #if up_diff > 0 :
+                    up_err_sum2 += up_diff**2
+                    #if dw_diff < 0 :
+                    dw_err_sum2 += dw_diff**2
+                        
                 up_error = math.sqrt(up_err_sum2)
                 dw_error = math.sqrt(dw_err_sum2)
-
                 band_max   = y + up_error
                 band_min   = y - dw_error
-
                 systPrecision.SetBinContent(ibin, (band_max + band_min)/2.0);
                 systPrecision.SetBinError  (ibin, (band_max - band_min)/2.0);
 
@@ -720,7 +739,7 @@ class instack ():
         ROOT.SetOwnership(paddw,0)
         return canv
     #---------------------------------------------------------
-    def makeRatio(self, hist1,hist2,ymax=2.1,ymin=0,norm=False, isdata =False):
+    def makeRatio(self, hist1,hist2,ymax=2.1,ymin=0,norm=False, isdata =False, ratio_type =  "default"):
         """returns the ratio plot hist2/hist1
         if one of the histograms is a stack put it in as argument 2!"""
         if norm:
@@ -735,8 +754,15 @@ class instack ():
             for ibin in range(hist2.GetNbinsX()+1):
                 ymc  = hist2.GetBinContent(ibin);
                 stat = hist1.GetBinError  (ibin);
+                cval = retH.GetBinContent (ibin);
                 if (ymc>0):
                     retH.SetBinError  (ibin,stat/ymc);
+                    if ratio_type == "default":
+                        retH.SetBinContent(ibin,cval);
+                    elif ratio_type == "centred":
+                        retH.SetBinContent(ibin,cval-1.0);
+                    else:
+                        logger.error(" ratio plot option not defeined ... please choose betwen 'default' or 'centred' ")
                 else:
                     retH.SetBinError  (ibin,0);
         ROOT.SetOwnership(retH,0)
@@ -750,7 +776,7 @@ class instack ():
                     drawDataOpt="",
                     norm=False,
                     ratioMin=0.7,
-                    ratioMax=1.3):
+                    ratioMax=1.3, ratio_type =  "default" ):
         """Takes two histograms as inputs and returns a canvas with a ratio plot of the two.
         The two optional arguments are for the x Axis and y Axis titles"""
 
@@ -774,7 +800,7 @@ class instack ():
             h = pad1.DrawFrame(histMC.GetXaxis().GetXmin(),yMin,histMC.GetXaxis().GetXmax(),yMax)
             ROOT.SetOwnership(h,0)
         if not norm:
-            drawStatErrBand(histMC,drawMCOpt)
+            drawStatErrBand( histMC,drawMCOpt  )
             histData.Draw  ('same,'+drawDataOpt)
         else:
             histMC   = histMC.DrawNormalized(drawMCOpt)
@@ -784,7 +810,7 @@ class instack ():
         c.cd()
         c.cd(2)
 
-        (errorHist,systHist) = self.make_stat_progression(histMC)
+        (errorHist,systHist) = self.make_stat_progression(histMC, ratio_type = self.options.ratio_type )
         ROOT.SetOwnership(errorHist,0)
         ROOT.SetOwnership(systHist ,0)
         errorHist.GetXaxis().SetTitle(xTitle)
@@ -797,7 +823,7 @@ class instack ():
         ratioHist.GetXaxis().SetTitle(xTitle)
         ratioHist.GetYaxis().SetTitle(yTitle)
 
-        line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
+        line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),0)
         line.SetLineColor(4)
         line.Draw()
         ROOT.SetOwnership(line,0)
@@ -807,13 +833,13 @@ class instack ():
     #---------------------------------------------------------
     def customizeHisto(self, hist):
         hist.GetYaxis().SetTitleSize  (21)
-        hist.GetYaxis().SetTitleFont  (43)
-        hist.GetYaxis().SetTitleOffset(1.8)
-        hist.GetYaxis().SetLabelFont  (43)
-        hist.GetYaxis().SetLabelSize  (18)
-        hist.GetXaxis().SetTitleSize  (21)
-        hist.GetXaxis().SetTitleFont  (43)
-        hist.GetXaxis().SetTitleOffset(3.5)
+        hist.GetYaxis().SetTitleFont  (43  )
+        hist.GetYaxis().SetTitleOffset(1.8 )
+        hist.GetYaxis().SetLabelFont  (43  )
+        hist.GetYaxis().SetLabelSize  (18  )
+        hist.GetXaxis().SetTitleSize  (21  )
+        hist.GetXaxis().SetTitleFont  (43  )
+        hist.GetXaxis().SetTitleOffset(3.5 )
         hist.GetXaxis().SetLabelOffset(0.02)
         hist.GetXaxis().SetLabelFont  (43)
         hist.GetXaxis().SetLabelSize  (18)
@@ -911,7 +937,6 @@ class instack ():
             if 'background' in sample.label.lower():
                 for key,syst in sample.systematics.items() :
                     for _sys_flip_ in ['up','down']:
-                        print "[yacine]", _sys_flip_ + '_root_tree' ," " , syst.__dict__[_sys_flip_ + '_root_tree'].GetEntries()
                         syst.__dict__[_sys_flip_ + '_root_tree'].Project(
                             '_'.join(['h',key, _sys_flip_, variable.name]) + variable.hist,
                             variable.formula,
@@ -925,7 +950,6 @@ class instack ():
                         )
                         _h_syst = ROOT.gDirectory.Get('_'.join(['h',key, _sys_flip_, variable.name]))
                         _h_syst.SetDirectory(0)
-                        print "_h_syst_ ", _h_syst.GetEntries()
                         if variable.norm and _h_syst.Integral()!=0:
                             _h_syst.Sumw2()
                             _h_syst.Scale(1.0/_h_syst.Integral())
@@ -964,7 +988,9 @@ class instack ():
                 hstack.Add(hist)
                 variable.root_histos.append(hist)
                 variable.root_legend.AddEntry( hist, sample.title, "f" )
-                # drawing
+        # ==========================
+        # drawing
+        # ==========================
         c = self.makeRatioPlotCanvas(name = variable.name)
         c.cd(1)
         _htmp_ = variable.root_histos[0].Clone('__htmp__')
@@ -997,10 +1023,18 @@ class instack ():
         hstack.Draw('hist,same')
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
         herrstat.Draw('E2,same')
-        if len(self.systematics)!=0:herrsyst.Draw('E2,same')
+        
+        systematic_label = "SigmaEoverEShift"
+        if len(self.systematics)!=0:
+            if _hard_code_ :
+                self.systematics[systematic_label].up_histo.SetLineColor(2)
+                self.systematics[systematic_label].down_histo.SetLineColor(2)
+                self.systematics[systematic_label].up_histo.Draw("same, hist")
+                self.systematics[systematic_label].down_histo.Draw("same, hist")
+            else:
+                herrsyst.Draw('E2,same')
         hdata = None
         for h in variable.root_histos:
-            print '::' , h.GetName()
             if 'data' in h.GetName():
                 h.SetFillStyle(0)
                 h.Draw('E,same')
@@ -1027,30 +1061,44 @@ class instack ():
         variable.root_legend.SetShadowColor(0)
         variable.root_legend.Draw()
         # draw labels
-        # if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
         utils.draw_labels(self.options.label)
-        # if (self.systematics.keys())>0 : self.options.label.pop()
         utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
         #
         c.cd()
         c.cd(2)
-        (errorHist,systHist) = self.make_stat_progression(hstack.GetStack().Last(),self.systematics)
+        (errorHist,systHist) = self.make_stat_progression(hstack.GetStack().Last(),self.systematics, ratio_type = self.options.ratio_type)
         ROOT.SetOwnership(errorHist,0)
         ROOT.SetOwnership(systHist ,0)
         errorHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-        errorHist.GetYaxis().SetTitle('Data/MC')
+        
         errorHist.GetYaxis().CenterTitle(True)
         systHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-        systHist.GetYaxis().SetTitle('Data/MC')
+        if self.options.ratio_type == "default":
+            errorHist.GetYaxis().SetTitle('Data/MC')
+            systHist.GetYaxis().SetTitle('Data/MC')
+        elif self.options.ratio_type == "centred":
+            errorHist.GetYaxis().SetTitle('(Data/MC)-1')
+            systHist.GetYaxis().SetTitle('(Data/MC)-1')
+        else:
+            logger.error("ratio plot option not defeined ... please choose betwen 'default' or 'centred' ")
         systHist.GetYaxis().CenterTitle(True)
         self.customizeHisto(errorHist)
         if settings.ratio_plot_grid :
             ROOT.gPad.SetGridy()
             ROOT.gPad.SetGridx()
         errorHist.Draw('E2')
-        if len(self.systematics)!=0: systHist.Draw('E2,same')
+        if len(self.systematics)!=0:
+            if _hard_code_ :
+                nominal_yacine = hstack.GetStack().Last().Clone("yacine_nominal")
+                yacine_up   = self.systematics[systematic_label].up_histo.Clone("yacine_up")
+                yacine_down = self.systematics[systematic_label].down_histo.Clone("yacine_down")
+                yacine_up.Divide(nominal_yacine)
+                yacine_down.Divide(nominal_yacine)
+                yacine_up.Draw("hist,same")
+                yacine_down.Draw("hist,same")
+            else :
+                systHist.Draw('E2,same')
         ratioHist = None
-
         sig_and_bkg_ratio = []
         #
         if hdata==None:
@@ -1073,7 +1121,7 @@ class instack ():
                     sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
                     sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
         else:
-            ratioHist = self.makeRatio(hist1 = hdata, hist2 = hstack.GetStack().Last(), isdata = True)
+            ratioHist = self.makeRatio(hist1 = hdata, hist2 = hstack.GetStack().Last(), isdata = True, ratio_type = self.options.ratio_type)
             ROOT.SetOwnership(ratioHist,0)
             ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
             ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
@@ -1090,10 +1138,19 @@ class instack ():
                     sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
 
         # concidence
-        line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
-        line.SetLineColor(4)
-        line.SetLineStyle(7)
-        line.Draw()
+        if self.options.ratio_type == "default":
+            line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
+            line.SetLineColor(4)
+            line.SetLineStyle(7)
+            line.Draw()
+        elif self.options.ratio_type == "centred":
+            line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),0,ratioHist.GetXaxis().GetXmax(),0)
+            line.SetLineColor(4)
+            line.SetLineStyle(7)
+            line.Draw()
+        else:
+            logger.error("ratio plot option not defeined ... please choose betwen 'default' or 'centred' ")
+        
         self.draw_categories(variable.boundaries,
                     miny=_htmp_.GetMinimum(),
                     maxy=_htmp_.GetMaximum())
@@ -1210,9 +1267,6 @@ class instack ():
         hsig = ROOT.gDirectory.Get('hsig_'+variable.name)
         hbkg = ROOT.gDirectory.Get('hbkg_'+variable.name)
 
-        print variable.name,  " --> sig: ",hsig.GetNbinsX(), ' Integral:', hsig.Integral(), ' N:', hsig.GetEntries()
-        print variable.name,  " --> bkg: ",hbkg.GetNbinsX(), ' Integral:', hbkg.Integral(), ' N:', hbkg.GetEntries()
-
         roc   = ROOT.TGraph()
         roc.SetName ('ROC_'+varkey+'_'+sig_sample+'_'+bkg_sample)
         roc.SetTitle( ';'+self.samples[sig_sample].title+';'+self.samples[bkg_sample].title)
@@ -1240,7 +1294,7 @@ class instack ():
             variable_x = self.variables.get(varkey_x)
             variable_y = self.variables.get(varkey_y)
         except KeyError:
-            print "ERROR:scatter: check your variables !!"
+            logger.error(":scatter: check your variables !!")
 
         histname = ('scatter_histogram_' +
                     variable_x.name + '_vs_' + variable_y.name
@@ -1270,8 +1324,6 @@ class instack ():
 
         for proc,sample in self.samples.items():
             if sample.label.lower() in ['signal','background','data'] :
-                print '-----------------------'
-                print '++ ',sample.label
                 _cutflow_here_ = _cutflow_
                 if sample.cut != '':
                     _cutflow_here_ = _cutflow_ + '&&' + sample.cut

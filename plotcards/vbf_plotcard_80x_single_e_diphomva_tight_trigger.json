@@ -32,57 +32,16 @@
             "norm": false,
             "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
         },
-	"dijet_LeadJPt": {
-	    "hist": "(60,15,265)",
-	    "cut": "dijet_LeadJPt>30",
-	    "blind": "",
-	    "log": false,
-	    "norm": false,
-	    "unit": "GeV",
-	    "title": "p_{t}(jet_{1})"
-	},
-	"dijet_SubJPt": {
-	    "hist": "(60,15,265)",
-	    "cut": "dijet_SubJPt>20",
-	    "blind": "",
-	    "log": false,
-	    "norm": false,
-	    "unit": "GeV",
-	    "title": "p_{t}(jet_{2})"
-	},
-	"dijet_Mjj": {
-	    "hist": "(40,0,800)",
-	    "cut": "dijet_Mjj>250",
-	    "blind": "",
-	    "log": true,
-	    "norm": false,
-	    "unit": "GeV",
-	    "title": "m_{jj}"
-	},
+	
 	"dipho_mva": {
             "hist" : "(50,-1,1)",
             "cut"  : "",
             "blind": "",
-            "log"  : false,
+            "log"  : true,
             "norm" : false,
             "title": "diphoton MVA"
         },
-	"dijet_leadEta": {
-	    "hist": "(50,-5,5)",
-	    "cut": "",
-	    "blind": "",
-	    "log": false,
-	    "norm": false,
-	    "title": "#eta(jet_{1})"
-	},
-	"dijet_subleadEta": {
-	    "hist": "(50,-5,5)",
-	    "cut": "",
-	    "blind": "",
-	    "log": false,
-	    "norm": false,
-	    "title": "#eta(jet_{2})"
-	},
+	
         "dipho_sublead_ptoM": {
             "hist": "(25,0,2.5)",
             "cut": "dipho_sublead_ptoM>(1/4.)",
@@ -92,7 +51,7 @@
             "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
         },
         "dipho_PToM": {
-            "hist": "(50,0,5)",
+            "hist": "(100,-1,20)",
             "cut": "",
             "blind": "",
             "log": false,
@@ -360,10 +319,10 @@
     //},
     "processes": {
         "Zee": {
-            "color": 130,
+            "color": 138,
             "order": 0,
             "files" : "DY",
-            "title": "DY MC",
+            "title": "DY aMC@NLO",
             "tree" : "DY",
             "cut"  : "",
             "label": "background"
@@ -372,27 +331,29 @@
             "tree": "Data",
             "color": 1,
             "order": 2,
-            "name": [
-                "SingleElectron"
-            ],
-            "cut": "",
+            "files": "SingleElectron",
+            "cut"  : "",
             "title": "data",
             "label": "data"
         }
     },
     "systematics": {
-        "JEC": {
-	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECUp01sigma",
-	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECDown01sigma"
-	},
-	"JER": {
-	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERUp01sigma",
-	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERDown01sigma"
-	}
-	//"SigmaEoverEShift": {
-	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftUp01sigma",
-	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftDown01sigma"
+        //"JEC": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECDown01sigma"
+	//},
+	//"JER": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERDown01sigma"
 	//}
+	"SigmaEoverEShift": {
+	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftUp01sigma",
+	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftDown01sigma"
+	},
+	"MvaShift": {
+	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftUp01sigma",
+	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftDown01sigma"
+	}
     },
     "options": {
         "label": [
@@ -401,14 +362,16 @@
         ],
         "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
         "intlumi": 36.8,
-        "kfactor": 0.78,
-        "ratio_range": [0.6,1.4],
+        "kfactor": 0.885,
+        "ratio_range": [0,2],
+	"ratio_type" : "default",
 	"categories" : [
 	    {
 		"name":"inclusive" ,
-		"cut":"1",
+		"cut":"abs(weight)<=1",
 		"label":""
 	    }
+	   
 	]
     }
     
