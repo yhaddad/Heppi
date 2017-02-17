@@ -1,0 +1,406 @@
+{
+    "variables": {
+        "isGold": {
+            "hist": "(2,-0.5,1.5)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "isGold"
+        },
+        "run": {
+            "hist" : "(50,273149,284068)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : false,
+            "norm" : false,
+            "title": "Run"
+        },
+        "normalisation:=1": {
+            "hist": "(1,1,2)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "for normalisation"
+        },
+        "dipho_lead_ptoM": {
+            "hist": "(25,0,2.5)",
+            "cut": "dipho_lead_ptoM>(1/3.)",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
+        },
+	
+	"dipho_mva": {
+            "hist" : "(50,-1,1)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "diphoton MVA"
+        },
+	
+        "dipho_sublead_ptoM": {
+            "hist": "(25,0,2.5)",
+            "cut": "dipho_sublead_ptoM>(1/4.)",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
+        },
+        "dipho_PToM": {
+            "hist": "(100,-1,20)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
+        },
+        "dipho_subleadPt": {
+            "hist": "(50,0,200)",
+            //"cut": "dipho_subleadPt>25",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "p_{t}(#gamma_2)"
+        },
+        "dipho_mass": {
+            "hist" : "(40,70,110)",
+            "cut"  : "(dipho_mass>70 && dipho_mass<110)",
+            "log"  : false,
+            "norm" : false,
+            "unit" : "GeV",
+            "title": "m_{#gamma#gamma}"
+        },
+        "nvtx": {
+            "hist": "(40,0,40)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "N_{vtx}"
+        },
+        "dipho_lead_elveto": {
+            "hist": "(2,0,2)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "electron veto (#gamma_{1})"
+        },
+        "leadmva": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#gamma ID MVA(#gamma_{1})"
+        },
+        "subleadmva": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#gamma ID MVA(#gamma_{2})"
+        },
+        "leadeta": {
+            "hist": "(40,-3.5,3.5)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#eta_{#gamma1}"
+        },
+        "subleadeta": {
+            "hist": "(40,-3.5,3.5)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#eta_{#gamma2}"
+        },
+        "sigmarv": {
+            "hist": "(40,0,0.075)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#sigma_{rv}"
+        },
+        "sigmarvDecorr": {
+            "hist": "(40,0,0.075)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#sigma_{rv}(Decorr.)"
+        },
+        "sigmawv": {
+            "hist": "(40,0,0.075)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#sigma_{wv}"
+        },
+        "CosPhi": {
+            "hist": "(40,-1,1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "Cos(#phi)"
+        },
+        "vtxprob": {
+            "hist" : "(40,0,1)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "Vertex Probability"
+        },
+        "result": {
+            "hist" : "(40,-1,1)",
+            "cut"  : "",
+            "blind": "",
+            "log"  : true,
+            "norm" : false,
+            "title": "#gamma#gamma MVA Result"
+        },
+        "pt": {
+            "hist": "(60,0,600)",
+            "cut": "",
+            "blind": "",
+            "log" : false,
+            "norm": false,
+            "title": "p_{T}(#gamma#gamma)"
+        },
+        "leadR9": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "R_{9}(#gamma1)"
+        },
+        "subleadR9": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "R_{9}(#gamma2)"
+        },
+        "leadfull5x5R9": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "R_{9}(#gamma1) (full 5x5)"
+        },
+        "subleadfull5x5R9": {
+            "hist": "(40,0,1)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "R_{9}(#gamma2) (full 5x5)"
+        },
+        "leadSCeta": {
+            "hist": "(40,-2.5,2.5)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#eta_{SC}(#gamma1)"
+        },
+        "subleadSCeta": {
+            "hist": "(40,-2.5,2.5)",
+            "cut": "",
+            "blind": "",
+            "log": false,
+            "norm": false,
+            "title": "#eta_{SC}(#gamma2)"
+        },
+        "leadSigEOverE": {
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma1)"
+        },
+        "subleadSigEOverE": {
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma2)"
+        },
+        "leadSigEOverE_barrel:=(leadSigEOverE*(abs(leadeta) < 1.4442) - 999*(abs(leadeta) > 1.4442))": {
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma1, barrel)"
+        },
+        "subleadSigEOverE_barrel:=(subleadSigEOverE*(abs(subleadeta) < 1.4442) - 999*(abs(subleadeta) > 1.4442))": {
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma2, barrel)"
+        },
+        "leadSigEOverE_endcap:=(leadSigEOverE*(abs(leadeta) > 1.4442) - 999*(abs(leadeta) < 1.4442))": {
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma1, endcap)"
+        },
+        "subleadSigEOverE_endcap:=(subleadSigEOverE*(abs(subleadeta) > 1.4442) - 999*(abs(subleadeta) < 1.4442))": {
+            "hist": "(40,0,0.1)",
+            "hist": "(40,0,0.1)",
+            "cut": "",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#sigma_{E}/E (#gamma2, endcap)"
+        }
+    },
+    "scatter": {
+        "xlist": ["dipho_mass"],
+        "ylist": [
+            "dijet_Mjj",
+            "dipho_mass",
+            "dijet_abs_dEta",
+            "nvtx",
+            "dijet_Zep",
+            "dijet_dipho_dphi_trunc",
+            "dipho_PToM",
+            "dipho_lead_ptoM",
+            "dijet_LeadJPt",
+            "dijet_SubJPt",
+            "dipho_lead_ptoM",
+            "dipho_sublead_ptoM"
+        ],
+        "profile": true,
+        "scatter": true,
+        "logz": false,
+        "normz": true
+    },
+    "processes": {
+        "Zee": {
+            "color": 138,
+            "order": 0,
+            "files" : "DY",
+            "title": "All",
+            "tree" : "DY",
+            "cut"  : "",
+            "label": "background"
+        },
+        //"Zee_matched": {
+        //    "color": 122,
+        //    "order": 1,
+        //    "files" : "DY",
+        //    "title": "both matched",
+        //    "tree" : "DY",
+        //    "cut"  : "(dijet_jet1_match==1 && dijet_jet2_match==1)",
+        //    "label": "background"
+        //},
+        //"Zee_fakes": {
+        //    "color": 132,
+        //    "order": 2,
+        //    "files" : "DY",
+        //    "title": "both fake",
+        //    "tree" : "DY",
+        //    "cut"  : "(dijet_jet1_match==0 && dijet_jet2_match==0)",
+        //    "label": "background"
+        //},
+        //"Zee_fake_jet1": {
+        //    "color": 123,
+        //    "order": 3,
+        //    "files": "DY",
+        //    "title": "jet_{1} fake",
+        //    "tree": "DY",
+        //    "cut": "(dijet_jet1_match==0 && dijet_jet2_match==1)",
+        //    "label": "background"
+        //},
+        //"Zee_fake_jet2": {
+        //    "color": 121,
+        //    "order": 4,
+        //    "files": "DY",
+        //    "title": "jet_{2} fake",
+        //    "tree": "DY",
+        //    "cut": "(dijet_jet1_match==1 && dijet_jet2_match==0)",
+        //    "label": "background"
+        //},
+        "Data": {
+            "tree": "Data",
+            "color": 1,
+            "order": 2,
+            "name": [
+                "SingleElectron"
+            ],
+            "cut": "",
+            "title": "data",
+            "label": "data"
+        }
+    },
+    "systematics": {
+	"SigmaEOverEShift": {
+	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftUp01sigma",
+	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftDown01sigma"
+	},
+	"MvaShift": {
+	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftUp01sigma",
+	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftDown01sigma"
+	}
+	//,
+	//"JEC": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECDown01sigma"
+	//},
+	//"JER": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERDown01sigma"
+	//}
+	//,
+	//"PUJID":{
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftDown01sigma"
+	//}
+    },
+    "options": {
+        "label": [
+            "diphoton preselection",
+            "MVAShift + SigmaEoEShift"
+	],
+        "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
+        "intlumi": 36.8,
+        "kfactor": 0.885,
+        //"ratio_range": [0.0,2.1],
+        "ratio_range": [-1,1],
+        "ratio_type" : "centred",
+        "categories" : [
+            {
+                "name":"inclusive" ,
+                "cut":"abs(weight)<=1",
+                "label":"70 < m_{ee} < 110 GeV"
+            },
+	    {
+		"name":"reduced_mass_range" ,
+                "cut":"abs(weight)<=1 && (dipho_mass>80 && dipho_mass<100)",
+                "label":"80 < m_{ee} < 100 GeV"
+	    }
+        ]
+    }
+}

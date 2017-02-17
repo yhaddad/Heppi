@@ -1030,7 +1030,7 @@ class instack ():
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
         herrstat.Draw('E2,same')
         
-        systematic_label = "SigmaEoverEShift"
+        systematic_label = "PUJID"
         if len(self.systematics)!=0:
             if _hard_code_ :
                 self.systematics[systematic_label].up_histo.SetLineColor(2)
