@@ -310,14 +310,14 @@
         }
     },
     "systematics": {
-	"SigmaEOverEShift": {
-	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftUp01sigma",
-	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftDown01sigma"
-	},
-	"MvaShift": {
-	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftUp01sigma",
-	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftDown01sigma"
-	},
+	//"SigmaEOverEShift": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_SigmaEOverEShiftDown01sigma"
+	//},
+	//"MvaShift": {
+	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftUp01sigma",
+	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_MvaShiftDown01sigma"
+	//},
 	"JEC": {
 	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECUp01sigma",
 	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JECDown01sigma"
@@ -325,12 +325,11 @@
 	"JER": {
 	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERUp01sigma",
 	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_JERDown01sigma"
+	},
+	"PUJID":{
+	    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftUp01sigma",
+	    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftDown01sigma"
 	}
-	//,
-	//"PUJID":{
-	//    "up_tree"   : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftUp01sigma",
-	//    "down_tree" : "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet_PUJIDShiftDown01sigma"
-	//}
     },
     "options": {
         "label": [
@@ -340,12 +339,13 @@
 	    "JEC + JER"
         ],
         "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
-        "intlumi": 36.8,
-        "kfactor": 0.74,
+        "intlumi": 36.8 ,
+        "kfactor": 0.885,
         //"ratio_range": [0.0,2.1],
         "ratio_range": [-1,1],
         "ratio_type" : "centred",
-        "categories" : [
+	"debug_syst" : false,
+	"categories" : [
             {
                 "name":"inclusive" ,
                 "cut":"abs(weight)<=1",

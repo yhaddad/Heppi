@@ -347,7 +347,7 @@
             "tree": "Data",
             "color": 1,
             "order": 2,
-            "name": [
+            "files": [
                 "SingleElectron"
             ],
             "cut": "",

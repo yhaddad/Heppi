@@ -9,7 +9,7 @@ logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
 logger = logging.getLogger('heppi-draw')
 heppi.ROOT.gROOT.ProcessLine(".x .root/rootlogon.C")
-
+            
 def get_options():
     parser = OptionParser()
     parser.add_option("-p", "--plotcard", dest="plotcard",default='plotcard.json',
@@ -69,18 +69,24 @@ def get_options():
 if __name__ == "__main__":
     (opt, args) = get_options()
     stack = None
+    print args
+    print sys.argv
+    #if len(sys.argv)==1:
+    #    parser.print_help()
+    #    sys.exit(1)
     try:
         f = open(opt.plotcard)
         stack = heppi.instack(  plotcard  = opt.plotcard  ,
                                 sampledir = opt.sampledir )
     except IOError as e:
         print "I/O error({0}): {1}".format(e.errno, e.strerror)
-        
+
+
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
     stack.print_cuts()
     stack.print_systematics()
-
+    
     if opt.print_cutflow : stack.print_cutflow()
     if  opt.verbose == 'INFO':
         heppi.logger.setLevel(level=heppi.logging.INFO)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-_hard_code_ = False
 try:
     import ROOT
 except ImportError:
@@ -314,17 +313,18 @@ class options (object):
     """
     def __init__(self,options = {}):
         self.__template__ = {
-            "ratio_range"   : [0.5,1.5],
-            "ratioplot"     : True,
-            "legend"        : [ "" ],
-            "treename"      :   "",
-            "output_label"  :   "",
-            "kfactor"       :  1.0,
-            "intlumi"       :  1.0,
-            "cutflow"       : [ "" ],
-            "weight_branch" : "weight",
-            "categories"    : [],
-            "ratio_type"    : "default"
+            "ratio_range"  : [0.5,1.5],
+            "ratioplot"    : True,
+            "legend"       : [ "" ],
+            "treename"     :   "",
+            "output_label" :   "",
+            "kfactor"      :  1.0,
+            "intlumi"      :  1.0,
+            "cutflow"      : [ "" ],
+            "weight_branch": "weight",
+            "categories"   : [],
+            "ratio_type"   : "default",
+            "debug_syst"   : False 
         }
         self.__dict__  = self.__template__
         self.__dict__.update(options)
@@ -1030,13 +1030,15 @@ class instack ():
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
         herrstat.Draw('E2,same')
         
-        systematic_label = "PUJID"
+        
         if len(self.systematics)!=0:
-            if _hard_code_ :
-                self.systematics[systematic_label].up_histo.SetLineColor(2)
-                self.systematics[systematic_label].down_histo.SetLineColor(2)
-                self.systematics[systematic_label].up_histo.Draw("same, hist")
-                self.systematics[systematic_label].down_histo.Draw("same, hist")
+            if self.options.debug_syst : 
+                herrsyst.Draw('E2,same')
+                for systematic_label in self.systematics:
+                    self.systematics[systematic_label].up_histo.SetLineColor(2)
+                    self.systematics[systematic_label].down_histo.SetLineColor(2)
+                    self.systematics[systematic_label].up_histo.Draw("same, hist")
+                    self.systematics[systematic_label].down_histo.Draw("same, hist")
             else:
                 herrsyst.Draw('E2,same')
         hdata = None
@@ -1094,14 +1096,22 @@ class instack ():
             ROOT.gPad.SetGridx()
         errorHist.Draw('E2')
         if len(self.systematics)!=0:
-            if _hard_code_ :
-                nominal_yacine = hstack.GetStack().Last().Clone("yacine_nominal")
-                yacine_up   = self.systematics[systematic_label].up_histo.Clone("yacine_up")
-                yacine_down = self.systematics[systematic_label].down_histo.Clone("yacine_down")
-                yacine_up.Divide(nominal_yacine)
-                yacine_down.Divide(nominal_yacine)
-                yacine_up.Draw("hist,same")
-                yacine_down.Draw("hist,same")
+            if self.options.debug_syst :
+                systHist.Draw('E2,same')
+                debug_syst_nominal = hstack.GetStack().Last().Clone("nominal_syst_" +  systematic_label)
+                for systematic_label in self.systematics:
+                    print "systematic :: ",  systematic_label
+                    debug_syst_up   = self.systematics[systematic_label].up_histo.Clone  ("syst_up_"   + systematic_label)
+                    debug_syst_down = self.systematics[systematic_label].down_histo.Clone("syst_down_" + systematic_label)
+                    debug_syst_up.Divide  (debug_syst_nominal)
+                    debug_syst_down.Divide(debug_syst_nominal)
+                    if self.options.ratio_type == "centred":
+                        one_hist    = debug_syst_nominal.Clone("one_hist_" + systematic_label)
+                        [one_hist.SetBinContent(ibin, -1) for ibin in range(0, one_hist.GetNbinsX())]
+                        debug_syst_up.Add  (one_hist)
+                        debug_syst_down.Add(one_hist)
+                    debug_syst_up.Draw  ("hist,same")
+                    debug_syst_down.Draw("hist,same")
             else :
                 systHist.Draw('E2,same')
         ratioHist = None
