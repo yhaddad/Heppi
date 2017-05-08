@@ -35,8 +35,8 @@
 	
 	"dipho_mva_flat": {
             "hist" : "(50,0,1)",
-            "cut"  : "dipho_mva_flat>0.1",
-//            "cut"  : "",
+            //"cut"  : "dipho_mva_flat>0.1",
+	    "cut"  : "",
             "blind": "",
             "log"  : false,
             "norm" : false,
@@ -463,8 +463,8 @@
         //"kfactor": 0.9345,
         "intlumi": 35.9,
         //"kfactor": 0.9445,
-        //"kfactor": 0.934,
-        "kfactor": 0.92,
+        "kfactor": 0.934,
+        //"kfactor": 0.92,
         //"kfactor": 0.90,
         //"kfactor": 0.935,
         //"kfactor": 0.92, //MVA Cut
@@ -474,12 +474,19 @@
 	"ratioplot" : false ,
 	"categories" : [
 	    {
-		"name":"inclusive" ,
-		"cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) < 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) > 1.57))",
-//		"cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) > 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) < 1.4442))",
-//		"cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) > 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) > 1.57))",
-//		"cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) < 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) < 1.4442))",
-		//"cut":"(abs(weight)<=1)",
+		"name":"hightEtaLowR9","cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) < 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) > 1.57))",
+		"label":""
+	    },
+	    {
+		"name":"LowEtahighR9" ,"cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) > 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) < 1.4442))",
+		"label":""
+	    },
+	   {
+	       "name":"lowEtaLowR9","cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) < 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) < 1.4442))",
+	       "label":""
+	   },
+	    {
+		"name":"hightEtahighR9","cut":"(abs(weight)<=1 && (min(leadR9,subleadR9) > 0.94 && max(abs(leadSCeta),abs(subleadSCeta)) > 1.57))",
 		"label":""
 	    }
 	   
