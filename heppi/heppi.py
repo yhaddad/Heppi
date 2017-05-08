@@ -805,18 +805,26 @@ class instack ():
         c.cd()
         return c
     #---------------------------------------------------------
-    def customizeHisto(self, hist):
+    def customizeHisto(self, hist, ratioplot = True):
         hist.GetYaxis().SetTitleSize  (21)
         hist.GetYaxis().SetTitleFont  (43)
         hist.GetYaxis().SetTitleOffset(1.8)
         hist.GetYaxis().SetLabelFont  (43)
         hist.GetYaxis().SetLabelSize  (18)
-        hist.GetXaxis().SetTitleSize  (21)
-        hist.GetXaxis().SetTitleFont  (43)
-        hist.GetXaxis().SetTitleOffset(3.5)
-        hist.GetXaxis().SetLabelOffset(0.02)
-        hist.GetXaxis().SetLabelFont  (43)
-        hist.GetXaxis().SetLabelSize  (18)
+        if ratioplot :
+            hist.GetXaxis().SetTitleSize  (21)
+            hist.GetXaxis().SetTitleFont  (43)
+            hist.GetXaxis().SetTitleOffset(3.5)
+            hist.GetXaxis().SetLabelOffset(0.02)
+            hist.GetXaxis().SetLabelFont  (43)
+            hist.GetXaxis().SetLabelSize  (18)
+        else:
+            hist.GetXaxis().SetTitleSize  (21)
+            hist.GetXaxis().SetTitleFont  (43)
+            hist.GetXaxis().SetTitleOffset(1.5)
+            hist.GetXaxis().SetLabelOffset(0.01)
+            hist.GetXaxis().SetLabelFont  (43)
+            hist.GetXaxis().SetLabelSize  (18)
     #---------------------------------------------------------
     def test_tree_book():
         for sam in samples:
@@ -965,8 +973,20 @@ class instack ():
                 variable.root_histos.append(hist)
                 variable.root_legend.AddEntry( hist, sample.title, "f" )
                 # drawing
-        c = self.makeRatioPlotCanvas(name = variable.name)
-        c.cd(1)
+
+        c = None
+        print 'making a ratio plot ? ::', self.options.ratioplot
+        if self.options.ratioplot :
+            c = self.makeRatioPlotCanvas(name = variable.name)
+            c.cd(1)
+        else:
+            print 'making a cnavas without ratio plot .... '
+            print settings.canvas_width , settings.canvas_height-150.0
+            c = ROOT.TCanvas("c_normal_" + variable.name  , variable.name,
+                             settings.canvas_width ,
+                             settings.canvas_height-150)
+            c.cd()
+            
         _htmp_ = variable.root_histos[0].Clone('__htmp__')
         ROOT.SetOwnership(_htmp_,0)
         bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variable.hist )]
@@ -992,7 +1012,7 @@ class instack ():
             _ymax_ = _ymax_ + _ymax_ * 0.5
             _htmp_.GetYaxis().SetRangeUser(_ymin_,_ymax_)
 
-        self.customizeHisto(_htmp_)
+        self.customizeHisto(_htmp_, self.options.ratioplot)
         _htmp_.Draw('hist')
         hstack.Draw('hist,same')
         (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
@@ -1030,76 +1050,79 @@ class instack ():
         # if (self.systematics.keys())>0 : self.options.label.append('+'.join(self.systematics.keys()))
         utils.draw_labels(self.options.label)
         # if (self.systematics.keys())>0 : self.options.label.pop()
-        utils.draw_cms_headlabel( label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
+        utils.draw_cms_headlabel( label_left = '', label_right='#sqrt{s} = 13 TeV, L = %1.2f fb^{-1}' % self.options.intlumi )
         #
         c.cd()
-        c.cd(2)
-        (errorHist,systHist) = self.make_stat_progression(hstack.GetStack().Last(),self.systematics)
-        ROOT.SetOwnership(errorHist,0)
-        ROOT.SetOwnership(systHist ,0)
-        errorHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-        errorHist.GetYaxis().SetTitle('Data/MC')
-        errorHist.GetYaxis().CenterTitle(True)
-        systHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-        systHist.GetYaxis().SetTitle('Data/MC')
-        systHist.GetYaxis().CenterTitle(True)
-        self.customizeHisto(errorHist)
-        if settings.ratio_plot_grid :
-            ROOT.gPad.SetGridy()
-            ROOT.gPad.SetGridx()
-        errorHist.Draw('E2')
-        if len(self.systematics)!=0: systHist.Draw('E2,same')
-        ratioHist = None
-
-        sig_and_bkg_ratio = []
-        #
-        if hdata==None:
-            ratioHist = hstack.GetStack().Last().Clone('_temp_')
-            ratioHist.Clear()
-            ratioHist.SetLineColorAlpha(0,0)
-            ratioHist.SetMarkerColorAlpha(0,0)
-            ROOT.SetOwnership(ratioHist,0)
-            ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-            ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
-            if settings.ratio_draw_signal:
-                for sig in variable.root_histos:
-                    sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
-                    sig_and_bkg.Add(sig)
-                    sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
-                    ROOT.SetOwnership(sig_and_bkg_ratio_,0)
-                    sig_and_bkg_ratio_.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-                    sig_and_bkg_ratio_.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
-                    sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
-                    sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
-                    sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
-        else:
-            ratioHist = self.makeRatio(hist1 = hdata, hist2 = hstack.GetStack().Last(), isdata = True)
-            ROOT.SetOwnership(ratioHist,0)
-            ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-            ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
-            if settings.ratio_draw_signal:
-                for sig in variable.root_histos:
-                    sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
-                    sig_and_bkg.Add(sig)
-                    sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
-                    ROOT.SetOwnership(sig_and_bkg_ratio_,0)
-                    sig_and_bkg_ratio_.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
-                    sig_and_bkg_ratio_.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
-                    sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
-                    sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
-                    sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
-
+        if self.options.ratioplot :
+            c.cd(2)
+            (errorHist,systHist) = self.make_stat_progression(hstack.GetStack().Last(),self.systematics)
+            ROOT.SetOwnership(errorHist,0)
+            ROOT.SetOwnership(systHist ,0)
+            errorHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+            errorHist.GetYaxis().SetTitle('Data/MC')
+            errorHist.GetYaxis().CenterTitle(True)
+            systHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+            systHist.GetYaxis().SetTitle('Data/MC')
+            systHist.GetYaxis().CenterTitle(True)
+            self.customizeHisto(errorHist)
+            if settings.ratio_plot_grid :
+        	ROOT.gPad.SetGridy()
+        	ROOT.gPad.SetGridx()
+        	errorHist.Draw('E2')
+            if len(self.systematics)!=0: systHist.Draw('E2,same')
+            ratioHist = None
+            
+            sig_and_bkg_ratio = []
+        
+            if hdata==None:
+                ratioHist = hstack.GetStack().Last().Clone('_temp_')
+                ratioHist.Clear()
+                ratioHist.SetLineColorAlpha(0,0)
+                ratioHist.SetMarkerColorAlpha(0,0)
+                ROOT.SetOwnership(ratioHist,0)
+                ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+                ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
+                if settings.ratio_draw_signal:
+                    for sig in variable.root_histos:
+                        sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
+                        sig_and_bkg.Add(sig)
+                        sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
+                        ROOT.SetOwnership(sig_and_bkg_ratio_,0)
+                        sig_and_bkg_ratio_.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+                        sig_and_bkg_ratio_.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
+                        sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
+                        sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
+                        sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
+            else:
+                ratioHist = self.makeRatio(hist1 = hdata, hist2 = hstack.GetStack().Last(), isdata = True)
+                ROOT.SetOwnership(ratioHist,0)
+                ratioHist.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+                ratioHist.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
+                if settings.ratio_draw_signal:
+                    for sig in variable.root_histos:
+                        sig_and_bkg = hstack.GetStack().Last().Clone('_temp_bkg_' + sig.GetName())
+                        sig_and_bkg.Add(sig)
+                        sig_and_bkg_ratio_ = self.makeRatio(sig_and_bkg,hstack.GetStack().Last())
+                        ROOT.SetOwnership(sig_and_bkg_ratio_,0)
+                        sig_and_bkg_ratio_.GetXaxis().SetTitle(_htmp_.GetXaxis().GetTitle())
+                        sig_and_bkg_ratio_.GetYaxis().SetTitle(_htmp_.GetYaxis().GetTitle())
+                        sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
+                        sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
+                        sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
+        
+            # concidence
+            line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
+            line.SetLineColor(4)
+            line.SetLineStyle(7)
+            line.Draw()
+            ROOT.SetOwnership(line,0)
+            ratioHist.Draw('same')
+            print 'forgetting the ratio plot ....'
         # concidence
-        line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
-        line.SetLineColor(4)
-        line.SetLineStyle(7)
-        line.Draw()
         self.draw_categories(variable.boundaries,
                     miny=_htmp_.GetMinimum(),
                     maxy=_htmp_.GetMaximum())
-        ROOT.SetOwnership(line,0)
-        ratioHist.Draw('same')
-
+        
         c.cd()
         if variable.norm == True:
             histname = histname + '_norm'
