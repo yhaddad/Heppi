@@ -811,6 +811,9 @@ class instack ():
         hist.GetYaxis().SetTitleOffset(1.8)
         hist.GetYaxis().SetLabelFont  (43)
         hist.GetYaxis().SetLabelSize  (18)
+        """hist.GetYaxis().SetExponentOffset(0.5,0.5)"""
+        """hist.GetYaxis().SetNoExponent(ROOT.kTRUE)"""
+        ROOT.TGaxis.SetExponentOffset(-0.05,0)
         if ratioplot :
             hist.GetXaxis().SetTitleSize  (21)
             hist.GetXaxis().SetTitleFont  (43)
@@ -1014,10 +1017,17 @@ class instack ():
 
         self.customizeHisto(_htmp_, self.options.ratioplot)
         _htmp_.Draw('hist')
-        hstack.Draw('hist,same')
-        (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
-        herrstat.Draw('E2,same')
-        if len(self.systematics)!=0:herrsyst.Draw('E2,same')
+        try :
+            (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
+            herrstat.Draw('E2,same')
+            if len(self.systematics)!=0:herrsyst.Draw('E2,same')        
+            hstack.Draw('hist,same')
+            _htmp_line_ = hstack.GetStack().Last().Clone("h_clone_for_line")
+            _htmp_line_.SetFillStyle(0)
+            _htmp_line_.SetLineColor(1)
+            _htmp_line_.Draw('hist,same')
+        except:
+            pass 
         hdata = None
         for h in variable.root_histos:
             print '::' , h.GetName()
@@ -1027,11 +1037,13 @@ class instack ():
                 hdata = h
             if 'signal' in h.GetName() or 'spectator' in h.GetName():
                 h.Draw('hist,same')
-        if len(self.systematics)>0:
-            variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
-        else:
-            variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
-
+        try:
+            if len(self.systematics)>0:
+                variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
+            else:
+                variable.root_legend.AddEntry(herrstat, "Stat Uncert", "f" )
+        except:
+            pass 
         # cosmetics
         utils.draw_cut_line(_htmp_,variable,'x')
         self.draw_categories(variable.boundaries, miny=_htmp_.GetMinimum(),maxy=_htmp_.GetMaximum())
