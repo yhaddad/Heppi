@@ -969,7 +969,7 @@ class instack ():
                 variable.root_histos.append(hist)
             if 'background' in sample.label:
                 hist.SetLineColor(ROOT.kBlack)
-                hist.SetFillColor(sample.color)
+                hist.SetFillColorAlpha(sample.color,0.5)
                 hist.SetLineWidth(2)
                 hist.SetName(hist.GetName() + '_background')
                 hstack.Add(hist)
@@ -1019,9 +1019,9 @@ class instack ():
         _htmp_.Draw('hist')
         try :
             (herrstat, herrsyst) = self.draw_error_band(hstack.GetStack().Last(),self.systematics)
+            hstack.Draw('hist,same')
             herrstat.Draw('E2,same')
             if len(self.systematics)!=0:herrsyst.Draw('E2,same')        
-            hstack.Draw('hist,same')
             _htmp_line_ = hstack.GetStack().Last().Clone("h_clone_for_line")
             _htmp_line_.SetFillStyle(0)
             _htmp_line_.SetLineColor(1)
@@ -1037,6 +1037,7 @@ class instack ():
                 hdata = h
             if 'signal' in h.GetName() or 'spectator' in h.GetName():
                 h.Draw('hist,same')
+
         try:
             if len(self.systematics)>0:
                 variable.root_legend.AddEntry(herrsyst, "Stat #oplus Syst", "f" )
