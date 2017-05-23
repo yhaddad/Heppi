@@ -12,6 +12,9 @@ Heppi (Hep Plotting Interface)
         :target: https://readthedocs.org/projects/heppi/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://zenodo.org/badge/45534212.svg
+   :target: https://zenodo.org/badge/latestdoi/45534212
+
 
 A High Energy Physics Plotting Interface
 
