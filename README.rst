@@ -5,8 +5,8 @@ Heppi (Hep Plotting Interface)
 .. image:: https://img.shields.io/pypi/v/heppi.svg
         :target: https://pypi.python.org/pypi/heppi
 
-.. image:: https://img.shields.io/travis/yhaddad/heppi.svg
-        :target: https://travis-ci.org/yhaddad/heppi
+.. image:: https://travis-ci.org/yhaddad/Heppi.svg?branch=master
+    :target: https://travis-ci.org/yhaddad/Heppi
 
 .. image:: https://readthedocs.org/projects/heppi/badge/?version=latest
         :target: https://readthedocs.org/projects/heppi/?badge=latest
