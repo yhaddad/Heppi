@@ -12,14 +12,6 @@ heppi.heppi module
     :undoc-members:
     :show-inheritance:
 
-heppi.heppi_copy module
------------------------
-
-.. automodule:: heppi.heppi_copy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 heppi.performance module
 ------------------------
 
