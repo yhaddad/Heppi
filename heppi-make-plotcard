@@ -1,45 +1,53 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import ROOT
 import sys, os, glob, json, re
-#import colors
-
-version=0.1
+from optparse import OptionParser
+from heppi import heppi
 
 # --------------------
 # read arguments
 # --------------------
-def create_json(rootfile='file.root', treename='', jout=''):
+
+def create_json(rootfile='file.root', treename=None, jout=''):
     """
     Create a json template file for
     plotng all the branches in a given
     tree
     """
-    dumper = treename.split("*")[0]
-    treerf = treename.split("*")[1]
-    print 'dumper', dumper
-    print 'treerf', treerf
     root = ROOT.TFile.Open(rootfile)
-    # tree_dir = root.Get(dumper)
-    #
-    # treenm = ''
-    # for a in tree_dir.GetListOfKeys():
-    #     if treerf in a.GetName():
-    #         treenm = a.GetName()
-    tree = ROOT.gDirectory.Get(dumper+treerf)
-    print dumper+treerf
-    if tree.GetEntries()==0:
-        print 'ERROR: the tree is empty ...'
-    # create list of variables
+    treenm = []
+
+    def getall(d, basepath=""):
+        try:
+            for key in d.GetListOfKeys():
+                kname = key.GetName()
+                print 'getall :: ', kname
+                if key.IsFolder():
+                    for i in getall(d.Get(kname), os.path.join(basepath,kname)):
+                        yield i
+                else:
+                    yield basepath+kname, d.Get(kname)
+        except :
+             yield basepath, d
+
+    trees = []
+    for k, o in getall(root):
+        if o.ClassName() == 'TTree' and o.GetEntries() > 0:
+            trees.append(k.split(o.GetName())[0] + o.GetName())
+    if len(trees)>0 :
+        heppi.logger.info(' The following trees have been found on this root file :')
+        heppi.logger.info( trees )
+        heppi.logger.info(' Only "' + trees[0] + '" will be used to build the plotcard')
+    else:
+        heppi.logger.error( 'No TTree found on this root file or no empty TTree' )
+
+    tree = ROOT.gDirectory.Get(trees[0])
     varlist={}
     for var in tree.GetListOfLeaves():
-        # print var.GetName()
         L    = tree.GetBranch(str(var))
-
-
         if '[' in var.GetTitle() and ']' in var.GetTitle():
             dim = [int(s) for s in re.findall('[-+]?\d*\.\d+|\d+', var.GetTitle().split('[')[1])]
-
             for idim in range(0, dim[0]):
                 _var_ = var.GetTitle().replace('[%i]'%dim[0], '[%i]'%idim)
                 tree.Project("_h_"+_var_.split('[')[0],_var_)
@@ -65,7 +73,7 @@ def create_json(rootfile='file.root', treename='', jout=''):
             nbin = _h_.GetNbinsX()
             xmin = _h_.GetXaxis().GetXmin()
             xmax = _h_.GetXaxis().GetXmax()
-            hist = "(%i,%1.3f,%1.3f)" % (nbin,xmin,xmax)
+            hist = "(%i,%1.1f,%1.1f)" % (nbin,xmin,xmax)
             varlist[var.GetTitle()]={
                 'cut'  :'',
                 "hist" : hist,
@@ -76,28 +84,44 @@ def create_json(rootfile='file.root', treename='', jout=''):
                 "title": var.GetTitle()
             }
             print ('variable: %25s' % var.GetTitle())
-        # create a json file
-    # samples     = json.loads(open('samples.json').read())
     samples_new = {}
     sample_tree = {'name':treename}
     selection   = {'cutflow':''}
+    plot_options = heppi.options()
     with open(jout, "w") as file:
-        json.dump({'variables':varlist, 'processes':{}, 'option':{}}, file, indent=2)
+        json.dump({'variables':varlist,
+                   'processes':{
+                        "SMprocess": {
+                            "color": 138,
+                            "order": 0,
+                            "files" : rootfile,
+                            "title" : 'SMprocess',
+                            "tree"  : trees[0],
+                            "cut"   : "",
+                            "label" : "background"
+                        },
+                   },
+                   'option':plot_options.__dict__ } ,
+                  file, indent=2)
         file.close()
+
 # --------------------
 # read arguments
 # --------------------
-from optparse import OptionParser
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-r", "--load", dest="rootfile",default='rootfile.root',
                       help="create a plot card from tree", metavar="FILE")
-    parser.add_option("-t", "--tree", dest="treename",default='VBFMVADumper/*VBFDiJet',
+    parser.add_option("-t", "--tree", dest="treename",default=None,
                       help="Dumper tree that you wnat to plot", metavar="FILE")
     parser.add_option("-o", "--out", dest="jsonfile",default="plotcard.json",
                       help="specify output json file")
 
     (options, args) = parser.parse_args()
-    create_json( options.rootfile,
-                 options.treename,
-                 options.jsonfile)
+
+    if os.path.exists(options.rootfile) :
+        create_json( options.rootfile,
+                     options.treename,
+                     options.jsonfile)
+    else:
+        parser.print_help()

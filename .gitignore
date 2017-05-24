@@ -62,8 +62,7 @@ target/
 *.swp
 *~
 
-# SCRAM business
-__init__.py
+# Python binaries
 *.pyc
 
 # ROOT-related files
@@ -76,7 +75,7 @@ __init__.py
 .\#*
 AutoDict_*
 
-# Other temp files
+# Other files
 *.txt
 *.log
 *.png
@@ -89,4 +88,3 @@ data*
 plotcards/*
 *test*
 *text*
-

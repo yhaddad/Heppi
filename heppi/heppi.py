@@ -17,8 +17,7 @@ try:
 
 except ImportError:
     raise ImportError(
-        """
-        please install termcolor and jsmin, and try again.
+        """please install termcolor and jsmin, and try again.
         Suggestion: pip install requirement.txt --user
         """)
 import  glob, json, re, logging, collections, math, parser
@@ -938,7 +937,7 @@ class instack ():
                             _h_syst.Sumw2()
                             _h_syst.Scale(1.0/_h_syst.Integral())
                         self.systematics[key].append_hist(_h_syst,_sys_flip_)
-                        
+
             hist.SetTitle(";" + variable.title + ";entries")
             if ('signal'==sample.label) or ('spectator'==sample.label):
                 hist.SetLineColor(sample.color)
@@ -986,7 +985,7 @@ class instack ():
                              settings.canvas_width ,
                              settings.canvas_height-150)
             c.cd()
-            
+
         _htmp_ = variable.root_histos[0].Clone('__htmp__')
         ROOT.SetOwnership(_htmp_,0)
         bounds = [float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',variable.hist )]
@@ -1071,9 +1070,9 @@ class instack ():
         	errorHist.Draw('E2')
             if len(self.systematics)!=0: systHist.Draw('E2,same')
             ratioHist = None
-            
+
             sig_and_bkg_ratio = []
-        
+
             if hdata==None:
                 ratioHist = hstack.GetStack().Last().Clone('_temp_')
                 ratioHist.Clear()
@@ -1109,7 +1108,7 @@ class instack ():
                         sig_and_bkg_ratio_.SetFillColorAlpha(0,0)
                         sig_and_bkg_ratio_.SetLineColor(sig.GetLineColor())
                         sig_and_bkg_ratio.append(sig_and_bkg_ratio_)
-        
+
             # concidence
             line = ROOT.TLine(ratioHist.GetXaxis().GetXmin(),1,ratioHist.GetXaxis().GetXmax(),1)
             line.SetLineColor(4)
@@ -1122,7 +1121,7 @@ class instack ():
         self.draw_categories(variable.boundaries,
                     miny=_htmp_.GetMinimum(),
                     maxy=_htmp_.GetMaximum())
-        
+
         c.cd()
         if variable.norm == True:
             histname = histname + '_norm'

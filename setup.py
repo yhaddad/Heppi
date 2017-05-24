@@ -23,7 +23,8 @@ requirements = [
     "jsmin",
     "termcolor",
     "progressbar",
-    "jsonmerge"
+    "jsonmerge",
+    "tabulate"
 ]
 
 test_requirements = []
@@ -41,8 +42,8 @@ setup(
         'heppi',
     ],
     package_dir          = {'heppi': 'heppi'},
+    scripts              = ['heppi-draw','heppi-make-plotcard'],
     include_package_data = True,
-    scripts              = ['heppi-draw','macros/makeplotcard.py'],
     install_requires     = requirements,
     license     = "ISCL",
     zip_safe    = False,
