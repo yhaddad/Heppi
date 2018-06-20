@@ -1,0 +1,340 @@
+{
+  "variables": {
+    /*"isGold": {
+      "hist": "(2,-0.5,1.5)",
+      "cut": "isGold>0.5",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "isGold"
+    },*/
+    /*"Rpt:=(dipho_leadPt*dipho_subleadPt)/(dijet_LeadJPt*dijet_SubJPt)": {
+      "hist": "(100,0,10)",
+      "cut": "",
+      "blind": "",
+      "log": true,
+      "norm": false,
+      "title": "Uncorrected p_{t}(jet_{2})[GeV]"
+    },*/
+    "dijet_LeadJPt": {
+      "hist": "(60,15,265)",
+      "cut": "dijet_LeadJPt>30",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "unit": "GeV",
+      "title": "p_{t}(jet_{1})"
+    },
+    "dijet_SubJPt": {
+      "hist": "(60,15,265)",
+      "cut": "dijet_SubJPt>20",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "unit": "GeV",
+      "title": "p_{t}(jet_{2})"
+    },
+    "dijet_leadEta": {
+      "hist": "(50,-5,5)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "#eta(jet_{1})"
+    },
+    "dijet_subleadEta": {
+      "hist": "(50,-5,5)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "#eta(jet_{2})"
+    },
+    /*"rms1_forward:=(abs(dijet_leadEta)>2.5)*dijet_jet1_RMS + (abs(dijet_leadEta)<=2.5)*-1": {
+      "hist": "(30,0,0.15)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "RMS(jet_{1})_{forward}"
+    },
+    "rms2_forward:=(abs(dijet_subleadEta)>2.5 && dijet_LeadJPt>0)*dijet_jet2_RMS +(abs(dijet_subleadEta)<=2.5 || dijet_LeadJPt<=0 )*-9": {
+      "hist": "(30,0,0.15)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "RMS(jet_{2})_{forward}"
+    },
+    "rms1_barrel:=(abs(dijet_leadEta)<2.5)*dijet_jet1_RMS + (abs(dijet_leadEta)>=2.5)*-1": {
+      "hist": "(20,0,0.1)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "RMS(jet_{1})_{barrel}"
+    },
+    "rms2_barrel:=(abs(dijet_subleadEta)<2.5)*dijet_jet2_RMS +(abs(dijet_subleadEta)>=2.5)*-1": {
+      "hist": "(20,0,0.1)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "RMS(jet_{2})_{barrel}"
+    },
+    "normalisation:=1": {
+      "hist": "(1,1,2)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "for normalisation"
+    },*/
+    "dijet_Mjj": {
+      "hist": "(40,0,800)",
+      "cut": "dijet_Mjj>250",
+      /*"cut"  : "",*/
+      "blind": "",
+      "log": true,
+      "norm": false,
+      "unit": "GeV",
+      "title": "m_{jj}"
+    },
+    "dijet_Zep": {
+      "hist": "(50,0,10)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "#eta^{*}"
+    },
+    "dijet_abs_dEta": {
+      "hist": "(20,0,10)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "|#Delta#eta_{jj}|"
+    },
+    "dijet_dipho_dphi_trunc": {
+      "hist": "(30,0,3)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "#Delta#phi(jj,#gamma#gamma)_{trunc}"
+    },
+    "dipho_lead_ptoM": {
+      "hist": "(25,0,2)",
+      "cut": "dipho_lead_ptoM>(1/2.)",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "p_{t}^{#gamma_{1}}/m_{#gamma#gamma}"
+    },
+    "dipho_sublead_ptoM": {
+      "hist": "(25,0,2)",
+      "cut": "dipho_sublead_ptoM>(1/4.)",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "p_{t}^{#gamma_{2}}/m_{#gamma#gamma}"
+    },
+    "dipho_PToM": {
+      "hist": "(50,0,5)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "p_{t}^{#gamma#gamma}/m_{#gamma#gamma}"
+    },
+    "dipho_subleadPt": {
+      "hist": "(50,0,200)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "p_{t}(#gamma_2)"
+    },
+    "dipho_mass": {
+      "hist" : "(80,100,180)",
+      "cut"  : "(dipho_mass>100 && dipho_mass<180)",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "GeV",
+      "title": "m_{#gamma#gamma}"
+    },
+    "dijet_mva": {
+      "hist" : "(50,-1,1)",
+      "cut"  : "",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "",
+      "title": "BDT_{jj}"
+    },
+    "dipho_dijet_MVA": {
+      "hist" : "(1000,-1,1)",
+    //  "cut"  : "dipho_dijet_MVA>0.92",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "",
+      "title": "BDT_{jj,#gamma#gamma}"
+    },
+    "dipho_mva": {
+      "hist" : "(50,-1,1)",
+      "cut"  : "",
+      "blind": "",
+      "log"  : true,
+      "norm" : false,
+      "unit" : "",
+      "title": "BDT_{#gamma#gamma}"
+    },
+    "nvtx": {
+      "hist"  : "(40,0,40)",
+      "cut"   : "",
+      "blind" : "",
+      "log"   : false,
+      "norm"  : false,
+      "title" : "N_{vtx}"
+    }
+    /*,
+    "dipho_lead_elveto": {
+      "hist" : "(2,0,2)",
+      "cut"  : "",
+      "blind": "",
+      "log"  : false,
+      "norm" : false,
+      "title": "electron veto (#gamma_{1})"
+    },
+    "dipho_sublead_elveto": {
+      "hist": "(2,0,2)",
+      "cut": "",
+      "blind": "",
+      "log": false,
+      "norm": false,
+      "title": "electron veto (#gamma_{2})"
+    }*/
+  },
+  "scatter" :{
+      "xlist"   : [
+        /*"dipho_mass",*/
+        "dipho_dijet_MVA"
+      ],
+      "ylist"   : [
+        /*"dipho_dijet_MVA",*/
+        "dipho_mass"
+      ],
+      "profile" : true,
+      "scatter" : true,
+      "logz"    : false,
+      "normz"   : true
+  },
+  "processes": {
+    "vbf_125" : {
+        "color" : 2,
+        "order" : 0,
+        "files" : "VBFHToGG_M125_13TeV_amcatnlo_pythia8",
+        "title" : "VBF(m_{h}=125)",
+        "cut"   : "",
+        //"kfactor" : 90,
+        //"tree"  : "vbf_125",
+        "label" : "signal"
+    },
+    /*"ggh_125" : {
+        "color" : 131,
+        "order" : 1,
+        "files" : "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8",
+        "title" : "ggH(m_{h}=125)",
+        "cut"   : "",
+        //"kfactor" : 90,
+        //"tree"  : "ggh_125",
+        "label" : "spectator"
+    },*/
+    "dipho": {
+        "color": 122,
+        "order": 2,
+        "files" : [
+            "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa"
+        ],
+        "title": "#gamma-#gamma",
+        "cut"  : "",
+        //"tree" : "dipho",
+        "label": "background"
+    },
+    "gjet": {
+        "color": 127,
+        "order": 3,
+        "files" : [
+          "GJet_Pt-20to40_DoubleEMEnriched:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+          "GJet_Pt-40toInf_DoubleEMEnriched:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+          "QCD_Pt-30to40_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+          "QCD_Pt-30toInf_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+          "QCD_Pt-40toInf_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+        ],
+        "title": "jet-#gamma",
+        "cut"  : "(!(prompt_pho_1==1 && prompt_pho_2==1) && (prompt_pho_1==1 || prompt_pho_2==1))",
+        "label": "background"
+    },
+    "jetjet":{
+        "color": 130,
+        "order": 5,
+        "files" : [
+          "GJet_Pt-20to40_DoubleEMEnriched:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+          "GJet_Pt-40toInf_DoubleEMEnriched:vbfTagDumper/trees/gjet_13TeV_VBFDiJet",
+          "QCD_Pt-30to40_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+          "QCD_Pt-30toInf_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet",
+          "QCD_Pt-40toInf_DoubleEMEnriched:vbfTagDumper/trees/qcd_13TeV_VBFDiJet"
+        ],
+        "title": "jet-jet",
+        "cut"  : "(prompt_pho_1!=1 && prompt_pho_2!=1)",
+        "label": "background"
+    }
+    /*,
+    "data":{
+        "color": 1,
+        "order": 6,
+        "files" : [
+          "output_DoubleEG_ferrif-RunIIFall15DR76-1_3_0-25ns_ext1-1_3_1-v0-Run2015C_25ns-16Dec2015-v1",
+          "output_DoubleEG_ferrif-RunIIFall15DR76-1_3_0-25ns_ext1-1_3_1-v0-Run2015D-16Dec2015-v2"
+        ],
+        "title": "Data",
+        "tree" : "Data",
+        "cut"  : "",
+        "label": "data"
+    }*/
+  },
+  "selection": {
+    "name": "zee_76x",
+    "title": ""
+  },
+  "tree": {
+    "name": "VBFTagDumper/trees/*_13TeV_VBFDiJet",
+    "kfactor": 0.89,
+    "lumi": 2.3
+  },
+  "systematics": { },
+  "options": {
+    "label": [
+      "VBF preselection",
+      "",
+      "VBF-1"
+    ],
+    "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
+    "intlumi": 2.7,
+    "kfactor": 1.0,
+    "ratio_range" : [0,1.9]
+  },
+  "categories" : [
+    {"name":"inclusive" , "cut":"1", "label":"inclusive"}
+  ],
+  "labels": {
+    "name": [
+      "VBF preselection",
+      "70 < m_{ee} < 110 GeV",
+      ""
+    ]
+  }
+}

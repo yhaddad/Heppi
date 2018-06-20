@@ -132,8 +132,9 @@ if __name__ == "__main__":
                 ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
             ))
             for xvar in stack.variables :
-                print xvar
+                print "hoho .. ", xvar
                 if opt.allnormhist : stack.variables[opt.variable].norm = True
+                
                 for cat in stack.options.categories:
                     logger.info(colored(" --- Drawing category : %10s " % cat.get('name'), 'yellow', 'on_red'))
                     logger.info(colored(

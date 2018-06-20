@@ -1,0 +1,613 @@
+{
+    "variables": {
+	"dist": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "dist", 
+	    "hist": "(100,-1.2,1.2)", 
+	    "norm": false
+	}, 
+	"pT": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "pT", 
+	    "hist": "(100,0.0,660000.0)", 
+	    "norm": false
+	}, 
+	"EoP": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "EoP", 
+	    "hist": "(100,-1.0,2047.0)", 
+	    "norm": false
+	}, 
+	"electrons_classification": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "electrons_classification", 
+	    "hist": "(5,0.0,5.0)", 
+	    "norm": false
+	}, 
+	"eleCharge": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleCharge", 
+	    "hist": "(100,-1.2,1.2)", 
+	    "norm": false
+	}, 
+	"mc_pt": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mc_pt", 
+	    "hist": "(100,-1150.0,850.0)", 
+	    "norm": false
+	}, 
+	"sumEt": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "sumEt", 
+	    "hist": "(100,100.0,7700.0)", 
+	    "norm": false
+	}, 
+	"eventNaiveId": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eventNaiveId", 
+	    "hist": "(102,-1031645600.0,-1031074400.0)", 
+	    "norm": false
+	}, 
+	"deltaPhiEleClusterAtCalo": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaPhiEleClusterAtCalo", 
+	    "hist": "(100,-3.7,3.7)", 
+	    "norm": false
+	}, 
+	"E9oE25": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "E9oE25", 
+	    "hist": "(100,-1.0,1.0)", 
+	    "norm": false
+	}, 
+	"eleEcalIso": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleEcalIso", 
+	    "hist": "(100,0.0,590.0)", 
+	    "norm": false
+	}, 
+	"phiSC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "phiSC", 
+	    "hist": "(100,-3.7,3.7)", 
+	    "norm": false
+	}, 
+	"mc_phi": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mc_phi", 
+	    "hist": "(100,-1080.0,100.0)", 
+	    "norm": false
+	}, 
+	"deltaPhiSuperClusterAtVtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaPhiSuperClusterAtVtx", 
+	    "hist": "(100,-3.1,3.2)", 
+	    "norm": false
+	}, 
+	"limuId": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "limuId", 
+	    "hist": "(101,0.0,505000.0)", 
+	    "norm": false
+	}, 
+	"deltaPhiSeedClusterAtCalo": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaPhiSeedClusterAtCalo", 
+	    "hist": "(100,-3.7,3.7)", 
+	    "norm": false
+	}, 
+	"BX": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "BX", 
+	    "hist": "(4,-3.0,1.0)", 
+	    "norm": false
+	}, 
+	"HoE": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "HoE", 
+	    "hist": "(100,0.0,79.0)", 
+	    "norm": false
+	}, 
+	"eventId": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eventId", 
+	    "hist": "(101,0.0,115140000.0)", 
+	    "norm": false
+	}, 
+	"nAmbiguousGsfTracks": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "nAmbiguousGsfTracks", 
+	    "hist": "(23,0.0,23.0)", 
+	    "norm": false
+	}, 
+	"elePFphotonIso": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "elePFphotonIso", 
+	    "hist": "(100,0.0,295.0)", 
+	    "norm": false
+	}, 
+	"electrons_basicClustersSize": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "electrons_basicClustersSize", 
+	    "hist": "(25,0.0,25.0)", 
+	    "norm": false
+	}, 
+	"deltaEtaEleClusterAtCalo": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaEtaEleClusterAtCalo", 
+	    "hist": "(100,-6.0,5.4)", 
+	    "norm": false
+	}, 
+	"mc_weight": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mc_weight", 
+	    "hist": "(100,-1.2,1.2)", 
+	    "norm": false
+	}, 
+	"p": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "p", 
+	    "hist": "(100,0.0,3350000.0)", 
+	    "norm": false
+	}, 
+	"zvtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "zvtx", 
+	    "hist": "(100,-18.5,20.5)", 
+	    "norm": false
+	}, 
+	"deltaEtaSeedClusterAtCalo": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaEtaSeedClusterAtCalo", 
+	    "hist": "(100,-5.6,5.4)", 
+	    "norm": false
+	}, 
+	"nGoodElectrons": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "nGoodElectrons", 
+	    "hist": "(4,-2.0,2.0)", 
+	    "norm": false
+	}, 
+	"mishits": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mishits", 
+	    "hist": "(27,3.0,30.0)", 
+	    "norm": false
+	}, 
+	"numPUMC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "numPUMC", 
+	    "hist": "(102,15.0,117.0)", 
+	    "norm": false
+	}, 
+	"E5x5": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "E5x5", 
+	    "hist": "(100,0.0,2100.0)", 
+	    "norm": false
+	}, 
+	"Sigma_Eta": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "Sigma_Eta", 
+	    "hist": "(100,0.0,2.8)", 
+	    "norm": false
+	}, 
+	"iSM": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "iSM", 
+	    "hist": "(103,-1051.0,82.0)", 
+	    "norm": false
+	}, 
+	"iSC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "iSC", 
+	    "hist": "(104,-1074.0,382.0)", 
+	    "norm": false
+	}, 
+	"seedSeverityLevel": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "seedSeverityLevel", 
+	    "hist": "(4,-3.0,1.0)", 
+	    "norm": false
+	}, 
+	"nvtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "nvtx", 
+	    "hist": "(124,5.0,129.0)", 
+	    "norm": false
+	}, 
+	"DeltaEtaIn": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "DeltaEtaIn", 
+	    "hist": "(100,-8.8,6.8)", 
+	    "norm": false
+	}, 
+	"ETSC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "ETSC", 
+	    "hist": "(100,0.0,740.0)", 
+	    "norm": false
+	}, 
+	"phi": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "phi", 
+	    "hist": "(100,-3.7,3.7)", 
+	    "norm": false
+	}, 
+	"deltaEtaSuperClusterAtVtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "deltaEtaSuperClusterAtVtx", 
+	    "hist": "(100,-8.8,6.8)", 
+	    "norm": false
+	}, 
+	"dcot": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "dcot", 
+	    "hist": "(100,-1.2,1.2)", 
+	    "norm": false
+	}, 
+	"pOut": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "pOut", 
+	    "hist": "(100,0.0,450000.0)", 
+	    "norm": false
+	}, 
+	"dphiMETEle": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "dphiMETEle", 
+	    "hist": "(100,-3.7,3.7)", 
+	    "norm": false
+	}, 
+	"eleHcalIsoD2": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleHcalIsoD2", 
+	    "hist": "(100,0.0,63.0)", 
+	    "norm": false
+	}, 
+	"eleHcalIsoD1": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleHcalIsoD1", 
+	    "hist": "(100,0.0,196.0)", 
+	    "norm": false
+	}, 
+	"elePFneutralHadronIso": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "elePFneutralHadronIso", 
+	    "hist": "(100,0.0,160.0)", 
+	    "norm": false
+	}, 
+	"iDetEE": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "iDetEE", 
+	    "hist": "(110,-1050.0,50.0)", 
+	    "norm": false
+	}, 
+	"met": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "met", 
+	    "hist": "(100,0.0,4150.0)", 
+	    "norm": false
+	}, 
+	"E3x3": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "E3x3", 
+	    "hist": "(100,0.0,2050.0)", 
+	    "norm": false
+	}, 
+	"ESC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "ESC", 
+	    "hist": "(100,0.0,2150.0)", 
+	    "norm": false
+	}, 
+	"eleES": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleES", 
+	    "hist": "(100,0.0,81.0)", 
+	    "norm": false
+	}, 
+	"iDetEB": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "iDetEB", 
+	    "hist": "(103,-1051.0,82.0)", 
+	    "norm": false
+	}, 
+	"ET": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "E_T", 
+	    "hist": "(100,0.0,200.0)", 
+	    "norm": false
+	}, 
+	"E2x2": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "E2x2", 
+	    "hist": "(100,0.0,1960.0)", 
+	    "norm": false
+	}, 
+	"Sigma_Phi": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "Sigma_Phi", 
+	    "hist": "(100,0.0,2.3)", 
+	    "norm": false
+	}, 
+	"pIn": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "pIn", 
+	    "hist": "(100,0.0,3350000.0)", 
+	    "norm": false
+	}, 
+	"pAtCalo": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "pAtCalo", 
+	    "hist": "(100,0.0,3350000.0)", 
+	    "norm": false
+	}, 
+	"etaSC": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "etaSC", 
+	    "hist": "(100,-5.4,5.6)", 
+	    "norm": false
+	}, 
+	"SigmaIEtaIEta": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "SigmaIEtaIEta", 
+	    "hist": "(100,0.0,370000000000000012449008871413764849664.0)", 
+	    "norm": false
+	}, 
+	"mc_eta": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mc_eta", 
+	    "hist": "(100,-1080.0,100.0)", 
+	    "norm": false
+	}, 
+	"eleTrkIso": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleTrkIso", 
+	    "hist": "(100,0.0,21000.0)", 
+	    "norm": false
+	}, 
+	"mll": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "mll", 
+	    "hist": "(100,-1150.0,1100.0)", 
+	    "norm": false
+	}, 
+	"DeltaPhiIn": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "DeltaPhiIn", 
+	    "hist": "(100,-3.1,3.2)", 
+	    "norm": false
+	}, 
+	"MT": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "MT", 
+	    "hist": "(100,0.0,780.0)", 
+	    "norm": false
+	}, 
+	"eta": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eta", 
+	    "hist": "(100,-3.5,3.5)", 
+	    "norm": false
+	}, 
+	"runId": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "runId", 
+	    "hist": "(3,0.0,3.0)", 
+	    "norm": false
+	}, 
+	"xvtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "xvtx", 
+	    "hist": "(100,-0.1,0.1)", 
+	    "norm": false
+	}, 
+	"time": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "time", 
+	    "hist": "(3,0.0,3.0)", 
+	    "norm": false
+	}, 
+	"eleFBrem": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleFBrem", 
+	    "hist": "(100,-1099999999999999993725589651456.0,100000000000000009025336901632.0)", 
+	    "norm": false
+	}, 
+	"eleSwissCross": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "eleSwissCross", 
+	    "hist": "(100,-12.4,2.2)", 
+	    "norm": false
+	}, 
+	"yvtx": {
+	    "blind": "", 
+	    "cut": "", 
+	    "log": true, 
+	    "title": "yvtx", 
+	    "hist": "(100,-0.1,0.1)", 
+	    "norm": false
+	}
+    }, 
+    "processes": {
+	"MC": {
+	    "files": ["MC"], 
+	    "cut"  : "", 
+	    "title": "MC", 
+	    "color": 138, 
+	    "tree" : "ntupleEcalAlignment/myTree", 
+	    "label": "background", 
+	    "order": 0
+	},
+	"data": {
+	    "files": ["Data"], 
+	    "cut"  : "", 
+	    "title": "data", 
+	    "color": 0, 
+	    "tree" : "ntupleEcalAlignment/myTree", 
+	    "label": "data", 
+	    "order": 1
+	}
+	
+    }, 
+    "options": {
+	"treename": "{sampleid}", 
+	"weight_branch": "mc_weight", 
+	"cutflow": [
+	    ""
+	], 
+	"ratio_range": [
+	    0.5, 
+	    1.5
+	], 
+	"kfactor": 1.0, 
+	"output_label": "", 
+	"label" : ["ECAL Validation", "Electron preselection"],
+	"intlumi": 1.0, 
+	"ratioplot": true, 
+	"categories": [{"name":"nominal"}], 
+	"legend": [
+	    ""
+	]
+    }
+}

@@ -1,0 +1,434 @@
+{
+    "variables": {
+        /*"leadPfPhoIso03": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        "dielecDeltaEta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(20,0,10)",
+            "norm": false
+        },
+        "leadIsSaturated": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "leadIsSaturated",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        "subLeadPassElectronVeto": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "subLeadPassElectronVeto",
+            "hist": "(2,0,2)",
+            "norm": false
+        },
+        "subLeadFull5x5_sigmaIetaIeta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "subLeadFull5x5_sigmaIetaIeta",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        "subLeadPhiSC": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "subLeadPhiSC",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        "dielecMass": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecMass",
+            "hist": "(200,0,1000)",
+            "norm": false
+        },
+        "dielecDeltaPhi_ggee": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecDeltaPhi_ggee",
+            "hist": "(40,0,10)",
+            "norm": false
+        },
+        "dielecLeadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecLeadPt",
+            "hist": "(50,0,500)",
+            "norm": false
+        },*/
+        "dijetDeltaEta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "#Delta#eta",
+            "hist": "(20,0,10)",
+            "norm": false
+        },
+        /*"subLeadEtaSC": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(20,0,10)",
+            "norm": false
+        },*/
+        "dielecLeadEta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(20,0,10)",
+            "norm": false
+        },
+        /*"electronMultiplicity_EGT35": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "electronMultiplicity_EGT35",
+            "hist": "(10,0,10)",
+            "norm": false
+        },
+        "leadHadronicOverEm": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "leadHadronicOverEm",
+            "hist": "(20,0,1)",
+            "norm": false
+        },*/
+        "subLeadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "subLeadPt",
+            "hist": "(50,0,500)",
+            "norm": false
+        },
+        /*"leadFull5x5_sigmaIetaIeta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(50,0,10)",
+            "norm": false
+        },*/
+        "category": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "category",
+            "hist": "(2,0,2)",
+            "norm": false
+        },
+        "dijetDeltaPhi_ggjj": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetDeltaPhi_ggjj",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        /*"leadR9": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "leadR9",
+            "hist": "(50,0,10)",
+            "norm": false
+        },*/
+        "dijetSubleadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetSubleadPt",
+            "hist": "(500,0,500)",
+            "norm": false
+        },
+        /*"nConv": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "nConv",
+            "hist": "(10,0,10)",
+            "norm": false
+        },*/
+        "dijetLeadEta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetLeadEta",
+            "hist": "(50,-5,5)",
+            "norm": false
+        },
+        "dijetMass": {
+            "blind": "",
+            "cut": "dijetMass>300",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,1000)",
+            "norm": false
+        },
+        "dielecZeppenfeld": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecZeppenfeld",
+            "hist": "(50,0,10)",
+            "norm": false
+        },
+        "dijetDeltaPhi_jj": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetDeltaPhi_jj",
+            "hist": "(100,0,4)",
+            "norm": false
+        },
+        /*"leadFull5x5_r9": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },*/
+        "dielecSubleadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecSubleadPt",
+            "hist": "(500,0,500)",
+            "norm": false
+        },
+        /*"leadChargedHadronIso": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "subLeadPfPhoIso03": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },*/
+        "mgg": {
+            "blind": "",
+            "cut"  : "",
+            "log"  : true,
+            "title": "",
+            "hist" : "(125,350,600)",
+            "norm" : false
+        },
+        "subLeadHadronicOverEm": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "jetMultiplicity_EGT40": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "jetMultiplicity_EGT40",
+            "hist": "(10,0,10)",
+            "norm": false
+        },
+        "leadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "leadPt",
+            "hist": "(500,0,500)",
+            "norm": false
+        },
+        "dijetSubleadEta": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetSubleadEta",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        /*"subLeadR9": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "subLeadR9",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "leadEtaSC": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "leadEtaSC",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "dielecDeltaPhi_ee": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dielecDeltaPhi_ee",
+            "hist": "(30,-3,3)",
+            "norm": false
+        },*/
+        "dijetLeadPt": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "dijetLeadPt",
+            "hist": "(500,0,500)",
+            "norm": false
+        },
+        "dijetZeppenfeld": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        /*"subLeadFull5x5_r9": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "subLeadIsSaturated": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "leadPhiSC": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },
+        "leadPassElectronVeto": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "",
+            "hist": "(100,0,10)",
+            "norm": false
+        },*/
+        "jetMultiplicity_EGT30": {
+            "blind": "",
+            "cut"   : "",
+            "log"   : true,
+            "title" : "N_{jet}(jet>30)",
+            "hist"  : "(100,0,10)",
+            "norm"  : false
+        },
+        /*"subLeadChargedHadronIso": {
+            "blind": "",
+            "cut"  : "",
+            "log"  : true,
+            "title": "subLeadChargedHadronIso",
+            "hist" : "(100,0,1)",
+            "norm" : false
+        },
+        "pullConv": {
+            "blind": "",
+            "cut"  : "",
+            "log"  : true,
+            "title": "pullConv",
+            "hist" : "(100,0,10)",
+            "norm" : false
+        },
+        "dielecSubleadEta": {
+            "blind": "",
+            "cut"  : "",
+            "log"  : true,
+            "title": "dielecSubleadEta",
+            "hist" : "(80,-4,4)",
+            "norm" : false
+        },*/
+        "jetMultiplicity_EGT20": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "N_{jet}(p_{t}>20)",
+            "hist": "(10,0,10)",
+            "norm": false
+        },
+        "jetMultiplicity": {
+            "blind": "",
+            "cut": "",
+            "log": true,
+            "title": "N_{jet}",
+            "hist": "(10,0,10)",
+            "norm": false
+        }
+    },
+    "processes": {
+        "data": {
+            "color": 1,
+            "order": 1,
+            "files": [
+                "output_DoubleEG_sethzenz-RunIIFall15DR76:flashggEXOValidationTreeMaker/diphotonTree_"
+              ],
+            "title"   : "Data",
+            "cut"     : "",
+            "kfactor" : 1,
+            "label"   : "data"
+        },
+        "qcd": {
+            "color" : 132,
+            "order" : 0,
+            "files" : [
+                "GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8:flashggEXOValidationTreeMaker/diphotonTree_",
+                "GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8:flashggEXOValidationTreeMaker/diphotonTree_",
+                "GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8:flashggEXOValidationTreeMaker/diphotonTree_",
+                "GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8:flashggEXOValidationTreeMaker/diphotonTree_"
+            ],
+            "title"  : "#gamma+jets",
+            "cut"    : "",
+            "kfactor": 1,
+            "label"  : "background"
+        }
+    },
+    "options": {
+        "label": [
+            "VBF-Xgg",
+            ""
+        ],
+        "ratio_range":[0,2],
+        "treename": "vbfTagDumper/trees/{sampleid}_13TeV_VBFDiJet",
+        "intlumi": 2.7,
+        "weight_branch" : "1",
+        "kfactor": 1.0
+    }
+}

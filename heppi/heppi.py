@@ -94,8 +94,8 @@ class utils:
             lines = label.split('\\')
         elif type(label) == type([]):
             lines = label
-        else:
-            raise ImportError("Label format is not supported: please enter a string or a table of strings!")
+        #else:
+        #    raise "Label format is not supported: please enter a string or a table of strings!"
 
         for s in lines:
             t.DrawLatexNDC((0.04   + ROOT.gStyle.GetPadLeftMargin()),
@@ -466,6 +466,7 @@ class instack ():
                 self.sig_root_tree.AddFriend(chain)
             if 'background' in sample.label and make_sig_bkg_trees:
                 self.bkg_root_tree.AddFriend(chain)
+            
             _samples_.append([  self.samples[proc].order   ,
                                 self.samples[proc].name    ,
                                 self.samples[proc].tree    ,
@@ -918,7 +919,7 @@ class instack ():
             if 'background' in sample.label.lower():
                 for key,syst in sample.systematics.items() :
                     for _sys_flip_ in ['up','down']:
-                        print "[yacine]", _sys_flip_ + '_root_tree' ," " , syst.__dict__[_sys_flip_ + '_root_tree'].GetEntries()
+                        #print "[yacine]", _sys_flip_ + '_root_tree' ," " , syst.__dict__[_sys_flip_ + '_root_tree'].GetEntries()
                         syst.__dict__[_sys_flip_ + '_root_tree'].Project(
                             '_'.join(['h',key, _sys_flip_, variable.name]) + variable.hist,
                             variable.formula,
@@ -932,7 +933,7 @@ class instack ():
                         )
                         _h_syst = ROOT.gDirectory.Get('_'.join(['h',key, _sys_flip_, variable.name]))
                         _h_syst.SetDirectory(0)
-                        print "_h_syst_ ", _h_syst.GetEntries()
+                        #print "_h_syst_ ", _h_syst.GetEntries()
                         if variable.norm and _h_syst.Integral()!=0:
                             _h_syst.Sumw2()
                             _h_syst.Scale(1.0/_h_syst.Integral())
@@ -974,12 +975,12 @@ class instack ():
                 # drawing
 
         c = None
-        print 'making a ratio plot ? ::', self.options.ratioplot
+        #print 'making a ratio plot ? ::', self.options.ratioplot
         if self.options.ratioplot :
             c = self.makeRatioPlotCanvas(name = variable.name)
             c.cd(1)
         else:
-            print 'making a cnavas without ratio plot .... '
+            #print 'making a cnavas without ratio plot .... '
             print settings.canvas_width , settings.canvas_height-150.0
             c = ROOT.TCanvas("c_normal_" + variable.name  , variable.name,
                              settings.canvas_width ,
@@ -1019,7 +1020,7 @@ class instack ():
         if len(self.systematics)!=0:herrsyst.Draw('E2,same')
         hdata = None
         for h in variable.root_histos:
-            print '::' , h.GetName()
+            #print '::' , h.GetName()
             if 'data' in h.GetName():
                 h.SetFillStyle(0)
                 h.Draw('E,same')
@@ -1116,7 +1117,7 @@ class instack ():
             line.Draw()
             ROOT.SetOwnership(line,0)
             ratioHist.Draw('same')
-            print 'forgetting the ratio plot ....'
+            #print 'forgetting the ratio plot ....'
         # concidence
         self.draw_categories(variable.boundaries,
                     miny=_htmp_.GetMinimum(),
@@ -1231,9 +1232,6 @@ class instack ():
         )
         hsig = ROOT.gDirectory.Get('hsig_'+variable.name)
         hbkg = ROOT.gDirectory.Get('hbkg_'+variable.name)
-
-        print variable.name,  " --> sig: ",hsig.GetNbinsX(), ' Integral:', hsig.Integral(), ' N:', hsig.GetEntries()
-        print variable.name,  " --> bkg: ",hbkg.GetNbinsX(), ' Integral:', hbkg.Integral(), ' N:', hbkg.GetEntries()
 
         roc   = ROOT.TGraph()
         roc.SetName ('ROC_'+varkey+'_'+sig_sample+'_'+bkg_sample)
