@@ -7,14 +7,15 @@ except ImportError:
         """
         ROOT is not in your environement, or not intsalled.
         Please check!
-        """)
+        """
+    )
 try:
     from termcolor    import colored
     from jsmin        import jsmin
     from progressbar  import ProgressBar, Bar, Percentage, ETA
     from jsonmerge    import merge
     from tabulate     import tabulate
-
+    import os
 except ImportError:
     raise ImportError(
         """please install termcolor and jsmin, and try again.
@@ -22,7 +23,8 @@ except ImportError:
         """)
 import  glob, json, re, logging, collections, math, parser
 from    collections        import OrderedDict
-import  settings
+"import  settings"
+from . import settings
 
 logging.basicConfig(format=colored('%(levelname)s:',attrs = ['bold'])
                     + colored('%(name)s:','blue') + ' %(message)s')
@@ -419,10 +421,16 @@ class instack ():
                 for sam in sample.files:
                     _sam_ = sam
                     _tre_ = chainName
+                    print("+++++++++++++++++++++++++++++++++")
+                    print(" --- ", sam)
                     if ':' in sam:
                         _sam_ = sam.split(':')[0]
                         _tre_ = sam.split(':')[1]
-                    for f in glob.glob( self.sampledir + '/*'+ _sam_ +'*.root'):
+                    print (self.sampledir + '/*'+ _sam_ )
+                    for f in glob.glob( self.sampledir + '/*'+ _sam_):
+                        print(' ->', f)
+                        "if 'root' not in os.path.splitext(f): continue"
+                        print(f + "/" + _tre_ )
                         chain.Add( f + '/' + _tre_ )
                         logger.debug("[a][%s] = [%s/%s]" % ( sample.name, f , _tre_ ) )
                 # preliminary systematics handling
@@ -918,7 +926,6 @@ class instack ():
             if 'background' in sample.label.lower():
                 for key,syst in sample.systematics.items() :
                     for _sys_flip_ in ['up','down']:
-                        print "[yacine]", _sys_flip_ + '_root_tree' ," " , syst.__dict__[_sys_flip_ + '_root_tree'].GetEntries()
                         syst.__dict__[_sys_flip_ + '_root_tree'].Project(
                             '_'.join(['h',key, _sys_flip_, variable.name]) + variable.hist,
                             variable.formula,
@@ -932,7 +939,6 @@ class instack ():
                         )
                         _h_syst = ROOT.gDirectory.Get('_'.join(['h',key, _sys_flip_, variable.name]))
                         _h_syst.SetDirectory(0)
-                        print "_h_syst_ ", _h_syst.GetEntries()
                         if variable.norm and _h_syst.Integral()!=0:
                             _h_syst.Sumw2()
                             _h_syst.Scale(1.0/_h_syst.Integral())
@@ -974,13 +980,10 @@ class instack ():
                 # drawing
 
         c = None
-        print 'making a ratio plot ? ::', self.options.ratioplot
         if self.options.ratioplot :
             c = self.makeRatioPlotCanvas(name = variable.name)
             c.cd(1)
         else:
-            print 'making a cnavas without ratio plot .... '
-            print settings.canvas_width , settings.canvas_height-150.0
             c = ROOT.TCanvas("c_normal_" + variable.name  , variable.name,
                              settings.canvas_width ,
                              settings.canvas_height-150)
@@ -1019,7 +1022,6 @@ class instack ():
         if len(self.systematics)!=0:herrsyst.Draw('E2,same')
         hdata = None
         for h in variable.root_histos:
-            print '::' , h.GetName()
             if 'data' in h.GetName():
                 h.SetFillStyle(0)
                 h.Draw('E,same')
@@ -1065,9 +1067,9 @@ class instack ():
             systHist.GetYaxis().CenterTitle(True)
             self.customizeHisto(errorHist)
             if settings.ratio_plot_grid :
-        	ROOT.gPad.SetGridy()
-        	ROOT.gPad.SetGridx()
-        	errorHist.Draw('E2')
+        	    ROOT.gPad.SetGridy()
+        	    ROOT.gPad.SetGridx()
+        	    errorHist.Draw('E2')
             if len(self.systematics)!=0: systHist.Draw('E2,same')
             ratioHist = None
 
@@ -1116,7 +1118,6 @@ class instack ():
             line.Draw()
             ROOT.SetOwnership(line,0)
             ratioHist.Draw('same')
-            print 'forgetting the ratio plot ....'
         # concidence
         self.draw_categories(variable.boundaries,
                     miny=_htmp_.GetMinimum(),
@@ -1232,9 +1233,6 @@ class instack ():
         hsig = ROOT.gDirectory.Get('hsig_'+variable.name)
         hbkg = ROOT.gDirectory.Get('hbkg_'+variable.name)
 
-        print variable.name,  " --> sig: ",hsig.GetNbinsX(), ' Integral:', hsig.Integral(), ' N:', hsig.GetEntries()
-        print variable.name,  " --> bkg: ",hbkg.GetNbinsX(), ' Integral:', hbkg.Integral(), ' N:', hbkg.GetEntries()
-
         roc   = ROOT.TGraph()
         roc.SetName ('ROC_'+varkey+'_'+sig_sample+'_'+bkg_sample)
         roc.SetTitle( ';'+self.samples[sig_sample].title+';'+self.samples[bkg_sample].title)
@@ -1262,7 +1260,7 @@ class instack ():
             variable_x = self.variables.get(varkey_x)
             variable_y = self.variables.get(varkey_y)
         except KeyError:
-            print "ERROR:scatter: check your variables !!"
+            print("ERROR:scatter: check your variables !!")
 
         histname = ('scatter_histogram_' +
                     variable_x.name + '_vs_' + variable_y.name
@@ -1292,8 +1290,6 @@ class instack ():
 
         for proc,sample in self.samples.items():
             if sample.label.lower() in ['signal','background','data'] :
-                print '-----------------------'
-                print '++ ',sample.label
                 _cutflow_here_ = _cutflow_
                 if sample.cut != '':
                     _cutflow_here_ = _cutflow_ + '&&' + sample.cut
@@ -1315,29 +1311,13 @@ class instack ():
                         )
                 h = ROOT.gDirectory.Get('_h_' + variable_x.name +"_"+variable_y.name +"_"+proc)
                 h.SetDirectory(0)
-
-                print '::', proc
-                print '::', self.options.weight_branch if 'data' not in sample.label.lower() else '1'
-                print '::', '*'.join(
-                      [   "("+ _cutflow_here_+")",
-                          "%f" % self.options.kfactor,
-                          "%f" % self.options.intlumi,
-                          self.options.weight_branch if 'data' not in sample.label.lower() else '1'
-                      ]
-                  )
-                print ':: N=', h.GetEntries()
-                print ':: I=', h.Integral()
-                print
                 if 'signal' in sample.label.lower():
                     scatter_sig.Add(h)
                 if 'background' in sample.label.lower():
                     scatter_bkg.Add(h)
                 if 'data' in sample.label.lower():
                     scatter_data.Add(h)
-        print
         # scatter_sig = ROOT.gDirectory.Get('hsig_'+variable_x.name +"_"+variable_y.name)
-
-        print scatter_sig
         if make_profiles:
             ymin = scatter_sig.GetYaxis().GetXmin()
             ymax = scatter_sig.GetYaxis().GetXmax()

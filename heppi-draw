@@ -74,8 +74,8 @@ if __name__ == "__main__":
         stack = heppi.instack(  plotcard  = opt.plotcard  ,
                                 sampledir = opt.sampledir )
     except IOError as e:
-        print "I/O error({0}): {1}".format(e.errno, e.strerror)
-        
+        print("I/O error({0}): {1}".format(e.errno, e.strerror))
+
     stack.read_plotcard()
     stack.book_trees(make_sig_bkg_trees=opt.scatter)
     stack.print_cuts()
@@ -132,20 +132,11 @@ if __name__ == "__main__":
                 ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
             ))
             for xvar in stack.variables :
-                print xvar
-                if opt.allnormhist : stack.variables[opt.variable].norm = True
-                for cat in stack.options.categories:
-                    logger.info(colored(" --- Drawing category : %10s " % cat.get('name'), 'yellow', 'on_red'))
-                    logger.info(colored(
-                        ('(%i) booked variables will be drawn :: ' % len(stack.variables)), 'red', attrs=['bold']
-                    ))
-                    stack.options.label.append(cat.get('label'))
-                    _cuts_ = cat.get('operator','&&').join(cat.get('cut')) if type(cat.get('cut')) == type([]) else cat.get('cut')
-                    stack.draw( varkey = opt.variable,
-                                label  = opt.label+'_'+cat.get('name'),
-                                select = _cuts_ )
-                    stack.options.label.pop() # remove the last label after drawing
-
+                if opt.allnormhist : stack.variables[xvar].norm = True
+                stack.draw(
+                    varkey=xvar,
+                    label=opt.label
+                )
     else:
         if opt.variable != '':
             if len(stack.options.categories) > 0 :

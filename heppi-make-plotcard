@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
-import ROOT
+
 import sys, os, glob, json, re
+print("version python : ",  sys.version)
+import ROOT
 from optparse import OptionParser
 from heppi import heppi
+
 
 # --------------------
 # read arguments
@@ -22,7 +25,6 @@ def create_json(rootfile='file.root', treename=None, jout=''):
         try:
             for key in d.GetListOfKeys():
                 kname = key.GetName()
-                print 'getall :: ', kname
                 if key.IsFolder():
                     for i in getall(d.Get(kname), os.path.join(basepath,kname)):
                         yield i
@@ -33,9 +35,11 @@ def create_json(rootfile='file.root', treename=None, jout=''):
 
     trees = []
     for k, o in getall(root):
-        if o.ClassName() == 'TTree' and o.GetEntries() > 0:
+        if type(o) == type(ROOT.TTree()) and o.GetEntries() > 0:
+            if o.GetName() not in treename:
+                continue
             trees.append(k.split(o.GetName())[0] + o.GetName())
-    if len(trees)>0 :
+    if len(trees) > 0:
         heppi.logger.info(' The following trees have been found on this root file :')
         heppi.logger.info( trees )
         heppi.logger.info(' Only "' + trees[0] + '" will be used to build the plotcard')

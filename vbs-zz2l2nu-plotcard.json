@@ -1,0 +1,340 @@
+{
+    "variables": {
+        "prechannel": {
+            "cut": "prechannel<10",
+            "hist": "(68,0.0,68.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "prechannel"
+        },
+        "prepfMet": {
+            "cut": "",
+            "hist": "(50,0.0,500.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "prepfMet"
+        },
+        "new_bal:=(1.0 + (prepfMet - Zpt_Reco)/Zpt_Reco)": {
+            "cut": "",
+            "hist": "(20,0,10.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "1 + (MET - p_{T}^{Z})/p_{T}^{Z}"
+        },
+        "HT:=(LeadingJetPt + subLeadingJetPt)": {
+            "cut": "",
+            "hist": "(50,0,1000.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "prepfMet"
+        },
+        "preZmass": {
+            "cut": "((preZmass<101)&&(preZmass>81))",
+            "hist": "(100,0.0,235.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "preZmass"
+        },
+        "Zpt_Reco": {
+            "cut": "Zpt_Reco>20",
+            "hist": "(40,0.0,200.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "Zpt_Reco"
+        },
+        "DeltaPhiZMet": {
+            "cut": "",
+            "hist": "(50,0.0,3.2)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaPhiZMet"
+        },
+        "DeltaPhiZMet_new:=DeltaPhiZMet/TMath::Pi()": {
+            "cut": "",
+            "hist": "(50,0.0,1)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaPhiZMet"
+        },
+        "Balance": {
+            "cut": "",
+            "hist": "(50,0.0,10)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "Balance"
+        },
+        "DeltaPhill_new:=DeltaPhill/TMath::Pi()": {
+            "cut": "",
+            "hist": "(50,0.0,1)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaPhill"
+        },
+        "DeltaEtall": {
+            "cut": "",
+            "hist": "(50,0.0,2.8)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaEtall"
+        },
+        "LeadingPtll": {
+            "cut": "LeadingPtll>20",
+            "hist": "(100,0.0,200.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "LeadingPtll"
+        },
+        "TrailingPtll": {
+            "cut": "TrailingPtll>20",
+            "hist": "(50,0.0,200.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "TrailingPtll"
+        },
+        "LeadingEtall": {
+            "cut": "",
+            "hist": "(50,-2.9,2.9)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "LeadingEtall"
+        },
+        "TrailingEtall": {
+            "cut": "",
+            "hist": "(50,-2.9,2.9)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "TrailingEtall"
+        },
+        "Etall": {
+            "cut": "",
+            "hist": "(50,-6.0,6.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "Etall"
+        },
+        "Rapidityll": {
+            "cut": "",
+            "hist": "(50,-2.9,2.9)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "Rapidityll"
+        },
+        "ngoodjets": {
+            "cut": "",
+            "hist": "(12,0.0,12.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "ngoodjets"
+        },
+        "LeadingJetPt": {
+            "cut": "LeadingJetPt>50",
+            "hist": "(50,0.0,200.0.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "LeadingJetPt"
+        },
+        "subLeadingJetPt": {
+            "cut": "subLeadingJetPt>30",
+            "hist": "(50,0.0,200.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "subLeadingJetPt"
+        },
+        "LeadingJetEta": {
+            "cut": "",
+            "hist": "(100,-5.0,5.2)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "LeadingJetEta"
+        },
+        "subLeadingJetEta": {
+            "cut": "",
+            "hist": "(100,-5.2,5.2)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "subLeadingJetEta"
+        },
+        "DijetMass": {
+            "cut": "",
+            "hist": "(50,0,5000)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "M_{jj} [GeV]"
+        },
+        "DeltaPhijj": {
+            "cut": "",
+            "hist": "(50,0.0,3.2)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaPhijj"
+        },
+        "DeltaPhijj_new:=DeltaPhijj/TMath::Pi()": {
+            "cut": "",
+            "hist": "(50,0.0,1.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "DeltaPhijj"
+        },
+        "DeltaEtajj": {
+            "cut": "",
+            "hist": "(50,-1.0,10.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "#Delta#eta_{jj}"
+        },
+        "nBjets": {
+            "cut": "nBjets<1",
+            "hist": "(7,0.0,7.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "nBjets"
+        },
+        "xJet": {
+            "cut": "",
+            "hist": "(50,0.0,1.0)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "xJet"
+        },
+        "xZ": {
+            "cut": "",
+            "hist": "(50,0.0,0.7)",
+            "blind": "",
+            "log": true,
+            "norm": false,
+            "title": "xZ"
+        }
+    },
+    "processes": {
+        "ZZJJ_ZZTo2L2Nu_EWK_13TeV-madgraph-pythia8": {
+            "color": 2,
+            "order": 0,
+            "files": ["MonoZSelector-jan16-18v3.root:ZZJJ_ZZTo2L2Nu_EWK_13TeV-madgraph-pythia8/preSelection"],
+            "title": "VBS",
+            "cut"  : "",
+            "label": "signal"
+        },
+        "DarkMatter_MonoZToLL_NLO_Vector_Mx2-150_Mv-500_gDM1_gQ0p25_TuneCUETP8M1_Mx1-1_ctau-1": {
+            "color": 3,
+            "order": 0,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:DarkMatter_MonoZToLL_NLO_Vector_Mx2-150_Mv-500_gDM1_gQ0p25_TuneCUETP8M1_Mx1-1_ctau-1_13TeV-madgraph/preSelection"
+            ],
+            "title": "DM_{150,500,1}",
+            "cut"  : "",
+            "label": "signal"
+        },
+        "DarkMatter_MonoZToLL_NLO_Vector_Mx2-1_Mv-500_gDM1_gQ0p25_TuneCUETP8M1_Mx1-0p1_ctau-1" :{
+            "color": 4,
+            "order": 0,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:DarkMatter_MonoZToLL_NLO_Vector_Mx2-1_Mv-500_gDM1_gQ0p25_TuneCUETP8M1_Mx1-0p1_ctau-1_13TeV-madgraph/preSelection"
+            ],
+            "title": "DM_{1,500,0.1}",
+            "cut"  : "",
+            "label": "signal"
+        },
+        "DYJetsToLL": {
+            "color": 120,
+            "order": 5,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/preSelection",
+                "MonoZSelector-jan16-18v3.root:DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/preSelection",
+                "MonoZSelector-jan16-18v3.root:DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/preSelection",
+                "MonoZSelector-jan16-18v3.root:DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/preSelection",
+                "MonoZSelector-jan16-18v3.root:DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/preSelection"
+            ],
+            "title": "Drel-Yann",
+            "cut"  : "",
+            "label": "background"
+        },
+        "TTTo2L2Nu": {
+            "color": 122,
+            "order": 4,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/preSelection"
+            ],
+            "title": "t#bar{t}",
+            "cut"  : "",
+            "label": "background"
+        },
+        "WWTo2L2Nu": {
+            "color": 123,
+            "order": 3,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:WWTo2L2Nu_13TeV-powheg/preSelection"
+            ],
+            "title": "WW",
+            "cut"  : "",
+            "label": "background"
+        },
+        "WZTo3LNu": {
+            "color": 131,
+            "order": 2,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8/preSelection"
+            ],
+            "title": "WZ",
+            "cut"  : "",
+            "label": "background"
+        },
+        "ZZTo2L2Nu": {
+            "color": 134,
+            "order": 1,
+            "files": [
+                "MonoZSelector-jan16-18v3.root:ZZTo2L2Nu_13TeV_powheg_pythia8/preSelection"
+            ],
+            "title": "ZZ",
+            "cut"  : "",
+            "label": "background"
+        }
+    },
+    "options": {
+        "ratio_range": [
+            0.5,
+            1.5
+        ],
+        "ratioplot": true,
+        "legend": [
+            ""
+        ],
+        "treename": "{sampleid}/preSelection",
+        "output_label": "",
+        "kfactor": 1.0,
+        "intlumi": 36.0,
+        "cutflow": [
+            ""
+        ],
+        "label" : ["VBS analysis", "Z pre-selection"],
+        "weight_branch": "weight",
+        "categories": []
+    }
+}

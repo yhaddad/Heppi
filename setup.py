@@ -22,7 +22,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     "jsmin",
     "termcolor",
-    "progressbar",
+    "progressbar2",
     "jsonmerge",
     "tabulate"
 ]
